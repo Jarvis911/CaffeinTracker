@@ -48,5 +48,22 @@
     "clear": "Xóa sạch",
     "clear_title": "Xóa toàn bộ đồ uống hôm nay",
     "empty": "Ghi nhận đồ uống và xem nó rơi vào đây"
+  },
+  "log": {
+    "title": "Ghi nhận đồ uống",
+    "subtitle": "Chạm vào món bạn đang nhâm nhi — chúng tôi sẽ theo dõi caffeine & đường",
+    "search_placeholder": "Tìm kiếm đồ uống...",
+    "category_all": "Tất cả",
+    "category_coffee": "Cà phê",
+    "category_tea": "Trà",
+    "category_energy": "Tăng lực",
+    "category_soda": "Soda",
+    "category_other": "Khác",
+    "favorites": "Yêu thích",
+    "recent": "Gần đây",
+    "logged_toast": "Đã ghi!",
+    "no_results": "Không tìm thấy đồ uống nào phù hợp.",
+    "caffeine": "caffeine",
+    "sugar": "đường"
   }
 }

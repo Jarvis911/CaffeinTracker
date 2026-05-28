@@ -48,5 +48,22 @@
     "clear": "Clear",
     "clear_title": "Clear all today's drinks",
     "empty": "Log a drink and watch it plop in here"
+  },
+  "log": {
+    "title": "Log a drink",
+    "subtitle": "Tap what you’re sipping — we’ll track caffeine & sugar",
+    "search_placeholder": "Search drinks...",
+    "category_all": "All",
+    "category_coffee": "Coffee",
+    "category_tea": "Tea",
+    "category_energy": "Energy",
+    "category_soda": "Soda",
+    "category_other": "Other",
+    "favorites": "Favorites",
+    "recent": "Recent",
+    "logged_toast": "Logged!",
+    "no_results": "No drinks found.",
+    "caffeine": "caffeine",
+    "sugar": "sugar"
   }
 }
