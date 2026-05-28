@@ -41,5 +41,12 @@
     "language": "Language / Ngôn ngữ",
     "lang_en": "English",
     "lang_vi": "Tiếng Việt"
+  },
+  "toybox": {
+    "title": "Your drink pile",
+    "hint": "Tap & drag — physics chaos! Double-click to pop a drink.",
+    "clear": "Clear",
+    "clear_title": "Clear all today's drinks",
+    "empty": "Log a drink and watch it plop in here"
   }
 }

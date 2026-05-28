@@ -112,6 +112,27 @@ class AppState {
 		this.persist();
 	}
 
+	removeOneFromLog(id: string) {
+		const index = this.logs.findIndex((l) => l.id === id);
+		if (index === -1) return;
+
+		if (this.logs[index].amount > 1) {
+			this.logs[index] = {
+				...this.logs[index],
+				amount: this.logs[index].amount - 1
+			};
+		} else {
+			this.logs = this.logs.filter((l) => l.id !== id);
+		}
+		this.persist();
+	}
+
+	clearTodayLogs() {
+		const today = new Date().toDateString();
+		this.logs = this.logs.filter((l) => new Date(l.at).toDateString() !== today);
+		this.persist();
+	}
+
 	get providers() {
 		return FITNESS_PROVIDERS.map((p) => ({
 			...p,

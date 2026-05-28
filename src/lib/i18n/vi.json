@@ -41,5 +41,12 @@
     "language": "Ngôn ngữ / Language",
     "lang_en": "English",
     "lang_vi": "Tiếng Việt"
+  },
+  "toybox": {
+    "title": "Đống đồ uống của bạn",
+    "hint": "Chạm & kéo — hỗn loạn vật lý! Nhấp đúp để xóa đồ uống.",
+    "clear": "Xóa sạch",
+    "clear_title": "Xóa toàn bộ đồ uống hôm nay",
+    "empty": "Ghi nhận đồ uống và xem nó rơi vào đây"
   }
 }

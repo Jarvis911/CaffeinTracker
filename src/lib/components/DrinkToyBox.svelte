@@ -1,15 +1,30 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { _ } from 'svelte-i18n';
 	import { DrinkPhysicsBox, type ToyItem } from '$lib/physics/drink-toy-box';
+	import { app } from '$lib/state/app.svelte';
 
 	let { items }: { items: ToyItem[] } = $props();
 
 	let physics: DrinkPhysicsBox | null = null;
 
+	function handleDoubleClick(toyId: string) {
+		const lastDashIndex = toyId.lastIndexOf('-');
+		if (lastDashIndex === -1) return;
+		const logId = toyId.substring(0, lastDashIndex);
+		app.removeOneFromLog(logId);
+	}
+
+	function clearAllToday() {
+		app.clearTodayLogs();
+	}
+
 	function attachBox(node: HTMLDivElement) {
 		if (!browser) return;
 
-		physics = new DrinkPhysicsBox(node);
+		physics = new DrinkPhysicsBox(node, {
+			onDoubleClick: handleDoubleClick
+		});
 		physics.start();
 		physics.syncItems(items);
 
@@ -26,8 +41,16 @@
 
 <section class="toy-section" aria-label="Drink toy box">
 	<div class="toy-header">
-		<h2 class="section-title">Your drink pile</h2>
-		<span class="hint">Tap & drag — physics chaos!</span>
+		<div class="title-group">
+			<h2 class="section-title">{$_('toybox.title', { default: 'Your drink pile' })}</h2>
+			{#if items.length > 0}
+				<button class="btn-clear" onclick={clearAllToday} title={$_('toybox.clear_title', { default: "Clear all today's drinks" })}>
+					<span class="trash-icon">🗑️</span>
+					<span class="btn-text">{$_('toybox.clear', { default: 'Clear' })}</span>
+				</button>
+			{/if}
+		</div>
+		<span class="hint">{$_('toybox.hint', { default: 'Tap & drag — physics chaos! Double-click to pop a drink.' })}</span>
 	</div>
 
 	<div class="claw-machine">
@@ -36,7 +59,7 @@
 		</div>
 		<div class="playpen" {@attach attachBox}>
 			{#if items.length === 0}
-				<p class="empty">Log a drink and watch it plop in here</p>
+				<p class="empty">{$_('toybox.empty', { default: 'Log a drink and watch it plop in here' })}</p>
 			{/if}
 		</div>
 		<div class="glass-shine" aria-hidden="true"></div>
@@ -50,14 +73,50 @@
 
 	.toy-header {
 		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 0.5rem;
+		flex-direction: column;
+		gap: 0.25rem;
 		margin-bottom: 0.65rem;
+	}
+
+	.title-group {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
 	}
 
 	.toy-header .section-title {
 		margin: 0;
+	}
+
+	.btn-clear {
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+		background: rgba(255, 255, 255, 0.6);
+		border: 1px solid color-mix(in srgb, var(--color-accent) 25%, transparent);
+		padding: 0.3rem 0.65rem;
+		border-radius: 0.75rem;
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: var(--color-accent-deep);
+		cursor: pointer;
+		transition: all 0.2s ease;
+		backdrop-filter: blur(4px);
+	}
+
+	.btn-clear:hover {
+		background: var(--color-accent-soft);
+		border-color: var(--color-accent);
+		transform: translateY(-1px);
+	}
+
+	.btn-clear:active {
+		transform: translateY(0);
+	}
+
+	.trash-icon {
+		font-size: 0.85rem;
 	}
 
 	.hint {
@@ -147,6 +206,21 @@
 
 	.playpen :global(.physics-toy:active) {
 		cursor: grabbing;
+	}
+
+	.playpen :global(.physics-toy.popping) {
+		animation: toy-pop-out 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+	}
+
+	@keyframes toy-pop-out {
+		0% {
+			transform: scale(1);
+			opacity: 1;
+		}
+		100% {
+			transform: scale(0);
+			opacity: 0;
+		}
 	}
 
 	.empty {

@@ -24,7 +24,10 @@ export class DrinkPhysicsBox {
 	private collisionHandler: ((e: Matter.IEventCollision<Matter.Engine>) => void) | null = null;
 	private endDragHandler: ((e: Matter.IEvent<Matter.MouseConstraint>) => void) | null = null;
 
-	constructor(private readonly container: HTMLElement) {
+	constructor(
+		private readonly container: HTMLElement,
+		private readonly options?: { onDoubleClick?: (id: string) => void }
+	) {
 		this.engine = Matter.Engine.create({
 			gravity: { x: 0, y: 1, scale: 0.0012 }
 		});
@@ -66,6 +69,11 @@ export class DrinkPhysicsBox {
 		this.container.appendChild(el);
 		this.elements.set(item.id, el);
 
+		el.addEventListener('dblclick', (e) => {
+			e.preventDefault();
+			this.options?.onDoubleClick?.(item.id);
+		});
+
 		const margin = TOY_RADIUS + 4;
 		const x = margin + Math.random() * Math.max(1, this.width - margin * 2);
 		const y = TOY_RADIUS + 8 + Math.random() * 36;
@@ -98,8 +106,15 @@ export class DrinkPhysicsBox {
 			this.bodies.delete(id);
 		}
 		if (el) {
-			el.remove();
 			this.elements.delete(id);
+			el.classList.add('popping');
+			el.style.pointerEvents = 'none';
+			
+			const cleanup = () => {
+				el.remove();
+			};
+			el.addEventListener('animationend', cleanup);
+			setTimeout(cleanup, 300);
 		}
 	}
 
