@@ -28,9 +28,11 @@
 		physics.start();
 		physics.syncItems(items);
 
-		return () => {
-			physics?.destroy();
-			physics = null;
+		return {
+			destroy() {
+				physics?.destroy();
+				physics = null;
+			}
 		};
 	}
 
@@ -57,7 +59,7 @@
 		<div class="claw-rail" aria-hidden="true">
 			<span class="claw">🦾</span>
 		</div>
-		<div class="playpen" {@attach attachBox}>
+		<div class="playpen" use:attachBox>
 			{#if items.length === 0}
 				<p class="empty">{$_('toybox.empty', { default: 'Log a drink and watch it plop in here' })}</p>
 			{/if}
@@ -183,7 +185,7 @@
 		padding: 0;
 		border: none;
 		background: transparent;
-		font-size: 2.1rem;
+		font-size: 3.1rem;
 		line-height: 1;
 		cursor: grab;
 		user-select: none;
@@ -191,8 +193,8 @@
 		will-change: transform;
 		filter: drop-shadow(0 4px 8px rgba(61, 44, 42, 0.15));
 		transition: filter 0.15s ease;
-		width: 52px;
-		height: 52px;
+		width: 76px;
+		height: 76px;
 		display: flex;
 		align-items: center;
 		justify-content: center;

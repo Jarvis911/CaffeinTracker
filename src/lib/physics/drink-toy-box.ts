@@ -7,7 +7,7 @@ export interface ToyItem {
 	imageUrl?: string;
 }
 
-const TOY_RADIUS = 26;
+const TOY_RADIUS = 38;
 
 export class DrinkPhysicsBox {
 	readonly engine: Matter.Engine;
