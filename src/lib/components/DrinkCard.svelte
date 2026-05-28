@@ -13,7 +13,11 @@
 </script>
 
 <button type="button" class="card" class:compact onclick={onSelect} disabled={!onSelect}>
-	<span class="emoji" aria-hidden="true">{drink.emoji}</span>
+	{#if drink.imageUrl}
+		<img src={drink.imageUrl} alt={drink.name} class="emoji-img" />
+	{:else}
+		<span class="emoji" aria-hidden="true">{drink.emoji}</span>
+	{/if}
 	<div class="info">
 		<span class="name">{drink.name}</span>
 		<span class="meta">{drink.caffeineMg} mg · {drink.sugarG}g sugar</span>
@@ -55,6 +59,13 @@
 
 	.emoji {
 		font-size: 1.75rem;
+	}
+
+	.emoji-img {
+		width: 2.25rem;
+		height: 2.25rem;
+		object-fit: contain;
+		flex-shrink: 0;
 	}
 
 	.info {

@@ -90,6 +90,56 @@ export const DRINK_CATALOG: DrinkTemplate[] = [
 		sugarG: 50,
 		calories: 320,
 		category: 'other'
+	},
+	{
+		id: 'jujube-soup',
+		name: 'Jujube Herbal Soup',
+		emoji: '🥣',
+		imageUrl: '/images/drinks/jujube-herbal-soup.webp',
+		caffeineMg: 0,
+		sugarG: 12,
+		calories: 80,
+		category: 'tea'
+	},
+	{
+		id: 'taro-boba',
+		name: 'Taro Bubble Tea',
+		emoji: '🧋',
+		imageUrl: '/images/drinks/taro-bubble-tea.webp',
+		caffeineMg: 25,
+		sugarG: 45,
+		calories: 350,
+		category: 'other'
+	},
+	{
+		id: 'teddy-mocha',
+		name: 'Teddy Bear Mocha',
+		emoji: '☕',
+		imageUrl: '/images/drinks/teddy-bear-mocha.webp',
+		caffeineMg: 85,
+		sugarG: 35,
+		calories: 280,
+		category: 'coffee'
+	},
+	{
+		id: 'watermelon-passion',
+		name: 'Watermelon Passionfruit',
+		emoji: '🍉',
+		imageUrl: '/images/drinks/watermelon-passionfruit-drink.webp',
+		caffeineMg: 0,
+		sugarG: 30,
+		calories: 120,
+		category: 'other'
+	},
+	{
+		id: 'dalgona-latte',
+		name: 'Whipped Dalgona Latte',
+		emoji: '🥛',
+		imageUrl: '/images/drinks/whipped-dalgona-latte.webp',
+		caffeineMg: 120,
+		sugarG: 25,
+		calories: 210,
+		category: 'coffee'
 	}
 ];
 

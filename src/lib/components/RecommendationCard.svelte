@@ -16,7 +16,11 @@
 
 <article class="rec">
 	<div class="top">
-		<span class="emoji" aria-hidden="true">{item.drink.emoji}</span>
+		{#if item.drink.imageUrl}
+			<img src={item.drink.imageUrl} alt={item.drink.name} class="emoji-img" />
+		{:else}
+			<span class="emoji" aria-hidden="true">{item.drink.emoji}</span>
+		{/if}
 		<div class="copy">
 			<h3>{item.drink.name}</h3>
 			<p>{item.reason}</p>
@@ -54,6 +58,13 @@
 
 	.emoji {
 		font-size: 2rem;
+	}
+
+	.emoji-img {
+		width: 2.5rem;
+		height: 2.5rem;
+		object-fit: contain;
+		flex-shrink: 0;
 	}
 
 	.copy {

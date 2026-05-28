@@ -27,6 +27,7 @@ export interface DrinkTemplate {
 	id: string;
 	name: string;
 	emoji: string;
+	imageUrl?: string;
 	caffeineMg: number;
 	sugarG: number;
 	calories: number;

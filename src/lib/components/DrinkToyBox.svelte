@@ -132,6 +132,11 @@
 		will-change: transform;
 		filter: drop-shadow(0 4px 8px rgba(61, 44, 42, 0.15));
 		transition: filter 0.15s ease;
+		width: 52px;
+		height: 52px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.playpen :global(.physics-toy.grabbed) {

@@ -14,7 +14,8 @@ export function getTodayToyItems(logs: LoggedDrink[]): ToyItem[] {
 			return Array.from({ length: log.amount }, (_, i) => ({
 				id: `${log.id}-${i}`,
 				emoji: drink.emoji,
-				name: drink.name
+				name: drink.name,
+				imageUrl: drink.imageUrl
 			}));
 		});
 }

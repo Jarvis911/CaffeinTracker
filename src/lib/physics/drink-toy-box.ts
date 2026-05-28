@@ -4,6 +4,7 @@ export interface ToyItem {
 	id: string;
 	emoji: string;
 	name?: string;
+	imageUrl?: string;
 }
 
 const TOY_RADIUS = 26;
@@ -45,7 +46,21 @@ export class DrinkPhysicsBox {
 		const el = document.createElement('button');
 		el.type = 'button';
 		el.className = 'physics-toy';
-		el.textContent = item.emoji;
+		
+		if (item.imageUrl) {
+			const img = document.createElement('img');
+			img.src = item.imageUrl;
+			img.alt = item.name ?? 'Drink';
+			img.draggable = false;
+			img.style.pointerEvents = 'none';
+			img.style.width = '100%';
+			img.style.height = '100%';
+			img.style.objectFit = 'contain';
+			el.appendChild(img);
+		} else {
+			el.textContent = item.emoji;
+		}
+		
 		el.title = item.name ?? 'Drink';
 		el.setAttribute('aria-label', item.name ? `${item.name} drink toy` : 'Drink toy');
 		this.container.appendChild(el);
