@@ -1,0 +1,19 @@
+# Supabase local config — see https://supabase.com/docs/guides/cli
+project_id = "caffein-tracker-mobile"
+
+[api]
+enabled = true
+port = 54321
+
+[db]
+port = 54322
+major_version = 15
+
+[auth]
+enabled = true
+site_url = "io.supabase.caffeintracker://login-callback"
+additional_redirect_urls = ["io.supabase.caffeintracker://login-callback"]
+
+[auth.email]
+enable_signup = true
+enable_confirmations = false

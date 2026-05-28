@@ -1,0 +1,110 @@
+@import 'tailwindcss';
+
+:root {
+	--color-bg: #fff8f3;
+	--color-bg-accent: #ffe8dc;
+	--color-surface: #ffffff;
+	--color-text: #3d2c2a;
+	--color-text-muted: #8b6f6a;
+	--color-border: #f0ddd6;
+	--color-accent: #e8896b;
+	--color-accent-deep: #c45f42;
+	--color-accent-soft: #ffe5db;
+	--color-mint: #7ec9a8;
+	--color-mint-deep: #3d8f6f;
+	--color-mint-soft: #dff5eb;
+	--color-rose: #e88ba0;
+	--color-rose-deep: #b84d66;
+	--color-ring-track: #f5ebe6;
+	--shadow-soft: 0 8px 24px rgba(196, 95, 66, 0.08);
+	--shadow-lift: 0 12px 32px rgba(196, 95, 66, 0.14);
+	--font-body: 'Nunito', system-ui, sans-serif;
+	--font-display: 'Quicksand', 'Nunito', system-ui, sans-serif;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html {
+	font-family: var(--font-body);
+	color: var(--color-text);
+	background: var(--color-bg);
+}
+
+body {
+	margin: 0;
+	min-height: 100dvh;
+	background:
+		radial-gradient(ellipse 80% 50% at 50% -10%, var(--color-bg-accent), transparent),
+		var(--color-bg);
+}
+
+h1,
+h2,
+h3 {
+	font-family: var(--font-display);
+}
+
+.app-shell {
+	min-height: 100dvh;
+	padding: 1.25rem 1.25rem 5.5rem;
+	max-width: 28rem;
+	margin-inline: auto;
+}
+
+.card-panel {
+	padding: 1.1rem;
+	border-radius: 1.5rem;
+	background: var(--color-surface);
+	border: 1px solid var(--color-border);
+	box-shadow: var(--shadow-soft);
+}
+
+.section-title {
+	margin: 0 0 0.75rem;
+	font-size: 0.95rem;
+	font-weight: 800;
+}
+
+.btn-primary {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.35rem;
+	padding: 0.7rem 1.25rem;
+	border: none;
+	border-radius: 999px;
+	background: linear-gradient(135deg, var(--color-accent), var(--color-accent-deep));
+	color: white;
+	font-weight: 700;
+	font-size: 0.9rem;
+	cursor: pointer;
+	box-shadow: var(--shadow-soft);
+	transition: transform 0.2s ease;
+}
+
+.btn-primary:hover {
+	transform: translateY(-1px);
+}
+
+.chip-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.fade-in {
+	animation: fadeIn 0.45s ease both;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
