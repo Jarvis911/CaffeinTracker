@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { _ } from 'svelte-i18n';
 
-	const links = [
-		{ href: '/', label: 'Home', icon: '🏠' },
-		{ href: '/log', label: 'Log', icon: '☕' },
-		{ href: '/connect', label: 'Sync', icon: '💗' },
-		{ href: '/insights', label: 'You', icon: '✨' }
-	];
+	const links = $derived([
+		{ href: '/', label: $_('nav.home'), icon: '🏠' },
+		{ href: '/log', label: $_('nav.log'), icon: '☕' },
+		{ href: '/connect', label: $_('nav.sync'), icon: '💗' },
+		{ href: '/insights', label: $_('nav.you'), icon: '✨' }
+	]);
 </script>
 
 <nav class="nav" aria-label="Main">

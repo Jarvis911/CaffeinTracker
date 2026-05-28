@@ -1,0 +1,45 @@
+{
+  "greeting": {
+    "morning": "Good morning",
+    "afternoon": "Good afternoon",
+    "evening": "Good evening"
+  },
+  "home": {
+    "subtitle_tuned": "Your drinks are tuned to today’s health snapshot",
+    "subtitle_connect": "Connect a fitness app for personalized picks",
+    "wellness": "Today’s wellness",
+    "picked_for_you": "Picked for you",
+    "connect_prompt": "Link Apple Health, Google Fit, Fitbit, or Garmin to personalize caffeine and sugar limits.",
+    "connect_btn": "Connect fitness apps"
+  },
+  "health": {
+    "sleep": "Sleep",
+    "resting_hr": "Resting HR",
+    "steps": "Steps",
+    "water": "Water"
+  },
+  "nav": {
+    "home": "Home",
+    "log": "Log",
+    "sync": "Sync",
+    "you": "You"
+  },
+  "profile": {
+    "title": "Your profile",
+    "subtitle": "Tune limits — we adapt recommendations automatically",
+    "display_name": "Display name",
+    "caffeine_limit": "Daily caffeine limit (mg)",
+    "sugar_sensitivity": "Sugar sensitivity",
+    "sugar_guidance": "Daily sugar guidance cap: ~{cap}g",
+    "how_we_personalize": "How we personalize",
+    "tip_sleep": "Short sleep lowers high-caffeine drink scores",
+    "tip_hr": "Elevated resting HR favors gentler options",
+    "tip_afternoon": "Afternoon logs trigger sleep-friendly suggestions",
+    "tip_active": "Active days can support a modest caffeine boost",
+    "connect_hint": "Connect a fitness app on the Sync tab to unlock health-aware tips.",
+    "go_to_sync": "Go to Sync",
+    "language": "Language / Ngôn ngữ",
+    "lang_en": "English",
+    "lang_vi": "Tiếng Việt"
+  }
+}

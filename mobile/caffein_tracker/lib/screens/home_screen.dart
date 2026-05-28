@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../services/app_controller.dart';
 import '../theme/app_theme.dart';
@@ -12,6 +13,15 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
+    String getGreeting() {
+      final hour = DateTime.now().hour;
+      if (hour < 12) return l10n.greetingMorning;
+      if (hour < 17) return l10n.greetingAfternoon;
+      return l10n.greetingEvening;
+    }
+
     return AnimatedBuilder(
       animation: controller,
       builder: (context, _) {
@@ -25,7 +35,7 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             children: [
               Text(
-                'Hi, ${profile?.displayName ?? 'Friend'} 👋',
+                '${getGreeting()}, ${profile?.displayName ?? 'Friend'} 👋',
                 style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
               ),
               const SizedBox(height: 4),
@@ -82,8 +92,8 @@ class HomeScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       children: [
-                        const Text(
-                          'Link Apple Health or Health Connect to unlock smart drink picks.',
+                        Text(
+                          l10n.connectFitnessPrompt,
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 12),
@@ -91,7 +101,7 @@ class HomeScreen extends StatelessWidget {
                           onPressed: () {
                             // Parent shell switches tab via callback if provided
                           },
-                          child: const Text('Connect health (Sync tab)'),
+                          child: Text(l10n.connectFitnessBtn),
                         ),
                       ],
                     ),

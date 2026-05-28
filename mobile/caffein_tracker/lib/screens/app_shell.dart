@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../services/app_controller.dart';
 import '../services/health_service.dart';
@@ -26,6 +27,8 @@ class _AppShellState extends State<AppShell> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     final pages = [
       HomeScreen(controller: widget.controller),
       LogScreen(controller: widget.controller),
@@ -41,11 +44,11 @@ class _AppShellState extends State<AppShell> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.home_outlined), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.coffee_outlined), label: 'Log'),
-          NavigationDestination(icon: Icon(Icons.favorite_outline), label: 'Sync'),
-          NavigationDestination(icon: Icon(Icons.person_outline), label: 'You'),
+        destinations: [
+          NavigationDestination(icon: const Icon(Icons.home_outlined), label: l10n.navHome),
+          NavigationDestination(icon: const Icon(Icons.coffee_outlined), label: l10n.navLog),
+          NavigationDestination(icon: const Icon(Icons.favorite_outline), label: l10n.navSync),
+          NavigationDestination(icon: const Icon(Icons.person_outline), label: l10n.navYou),
         ],
       ),
     );

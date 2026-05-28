@@ -1,0 +1,45 @@
+{
+  "greeting": {
+    "morning": "Chào buổi sáng",
+    "afternoon": "Chào buổi chiều",
+    "evening": "Chào buổi tối"
+  },
+  "home": {
+    "subtitle_tuned": "Lượng đồ uống đã được điều chỉnh theo sức khoẻ của bạn hôm nay",
+    "subtitle_connect": "Kết nối ứng dụng sức khỏe để nhận gợi ý cá nhân hóa",
+    "wellness": "Sức khỏe hôm nay",
+    "picked_for_you": "Dành riêng cho bạn",
+    "connect_prompt": "Liên kết Apple Health, Google Fit, Fitbit hoặc Garmin để cá nhân hóa giới hạn caffeine và đường.",
+    "connect_btn": "Kết nối ứng dụng sức khỏe"
+  },
+  "health": {
+    "sleep": "Giấc ngủ",
+    "resting_hr": "Nhịp tim nghỉ",
+    "steps": "Bước chân",
+    "water": "Nước"
+  },
+  "nav": {
+    "home": "Trang chủ",
+    "log": "Nhật ký",
+    "sync": "Đồng bộ",
+    "you": "Hồ sơ"
+  },
+  "profile": {
+    "title": "Hồ sơ của bạn",
+    "subtitle": "Tinh chỉnh giới hạn — chúng tôi sẽ tự động điều chỉnh gợi ý",
+    "display_name": "Tên hiển thị",
+    "caffeine_limit": "Giới hạn caffeine hàng ngày (mg)",
+    "sugar_sensitivity": "Mức nhạy cảm với đường",
+    "sugar_guidance": "Gợi ý lượng đường tối đa hàng ngày: ~{cap}g",
+    "how_we_personalize": "Cách chúng tôi cá nhân hóa",
+    "tip_sleep": "Ngủ ít sẽ làm giảm điểm số của đồ uống nhiều caffeine",
+    "tip_hr": "Nhịp tim nghỉ cao ưu tiên các lựa chọn nhẹ nhàng hơn",
+    "tip_afternoon": "Nhật ký buổi chiều sẽ kích hoạt gợi ý tốt cho giấc ngủ",
+    "tip_active": "Những ngày hoạt động nhiều có thể hỗ trợ mức caffeine cao hơn một chút",
+    "connect_hint": "Kết nối ứng dụng sức khỏe ở tab Đồng bộ để mở khóa gợi ý nhận biết sức khỏe.",
+    "go_to_sync": "Đến trang Đồng bộ",
+    "language": "Ngôn ngữ / Language",
+    "lang_en": "English",
+    "lang_vi": "Tiếng Việt"
+  }
+}

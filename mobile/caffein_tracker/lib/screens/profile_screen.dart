@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models/models.dart';
 import '../services/app_controller.dart';
@@ -13,6 +14,8 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return AnimatedBuilder(
       animation: controller,
       builder: (context, _) {
@@ -22,19 +25,19 @@ class ProfileScreen extends StatelessWidget {
         return ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            const Text('Your profile',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
+            Text(l10n.profileTitle,
+                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
             const SizedBox(height: 16),
             TextField(
-              decoration: const InputDecoration(
-                labelText: 'Display name',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.displayName,
+                border: const OutlineInputBorder(),
               ),
               controller: TextEditingController(text: p.displayName),
               onSubmitted: (v) => _save(p.copyWith(displayName: v)),
             ),
             const SizedBox(height: 16),
-            Text('Daily caffeine limit: ${p.dailyCaffeineLimitMg} mg'),
+            Text(l10n.caffeineLimit(p.dailyCaffeineLimitMg)),
             Slider(
               min: 100,
               max: 600,
@@ -50,15 +53,15 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const Text('Sugar sensitivity'),
+            Text(l10n.sugarSensitivity),
             const SizedBox(height: 8),
             SegmentedButton<SugarSensitivity>(
-              segments: const [
-                ButtonSegment(value: SugarSensitivity.low, label: Text('Low')),
+              segments: [
+                ButtonSegment(value: SugarSensitivity.low, label: Text(l10n.sugarLow)),
                 ButtonSegment(
-                    value: SugarSensitivity.medium, label: Text('Medium')),
+                    value: SugarSensitivity.medium, label: Text(l10n.sugarMedium)),
                 ButtonSegment(
-                    value: SugarSensitivity.high, label: Text('High')),
+                    value: SugarSensitivity.high, label: Text(l10n.sugarHigh)),
               ],
               selected: {p.sugarSensitivity},
               onSelectionChanged: (s) => _save(
@@ -71,16 +74,27 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 16),
+            Text(l10n.language),
+            const SizedBox(height: 8),
+            SegmentedButton<String>(
+              segments: [
+                ButtonSegment(value: 'en', label: Text(l10n.langEn)),
+                ButtonSegment(value: 'vi', label: Text(l10n.langVi)),
+              ],
+              selected: {controller.locale?.languageCode ?? Localizations.localeOf(context).languageCode},
+              onSelectionChanged: (s) => controller.setLocale(Locale(s.first)),
+            ),
             const SizedBox(height: 8),
             Text(
-              'Sugar guidance cap: ~${_personalization.getDailySugarCap(p.sugarSensitivity)}g',
+              l10n.sugarGuidance(_personalization.getDailySugarCap(p.sugarSensitivity)),
               style: const TextStyle(color: AppColors.textMuted, fontSize: 13),
             ),
             if (!controller.useOfflineDemo) ...[
               const SizedBox(height: 24),
               OutlinedButton(
                 onPressed: () => controller.signOut(),
-                child: const Text('Sign out'),
+                child: Text(l10n.signOut),
               ),
             ],
           ],

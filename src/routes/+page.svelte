@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from 'svelte-i18n';
 	import CaffeineRing from '$lib/components/CaffeineRing.svelte';
 	import DrinkToyBox from '$lib/components/DrinkToyBox.svelte';
 	import HealthChip from '$lib/components/HealthChip.svelte';
@@ -19,17 +20,17 @@
 
 	const greeting = $derived.by(() => {
 		const h = new Date().getHours();
-		if (h < 12) return 'Good morning';
-		if (h < 17) return 'Good afternoon';
-		return 'Good evening';
+		if (h < 12) return $_('greeting.morning');
+		if (h < 17) return $_('greeting.afternoon');
+		return $_('greeting.evening');
 	});
 </script>
 
 <MascotHeader
 	title="{greeting}, {app.profile.name}"
 	subtitle={app.hasFitnessData
-		? 'Your drinks are tuned to today’s health snapshot'
-		: 'Connect a fitness app for personalized picks'}
+		? $_('home.subtitle_tuned')
+		: $_('home.subtitle_connect')}
 />
 
 <section class="card-panel fade-in ring-panel">
@@ -42,17 +43,17 @@
 
 {#if app.hasFitnessData}
 	<section class="fade-in" style="animation-delay: 0.05s">
-		<h2 class="section-title">Today’s wellness</h2>
+		<h2 class="section-title">{$_('home.wellness')}</h2>
 		<div class="chip-row">
-			<HealthChip icon="😴" label="Sleep" value={`${app.health.sleepHours.toFixed(1)}h`} />
-			<HealthChip icon="💓" label="Resting HR" value={`${app.health.restingHeartRate} bpm`} />
-			<HealthChip icon="👟" label="Steps" value={app.health.steps.toLocaleString()} />
-			<HealthChip icon="💧" label="Water" value={`${Math.round(app.health.hydrationMl / 100) / 10}L`} />
+			<HealthChip icon="😴" label={$_('health.sleep')} value={`${app.health.sleepHours.toFixed(1)}h`} />
+			<HealthChip icon="💓" label={$_('health.resting_hr')} value={`${app.health.restingHeartRate} bpm`} />
+			<HealthChip icon="👟" label={$_('health.steps')} value={app.health.steps.toLocaleString()} />
+			<HealthChip icon="💧" label={$_('health.water')} value={`${Math.round(app.health.hydrationMl / 100) / 10}L`} />
 		</div>
 	</section>
 
 	<section class="fade-in" style="animation-delay: 0.1s">
-		<h2 class="section-title">Picked for you</h2>
+		<h2 class="section-title">{$_('home.picked_for_you')}</h2>
 		<div class="rec-list">
 			{#each recommendations as item, i}
 				<div style="animation-delay: {0.12 + i * 0.04}s" class="fade-in">
@@ -63,8 +64,8 @@
 	</section>
 {:else}
 	<section class="card-panel fade-in cta">
-		<p>Link Apple Health, Google Fit, Fitbit, or Garmin to personalize caffeine and sugar limits.</p>
-		<a href="/connect" class="btn-primary">Connect fitness apps</a>
+		<p>{$_('home.connect_prompt')}</p>
+		<a href="/connect" class="btn-primary">{$_('home.connect_btn')}</a>
 	</section>
 {/if}
 

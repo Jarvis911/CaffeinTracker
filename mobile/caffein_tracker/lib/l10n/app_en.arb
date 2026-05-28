@@ -1,0 +1,41 @@
+{
+  "appTitle": "Caffein Tracker",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "greetingMorning": "Good morning",
+  "greetingAfternoon": "Good afternoon",
+  "greetingEvening": "Good evening",
+  "connectFitnessPrompt": "Link fitness app for personalized picks.",
+  "connectFitnessBtn": "Connect fitness apps",
+  "navHome": "Home",
+  "navLog": "Log",
+  "navSync": "Sync",
+  "navYou": "You",
+  "profileTitle": "Your profile",
+  "displayName": "Display name",
+  "caffeineLimit": "Daily caffeine limit: {limit} mg",
+  "@caffeineLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "sugarSensitivity": "Sugar sensitivity",
+  "sugarLow": "Low",
+  "sugarMedium": "Medium",
+  "sugarHigh": "High",
+  "sugarGuidance": "Sugar guidance cap: ~{cap}g",
+  "@sugarGuidance": {
+    "placeholders": {
+      "cap": {
+        "type": "int"
+      }
+    }
+  },
+  "language": "Language / Ngôn ngữ",
+  "langEn": "English",
+  "langVi": "Tiếng Việt",
+  "signOut": "Sign out"
+}

@@ -3,6 +3,7 @@
 	import { getDailySugarCap } from '$lib/personalization/recommendations';
 	import { app } from '$lib/state/app.svelte';
 	import type { UserProfile } from '$lib/types';
+	import { _, locale } from 'svelte-i18n';
 
 	const sugarCap = $derived(getDailySugarCap(app.profile.sugarSensitivity));
 
@@ -17,18 +18,25 @@
 	function setName(value: string) {
 		app.updateProfile({ name: value || 'Friend' });
 	}
+
+	function toggleLanguage(newLocale: string) {
+		$locale = newLocale;
+		if (typeof window !== 'undefined') {
+			window.localStorage.setItem('locale', newLocale);
+		}
+	}
 </script>
 
-<MascotHeader title="Your profile" subtitle="Tune limits — we adapt recommendations automatically" />
+<MascotHeader title={$_('profile.title')} subtitle={$_('profile.subtitle')} />
 
 <section class="card-panel fade-in">
 	<label class="field">
-		<span>Display name</span>
+		<span>{$_('profile.display_name')}</span>
 		<input type="text" value={app.profile.name} oninput={(e) => setName(e.currentTarget.value)} />
 	</label>
 
 	<label class="field">
-		<span>Daily caffeine limit (mg)</span>
+		<span>{$_('profile.caffeine_limit')}</span>
 		<input
 			type="range"
 			min="100"
@@ -41,7 +49,7 @@
 	</label>
 
 	<fieldset class="field">
-		<span>Sugar sensitivity</span>
+		<span>{$_('profile.sugar_sensitivity')}</span>
 		<div class="radio-row">
 			{#each ['low', 'medium', 'high'] as level}
 				<button
@@ -53,24 +61,44 @@
 				</button>
 			{/each}
 		</div>
-		<p class="hint">Daily sugar guidance cap: ~{sugarCap}g</p>
+		<p class="hint">{$_('profile.sugar_guidance', { values: { cap: sugarCap } })}</p>
+	</fieldset>
+
+	<fieldset class="field" style="margin-top: 1rem;">
+		<span>{$_('profile.language')}</span>
+		<div class="radio-row">
+			<button
+				type="button"
+				class:active={$locale === 'en'}
+				onclick={() => toggleLanguage('en')}
+			>
+				{$_('profile.lang_en')}
+			</button>
+			<button
+				type="button"
+				class:active={$locale === 'vi'}
+				onclick={() => toggleLanguage('vi')}
+			>
+				{$_('profile.lang_vi')}
+			</button>
+		</div>
 	</fieldset>
 </section>
 
 {#if app.hasFitnessData}
 	<section class="card-panel fade-in">
-		<h2 class="section-title">How we personalize</h2>
+		<h2 class="section-title">{$_('profile.how_we_personalize')}</h2>
 		<ul class="tips">
-			<li>Short sleep lowers high-caffeine drink scores</li>
-			<li>Elevated resting HR favors gentler options</li>
-			<li>Afternoon logs trigger sleep-friendly suggestions</li>
-			<li>Active days can support a modest caffeine boost</li>
+			<li>{$_('profile.tip_sleep')}</li>
+			<li>{$_('profile.tip_hr')}</li>
+			<li>{$_('profile.tip_afternoon')}</li>
+			<li>{$_('profile.tip_active')}</li>
 		</ul>
 	</section>
 {:else}
 	<section class="card-panel fade-in">
-		<p class="hint">Connect a fitness app on the Sync tab to unlock health-aware tips.</p>
-		<a href="/connect" class="btn-primary">Go to Sync</a>
+		<p class="hint">{$_('profile.connect_hint')}</p>
+		<a href="/connect" class="btn-primary">{$_('profile.go_to_sync')}</a>
 	</section>
 {/if}
 

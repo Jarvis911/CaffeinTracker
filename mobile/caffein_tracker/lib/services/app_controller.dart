@@ -28,12 +28,14 @@ class AppController extends ChangeNotifier {
   HealthSnapshot? health;
   List<FitnessConnectionInfo> connections = [];
   bool useOfflineDemo = false;
+  Locale? _locale;
 
   bool get loading => _loading;
   String? get error => _error;
   bool get isSignedIn => _repo?.isSignedIn ?? false;
   bool get canEnterApp => isSignedIn || (useOfflineDemo && profile != null);
   bool get hasHealth => health != null;
+  Locale? get locale => _locale;
 
   SupabaseRepository get repo {
     if (_repo == null) throw StateError('Not authenticated');
@@ -41,6 +43,12 @@ class AppController extends ChangeNotifier {
   }
 
   Future<void> init() async {
+    final prefs = await SharedPreferences.getInstance();
+    final localeStr = prefs.getString('app_locale');
+    if (localeStr != null) {
+      _locale = Locale(localeStr);
+    }
+
     if (!Env.isConfigured) {
       useOfflineDemo = true;
       _loadOfflineDemo();
@@ -50,6 +58,13 @@ class AppController extends ChangeNotifier {
     if (isSignedIn) {
       await refreshAll();
     }
+  }
+
+  Future<void> setLocale(Locale newLocale) async {
+    _locale = newLocale;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('app_locale', newLocale.languageCode);
   }
 
   Future<void> signIn(String email, String password) async {

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import '../lib/i18n';
+	import { isLoading } from 'svelte-i18n';
 	import './layout.css';
 	import BottomNav from '$lib/components/BottomNav.svelte';
 	import favicon from '$lib/assets/favicon.svg';
@@ -19,8 +21,12 @@
 	/>
 </svelte:head>
 
-<div class="app-shell">
-	{@render children()}
-</div>
+{#if $isLoading}
+	<!-- Do not render until dictionary is loaded -->
+{:else}
+	<div class="app-shell">
+		{@render children()}
+	</div>
 
-<BottomNav />
+	<BottomNav />
+{/if}
