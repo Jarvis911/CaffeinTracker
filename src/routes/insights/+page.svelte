@@ -118,16 +118,12 @@
 		color: var(--color-text-muted);
 	}
 
-	input[type='text'] {
-		padding: 0.65rem 0.85rem;
-		border-radius: 0.85rem;
-		border: 1px solid var(--color-border);
-		font: inherit;
-	}
-
 	output {
+		font-family: var(--font-display);
 		font-weight: 700;
-		font-size: 0.9rem;
+		font-size: 0.95rem;
+		color: var(--color-text);
+		text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
 	}
 
 	.radio-row {
@@ -137,20 +133,49 @@
 
 	.radio-row button {
 		flex: 1;
-		padding: 0.5rem;
-		border-radius: 999px;
-		border: 1px solid var(--color-border);
-		background: white;
+		font-family: var(--font-display);
 		font-weight: 600;
-		font-size: 0.8rem;
-		text-transform: capitalize;
+		color: #ffffff;
+		text-shadow: 1.5px 1.5px 0 var(--color-border);
+		background-image: url('/images/minecraft_green_planks.png');
+		background-size: 80px;
+		border: 3px solid var(--color-border);
+		border-radius: 8px;
+		padding: 0.45rem;
 		cursor: pointer;
+		box-shadow:
+			inset 0 2.5px 0 rgba(255, 255, 255, 0.85),
+			inset 0 -3.5px 0 rgba(0, 0, 0, 0.3),
+			0 4px 0 var(--color-border);
+		font-size: 0.72rem;
+		text-transform: uppercase;
+		transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
+	}
+
+	.radio-row button:hover {
+		filter: brightness(1.15);
+	}
+
+	.radio-row button:active {
+		transform: translateY(4px);
+		box-shadow:
+			inset 0 2px 0 rgba(255, 255, 255, 0.85),
+			inset 0 -2px 0 rgba(0, 0, 0, 0.3),
+			0 0px 0 var(--color-border);
 	}
 
 	.radio-row button.active {
-		background: var(--color-accent-soft);
-		border-color: var(--color-accent);
-		color: var(--color-accent-deep);
+		background: 
+			linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
+			url('/images/minecraft_green_planks.png');
+		background-size: auto, 80px;
+		color: var(--color-text);
+		text-shadow: none;
+		box-shadow:
+			inset 0 2.5px 0 rgba(255, 255, 255, 0.85),
+			inset 0 -3.5px 0 rgba(0, 0, 0, 0.25),
+			0 4px 0 var(--color-border);
+		filter: brightness(1.1);
 	}
 
 	.hint {

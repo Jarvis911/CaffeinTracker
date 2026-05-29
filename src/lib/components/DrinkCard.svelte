@@ -94,7 +94,7 @@
 		border-radius: 999px;
 		background: var(--color-accent-soft);
 		color: var(--color-accent-deep);
-		font-weight: 800;
+		font-weight: 700;
 		font-size: 1.1rem;
 	}
 </style>

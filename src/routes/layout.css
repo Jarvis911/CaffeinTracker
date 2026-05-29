@@ -1,29 +1,47 @@
 @import 'tailwindcss';
 
 :root {
-	--color-bg: #fff8f3;
-	--color-bg-accent: #ffe8dc;
-	--color-surface: #ffffff;
+	--color-bg: #f3f8f4;
+	--color-bg-accent: #e2f3e4;
+	--color-surface: #faf0dd;
 	--color-text: #3d2c2a;
 	--color-text-muted: #8b6f6a;
-	--color-border: #f0ddd6;
-	--color-accent: #e8896b;
-	--color-accent-deep: #c45f42;
-	--color-accent-soft: #ffe5db;
-	--color-mint: #7ec9a8;
-	--color-mint-deep: #3d8f6f;
-	--color-mint-soft: #dff5eb;
+	--color-border: #3d2c2a;
+	--color-accent: #eed4b5;
+	--color-accent-deep: #795238;
+	--color-accent-soft: #efebe9;
+	--color-mint: #99cc99;
+	--color-mint-deep: #5e8f60;
+	--color-mint-soft: #dcedc8;
 	--color-rose: #e88ba0;
 	--color-rose-deep: #b84d66;
-	--color-ring-track: #f5ebe6;
-	--shadow-soft: 0 8px 24px rgba(196, 95, 66, 0.08);
-	--shadow-lift: 0 12px 32px rgba(196, 95, 66, 0.14);
-	--font-body: 'Nunito', system-ui, sans-serif;
+	--color-ring-track: #eac49e;
+	
+	/* Green board variables */
+	--color-wood-medium: #689f74; /* Softer warm forest green board face */
+	--color-wood-light: #8ebf9a;  /* Top highlight green */
+	--color-wood-dark: #4b7856;   /* Bottom depth shadow green */
+	--color-wood-tan: #e2f3e4;    /* Warm green felt inner board */
+	
+	--shadow-soft: 0 5px 0 #3d2c2a;
+	--shadow-lift: 0 7px 0 #3d2c2a;
+	--font-body: 'Quicksand', 'Nunito', system-ui, sans-serif;
 	--font-display: 'Quicksand', 'Nunito', system-ui, sans-serif;
 }
 
 * {
 	box-sizing: border-box;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
+	color: inherit;
 }
 
 html {
@@ -36,7 +54,7 @@ body {
 	margin: 0;
 	min-height: 100dvh;
 	background:
-		radial-gradient(ellipse 80% 50% at 50% -10%, var(--color-bg-accent), transparent),
+		radial-gradient(ellipse 80% 50% at 50% -10%, rgba(126, 201, 168, 0.25), transparent),
 		var(--color-bg);
 }
 
@@ -44,48 +62,209 @@ h1,
 h2,
 h3 {
 	font-family: var(--font-display);
+	color: var(--color-text);
+	text-transform: uppercase;
+	font-weight: 700;
 }
 
 .app-shell {
 	min-height: 100dvh;
-	padding: 1.25rem 1.25rem 5.5rem;
+	padding: 1.25rem 1.25rem 7rem;
 	max-width: 28rem;
 	margin-inline: auto;
 }
 
+/* Wood Board & Panels (Sprout Lands design system) - 3D Green Version */
+.wood-board {
+	border: 3.5px solid #3d2c2a;
+	background-image: url('/images/minecraft_green_planks.png');
+	background-size: 120px;
+	box-shadow:
+		inset 0 4px 0 rgba(255, 255, 255, 0.25),
+		inset 0 -4px 0 rgba(0, 0, 0, 0.4),
+		0 6px 0 #3d2c2a;
+	border-radius: 14px;
+	padding: 0.9rem;
+	position: relative;
+}
+
+.wood-inner-board {
+	border: 3.5px solid #3d2c2a;
+	background-color: var(--color-wood-tan);
+	border-radius: 10px;
+	box-shadow: inset 0 4px 0 rgba(0, 0, 0, 0.08);
+	padding: 0.75rem;
+}
+
 .card-panel {
+	border: 3.5px solid #3d2c2a;
 	padding: 1.1rem;
-	border-radius: 1.5rem;
-	background: var(--color-surface);
-	border: 1px solid var(--color-border);
-	box-shadow: var(--shadow-soft);
+	border-radius: 14px;
+	background: 
+		linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
+		url('/images/minecraft_green_planks.png');
+	background-size: auto, 144px;
+	box-shadow:
+		inset 0 4px 0 rgba(255, 255, 255, 0.6),
+		inset 0 -4px 0 rgba(0, 0, 0, 0.08),
+		0 5px 0 #3d2c2a;
+}
+
+input[type='text'] {
+	padding: 0.65rem 0.85rem;
+	border-radius: 8px;
+	border: 3.5px solid var(--color-border);
+	background-color: var(--color-wood-tan);
+	box-shadow: inset 0 3px 0 rgba(0, 0, 0, 0.1);
+	font-family: var(--font-body);
+	font-weight: 700;
+	color: var(--color-text);
+	outline: none;
+}
+
+input[type='text']:focus {
+	border-color: var(--color-mint-deep);
+}
+
+/* Custom styled range input */
+input[type='range'] {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 100%;
+	height: 14px;
+	background: var(--color-wood-tan);
+	border: 3.5px solid var(--color-border);
+	border-radius: 8px;
+	outline: none;
+	box-shadow: inset 0 2.5px 0 rgba(0, 0, 0, 0.1);
+}
+
+input[type='range']::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 22px;
+	height: 26px;
+	background: 
+		linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
+		url('/images/minecraft_green_planks.png');
+	background-size: auto, 32px;
+	border: 3.5px solid var(--color-border);
+	border-radius: 6px;
+	cursor: pointer;
+	box-shadow: 
+		inset 0 3.5px 0 rgba(255, 255, 255, 0.85),
+		0 3px 0 var(--color-border);
+	transition: filter 0.15s ease;
+}
+
+input[type='range']::-webkit-slider-thumb:hover {
+	filter: brightness(1.15);
+}
+
+input[type='range']::-moz-range-thumb {
+	width: 22px;
+	height: 26px;
+	background: 
+		linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
+		url('/images/minecraft_green_planks.png');
+	background-size: auto, 32px;
+	border: 3.5px solid var(--color-border);
+	border-radius: 6px;
+	cursor: pointer;
+	box-shadow: 
+		inset 0 3.5px 0 rgba(255, 255, 255, 0.85),
+		0 3px 0 var(--color-border);
+	transition: filter 0.15s ease;
+}
+
+input[type='range']::-moz-range-thumb:hover {
+	filter: brightness(1.15);
 }
 
 .section-title {
 	margin: 0 0 0.75rem;
-	font-size: 0.95rem;
-	font-weight: 800;
+	font-size: 0.85rem;
+	font-weight: 700;
+	letter-spacing: 0.03em;
 }
 
-.btn-primary {
+/* 3D Cute tactile buttons */
+.btn-3d-cute {
+	font-family: var(--font-display);
+	font-weight: 600;
+	color: #ffffff;
+	text-shadow: 2px 2px 0 #3d2c2a;
+	background-image: url('/images/minecraft_green_planks.png');
+	background-size: 96px;
+	border: 3.5px solid #3d2c2a;
+	border-radius: 10px;
+	padding: 0.6rem 1.15rem;
+	cursor: pointer;
+	box-shadow:
+		inset 0 3px 0 rgba(255, 255, 255, 0.85),
+		inset 0 -3px 0 rgba(0, 0, 0, 0.45),
+		0 5px 0 #3d2c2a;
+	transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+	text-transform: uppercase;
+	font-size: 0.75rem;
+	letter-spacing: 0.03em;
 	gap: 0.35rem;
-	padding: 0.7rem 1.25rem;
-	border: none;
-	border-radius: 999px;
-	background: linear-gradient(135deg, var(--color-accent), var(--color-accent-deep));
-	color: white;
-	font-weight: 700;
-	font-size: 0.9rem;
+}
+
+.btn-3d-cute:hover {
+	filter: brightness(1.15);
+}
+
+.btn-3d-cute:active {
+	transform: translateY(5px);
+	box-shadow:
+		inset 0 2px 0 rgba(255, 255, 255, 0.85),
+		inset 0 -2px 0 rgba(0, 0, 0, 0.45),
+		0 0px 0 #3d2c2a;
+	filter: brightness(0.85);
+}
+
+.btn-primary {
+	font-family: var(--font-display);
+	font-weight: 600;
+	color: var(--color-text);
+	text-shadow: none;
+	background: 
+		linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
+		url('/images/minecraft_green_planks.png');
+	background-size: auto, 96px;
+	border: 3.5px solid #3d2c2a;
+	border-radius: 10px;
+	padding: 0.6rem 1.15rem;
 	cursor: pointer;
-	box-shadow: var(--shadow-soft);
-	transition: transform 0.2s ease;
+	box-shadow:
+		inset 0 3px 0 rgba(255, 255, 255, 0.85),
+		inset 0 -3px 0 rgba(0, 0, 0, 0.45),
+		0 5px 0 #3d2c2a;
+	transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: uppercase;
+	font-size: 0.75rem;
+	letter-spacing: 0.03em;
+	gap: 0.35rem;
 }
 
 .btn-primary:hover {
-	transform: translateY(-1px);
+	filter: brightness(1.15);
+}
+
+.btn-primary:active {
+	transform: translateY(5px);
+	box-shadow:
+		inset 0 2px 0 rgba(255, 255, 255, 0.85),
+		inset 0 -2px 0 rgba(0, 0, 0, 0.45),
+		0 0px 0 #3d2c2a;
+	filter: brightness(0.85);
 }
 
 .chip-row {

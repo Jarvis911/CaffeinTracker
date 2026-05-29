@@ -16,13 +16,12 @@
 </script>
 
 <div class="card-wrapper">
-	<button type="button" class="grid-card" onclick={onSelect} aria-label="Log {drink.name}">
+	<button type="button" class="grid-card" class:is-favorite-card={isFavorite} onclick={onSelect} aria-label="Log {drink.name}">
 		{#if drink.imageUrl}
 			<img src={drink.imageUrl} alt={drink.name} class="drink-img" />
 		{:else}
 			<span class="drink-emoji" aria-hidden="true">{drink.emoji}</span>
 		{/if}
-		<span class="drink-name">{drink.name}</span>
 
 		<!-- Tooltip containing details -->
 		<div class="tooltip" role="tooltip">
@@ -68,58 +67,92 @@
 		justify-content: center;
 		width: 100%;
 		height: 100%;
-		padding: 0.75rem 0.5rem;
-		border-radius: 1.25rem;
-		border: 1px solid var(--color-border);
-		background: var(--color-surface);
-		box-shadow: var(--shadow-soft);
+		padding: 0.65rem 0.4rem;
+		border-radius: 12px;
+		border: 3.5px solid var(--color-border);
+		background: 
+			linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
+			url('/images/minecraft_green_planks.png');
+		background-size: auto, 96px;
+		box-shadow:
+			inset 0 4px 0 rgba(255, 255, 255, 0.85),
+			inset 0 -7px 0 rgba(0, 0, 0, 0.2),
+			0 6px 0 var(--color-border);
 		cursor: pointer;
 		text-align: center;
-		gap: 0.4rem;
+		gap: 0.35rem;
+		position: relative;
 		transition:
-			transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-			box-shadow 0.2s ease,
-			border-color 0.2s ease;
+			transform 0.1s ease,
+			box-shadow 0.1s ease,
+			filter 0.15s ease;
+	}
+
+	/* Favorite highlighted style */
+	.grid-card.is-favorite-card {
+		background: url('/images/minecraft_green_planks.png');
+		background-size: 96px;
+		box-shadow:
+			inset 0 4px 0 rgba(255, 255, 255, 0.85),
+			inset 0 -7px 0 rgba(0, 0, 0, 0.25),
+			0 6px 0 var(--color-border);
 	}
 
 	.grid-card:hover {
-		transform: translateY(-4px) scale(1.02);
-		box-shadow: var(--shadow-lift);
-		border-color: var(--color-accent-soft);
+		filter: brightness(1.15);
+		transform: translateY(-2px);
+		box-shadow:
+			inset 0 4px 0 rgba(255, 255, 255, 0.85),
+			inset 0 -7px 0 rgba(0, 0, 0, 0.35),
+			0 8px 0 var(--color-border);
+	}
+
+	.grid-card.is-favorite-card:hover {
+		filter: brightness(1.15);
+		transform: translateY(-2px);
+		box-shadow:
+			inset 0 4px 0 rgba(255, 255, 255, 0.85),
+			inset 0 -7px 0 rgba(0, 0, 0, 0.45),
+			0 8px 0 var(--color-border);
 	}
 
 	.grid-card:active {
-		transform: scale(0.96);
+		transform: translateY(6px);
+		box-shadow:
+			inset 0 2px 0 rgba(255, 255, 255, 0.85),
+			inset 0 -2px 0 rgba(0, 0, 0, 0.35),
+			0 0px 0 var(--color-border);
+		filter: brightness(0.85);
 	}
 
 	.drink-img {
-		width: 2.75rem;
-		height: 2.75rem;
+		width: 3.8rem;
+		height: 3.8rem;
 		object-fit: contain;
 		flex-shrink: 0;
-		filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.06));
+		filter: drop-shadow(0 2px 4px rgba(61, 44, 42, 0.15));
 		transition: transform 0.2s ease;
 	}
 
 	.grid-card:hover .drink-img {
-		transform: scale(1.08) rotate(3deg);
+		transform: scale(1.1) rotate(4deg);
 	}
 
 	.drink-emoji {
-		font-size: 2.25rem;
+		font-size: 3.4rem;
 		line-height: 1;
 		transition: transform 0.2s ease;
 	}
 
 	.grid-card:hover .drink-emoji {
-		transform: scale(1.08) rotate(-3deg);
+		transform: scale(1.1) rotate(-4deg);
 	}
 
 	.drink-name {
-		font-family: var(--font-display);
+		font-family: var(--font-body);
 		font-weight: 700;
-		font-size: 0.78rem;
-		line-height: 1.2;
+		font-size: 0.72rem;
+		line-height: 1.15;
 		color: var(--color-text);
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
@@ -129,49 +162,48 @@
 		text-overflow: ellipsis;
 		word-break: break-word;
 		max-width: 100%;
-		padding-inline: 0.15rem;
+		padding-inline: 0.1rem;
 	}
 
-	/* Heart Button style */
+	/* Heart Button style (3D tactile style) */
 	.heart-btn {
 		position: absolute;
-		top: 0.5rem;
-		right: 0.5rem;
+		top: -0.25rem;
+		right: -0.25rem;
 		width: 1.75rem;
 		height: 1.75rem;
-		border-radius: 999px;
-		border: none;
-		background: rgba(255, 255, 255, 0.85);
-		backdrop-filter: blur(4px);
+		border-radius: 50%;
+		border: 2px solid var(--color-border);
+		background: #faf0dd;
 		display: grid;
 		place-items: center;
 		cursor: pointer;
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+		box-shadow: 0 3px 0 var(--color-border);
 		color: var(--color-text-muted);
 		transition:
-			transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-			background 0.2s ease,
-			color 0.2s ease;
+			transform 0.1s ease,
+			box-shadow 0.1s ease,
+			background 0.2s ease;
 		padding: 0;
 		z-index: 10;
 	}
 
 	.heart-btn:hover {
-		transform: scale(1.15);
 		background: #ffffff;
 		color: var(--color-rose);
 	}
 
 	.heart-btn:active {
-		transform: scale(0.9);
+		transform: translateY(3px);
+		box-shadow: 0 0px 0 var(--color-border);
 	}
 
 	.heart-icon {
-		width: 0.95rem;
-		height: 0.95rem;
+		width: 0.85rem;
+		height: 0.85rem;
 		fill: none;
 		stroke: currentColor;
-		stroke-width: 2.5;
+		stroke-width: 3;
 		transition:
 			fill 0.2s ease,
 			stroke 0.2s ease;
@@ -179,8 +211,7 @@
 
 	.heart-btn.is-favorite {
 		color: var(--color-rose);
-		background: #ffffff;
-		box-shadow: 0 2px 8px rgba(232, 139, 160, 0.2);
+		background: #fff0f3;
 	}
 
 	.heart-btn.is-favorite .heart-icon {
@@ -188,31 +219,41 @@
 		stroke: var(--color-rose-deep);
 	}
 
-	/* Tooltip implementation */
+	/* Tooltip implementation (wooden signboard styled) */
 	.tooltip {
 		position: absolute;
-		bottom: 108%;
+		bottom: 110%;
 		left: 50%;
-		transform: translateX(-50%) translateY(8px);
-		background: rgba(61, 44, 42, 0.96);
-		backdrop-filter: blur(8px);
-		color: #ffffff;
-		padding: 0.5rem 0.75rem;
-		border-radius: 0.75rem;
-		font-size: 0.72rem;
+		transform: translateX(-50%) translateY(6px);
+		background: var(--color-accent-deep); /* dark brown wood */
+		border: 2.5px solid var(--color-border);
+		box-shadow: 0 3px 0 var(--color-border);
+		color: #faf0dd;
+		padding: 0.45rem 0.65rem;
+		border-radius: 8px;
+		font-size: 0.65rem;
 		white-space: nowrap;
 		display: flex;
 		flex-direction: column;
-		gap: 0.2rem;
+		gap: 0.15rem;
 		opacity: 0;
 		pointer-events: none;
 		z-index: 50;
-		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 		transition:
-			opacity 0.2s cubic-bezier(0.25, 0.8, 0.25, 1),
-			transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-		border: 1px solid rgba(255, 255, 255, 0.1);
+			opacity 0.15s ease,
+			transform 0.15s ease;
 		text-align: left;
+	}
+
+	.tooltip-title {
+		font-family: var(--font-display);
+		font-size: 0.62rem;
+		font-weight: 700;
+		letter-spacing: 0.03em;
+		text-transform: uppercase;
+		border-bottom: 1.5px solid rgba(255, 255, 255, 0.2);
+		padding-bottom: 0.15rem;
+		margin-bottom: 0.15rem;
 	}
 
 	/* Arrow/caret for tooltip */
@@ -222,9 +263,9 @@
 		top: 100%;
 		left: 50%;
 		transform: translateX(-50%);
-		border-width: 5px;
+		border-width: 4px;
 		border-style: solid;
-		border-color: rgba(61, 44, 42, 0.96) transparent transparent transparent;
+		border-color: var(--color-border) transparent transparent transparent;
 	}
 
 	/* Show tooltip on hover or active/focus states */
@@ -234,7 +275,7 @@
 		transform: translateX(-50%) translateY(0);
 	}
 
-	/* On mobile, support touch trigger by making tooltip persistent while active is pressed or via parent focus */
+	/* On mobile, support touch trigger */
 	@media (hover: none) {
 		.grid-card:active .tooltip {
 			opacity: 1;

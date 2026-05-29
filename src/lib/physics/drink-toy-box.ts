@@ -9,6 +9,11 @@ export interface ToyItem {
 
 const TOY_RADIUS = 38;
 
+export interface DrinkPhysicsBoxOptions {
+	onDoubleClick?: (id: string) => void;
+	onSplash?: (x: number, y: number, velocityY: number) => void;
+}
+
 export class DrinkPhysicsBox {
 	readonly engine: Matter.Engine;
 	readonly world: Matter.World;
@@ -20,13 +25,14 @@ export class DrinkPhysicsBox {
 	private width = 0;
 	private height = 0;
 	private raf = 0;
+	private waterPercentage = 0.15;
 	private resizeObserver: ResizeObserver | null = null;
 	private collisionHandler: ((e: Matter.IEventCollision<Matter.Engine>) => void) | null = null;
 	private endDragHandler: ((e: Matter.IEvent<Matter.MouseConstraint>) => void) | null = null;
 
 	constructor(
 		private readonly container: HTMLElement,
-		private readonly options?: { onDoubleClick?: (id: string) => void }
+		private readonly options?: DrinkPhysicsBoxOptions
 	) {
 		this.engine = Matter.Engine.create({
 			gravity: { x: 0, y: 1, scale: 0.0012 }
@@ -34,6 +40,10 @@ export class DrinkPhysicsBox {
 		this.world = this.engine.world;
 
 		this.container.style.touchAction = 'none';
+	}
+
+	setWaterPercentage(percentage: number) {
+		this.waterPercentage = percentage;
 	}
 
 	setSize(width: number, height: number) {
@@ -174,9 +184,48 @@ export class DrinkPhysicsBox {
 		const loop = () => {
 			Matter.Engine.update(this.engine, 1000 / 60);
 
+			const waterY = this.height - (this.height * this.waterPercentage);
+
 			for (const [id, body] of this.bodies) {
 				const el = this.elements.get(id);
 				if (!el) continue;
+
+				// Water physics interaction
+				if (body.position.y > waterY) {
+					// 1. Buoyancy
+					const submergedDepth = body.position.y - waterY;
+					const submergedRatio = Math.min(1, submergedDepth / (TOY_RADIUS * 2));
+					
+					// Gravity force: mass * gravity.y * gravity.scale
+					const gravityY = this.engine.gravity.y * (this.engine.gravity.scale ?? 0.0012);
+					const buoyancyMultiplier = 1.35; // slightly higher than 1 to float
+					const buoyancyForce = -body.mass * gravityY * submergedRatio * buoyancyMultiplier;
+					
+					Matter.Body.applyForce(body, body.position, { x: 0, y: buoyancyForce });
+
+					// 2. Viscous Drag (water friction)
+					const dragCoefficient = 0.045;
+					const dragForceX = -body.velocity.x * dragCoefficient * submergedRatio;
+					const dragForceY = -body.velocity.y * dragCoefficient * submergedRatio;
+					Matter.Body.applyForce(body, body.position, { x: dragForceX, y: dragForceY });
+
+					// 3. Angular resistance
+					const angularDragCoefficient = 0.05;
+					body.torque -= body.angularVelocity * angularDragCoefficient * submergedRatio * body.inertia;
+
+					// 4. Wave drift (slight gentle sway)
+					const driftForceX = Math.sin(Date.now() * 0.0015 + body.id) * 0.00015 * submergedRatio * body.mass;
+					Matter.Body.applyForce(body, body.position, { x: driftForceX, y: 0 });
+				}
+
+				// Splash detection on water entry
+				if (body.positionPrev) {
+					const wasAbove = body.positionPrev.y <= waterY;
+					const isBelow = body.position.y > waterY;
+					if (wasAbove && isBelow && body.velocity.y > 0.5) {
+						this.options?.onSplash?.(body.position.x, waterY, body.velocity.y);
+					}
+				}
 
 				const { x, y } = body.position;
 				el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%) rotate(${body.angle}rad)`;
