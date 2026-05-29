@@ -1,19 +1,41 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { _ } from 'svelte-i18n';
-	import { DrinkPhysicsBox, type ToyItem } from '$lib/physics/drink-toy-box';
+	import {
+		DrinkPhysicsBox,
+		TOY_DISPLAY_PX,
+		type PhysicsMode,
+		type ToyItem
+	} from '$lib/physics/drink-toy-box';
 	import { app } from '$lib/state/app.svelte';
 	import { getCaffeineStatus } from '$lib/personalization/recommendations';
+
+	const MODE_STORAGE_KEY = 'caffein-tracker-toybox-mode';
 
 	let { items }: { items: ToyItem[] } = $props();
 
 	let physics: DrinkPhysicsBox | null = null;
 	let splashes = $state<{ id: string; x: number; y: number; size: number }[]>([]);
 
+	function loadSavedMode(): PhysicsMode {
+		if (!browser) return 'chaos';
+		const saved = localStorage.getItem(MODE_STORAGE_KEY);
+		return saved === 'water' ? 'water' : 'chaos';
+	}
+
+	let physicsMode = $state<PhysicsMode>(loadSavedMode());
+
 	const caffeine = $derived(getCaffeineStatus(app.profile, app.logs));
 	const waterPercentage = $derived(
 		caffeine.limit > 0 ? 0.15 + (Math.min(100, caffeine.percent) / 100) * 0.65 : 0.15
 	);
+	const isWaterMode = $derived(physicsMode === 'water');
+
+	function setPhysicsMode(mode: PhysicsMode) {
+		physicsMode = mode;
+		if (browser) localStorage.setItem(MODE_STORAGE_KEY, mode);
+		if (mode === 'chaos') splashes = [];
+	}
 
 	function handleDoubleClick(toyId: string) {
 		const lastDashIndex = toyId.lastIndexOf('-');
@@ -27,6 +49,7 @@
 	}
 
 	function handleSplash(x: number, y: number, velocityY: number) {
+		if (physicsMode !== 'water') return;
 		const id = Math.random().toString(36).substring(2, 9);
 		const size = Math.min(1.6, 0.5 + velocityY * 0.15);
 		splashes = [...splashes, { id, x, y, size }];
@@ -40,11 +63,13 @@
 
 		physics = new DrinkPhysicsBox(node, {
 			onDoubleClick: handleDoubleClick,
-			onSplash: handleSplash
+			onSplash: handleSplash,
+			mode: physicsMode
 		});
 		physics.start();
 		physics.syncItems(items);
 		physics.setWaterPercentage(waterPercentage);
+		physics.setMode(physicsMode);
 
 		return {
 			destroy() {
@@ -59,7 +84,13 @@
 	});
 
 	$effect(() => {
-		physics?.setWaterPercentage(waterPercentage);
+		if (physicsMode === 'water') {
+			physics?.setWaterPercentage(waterPercentage);
+		}
+	});
+
+	$effect(() => {
+		physics?.setMode(physicsMode);
 	});
 </script>
 
@@ -74,18 +105,59 @@
 				</button>
 			{/if}
 		</div>
-		<span class="hint">{$_('toybox.hint', { default: 'Tap & drag — physics chaos! Double-click to pop a drink.' })}</span>
+		<div class="mode-row">
+			<span class="mode-label" id="toybox-mode-label">{$_('toybox.mode_label', { default: 'Physics mode' })}</span>
+			<div class="mode-toggle" role="group" aria-labelledby="toybox-mode-label">
+				<button
+					type="button"
+					class="mode-btn"
+					class:active={physicsMode === 'chaos'}
+					aria-pressed={physicsMode === 'chaos'}
+					onclick={() => setPhysicsMode('chaos')}
+				>
+					<span aria-hidden="true">🎲</span>
+					{$_('toybox.mode_chaos', { default: 'Chaos' })}
+				</button>
+				<button
+					type="button"
+					class="mode-btn"
+					class:active={physicsMode === 'water'}
+					aria-pressed={physicsMode === 'water'}
+					onclick={() => setPhysicsMode('water')}
+				>
+					<span aria-hidden="true">🌊</span>
+					{$_('toybox.mode_water', { default: 'Water' })}
+				</button>
+			</div>
+		</div>
+		<span class="hint">
+			{#if isWaterMode}
+				{$_('toybox.hint_water', {
+					default: 'Drinks sink into the water — level follows your caffeine. Double-click to pop.'
+				})}
+			{:else}
+				{$_('toybox.hint', { default: 'Tap & drag — physics chaos! Double-click to pop a drink.' })}
+			{/if}
+		</span>
 	</div>
 
-	<div class="claw-machine">
-		<div class="claw-rail" aria-hidden="true">
-			<span class="claw">🦾</span>
-		</div>
-		<div class="playpen" use:attachBox>
+	<div class="claw-machine" class:mode-water={isWaterMode} class:mode-chaos={!isWaterMode}>
+		{#if !isWaterMode}
+			<div class="claw-rail" aria-hidden="true">
+				<span class="claw">🦾</span>
+			</div>
+		{/if}
+		<div
+			class="playpen"
+			class:playpen-water={isWaterMode}
+			style="--toy-size: {TOY_DISPLAY_PX}px"
+			use:attachBox
+		>
 			{#if items.length === 0}
 				<p class="empty">{$_('toybox.empty', { default: 'Log a drink and watch it plop in here' })}</p>
 			{/if}
 
+			{#if isWaterMode}
 			<!-- Water BG: Back wave, middle wave and rising bubbles -->
 			<div class="water-container water-bg" style="height: {waterPercentage * 100}%;">
 				<div class="wave wave-back">
@@ -122,7 +194,6 @@
 				</div>
 			</div>
 
-			<!-- Splashes -->
 			{#each splashes as splash (splash.id)}
 				<div 
 					class="splash-effect" 
@@ -135,7 +206,6 @@
 				</div>
 			{/each}
 
-			<!-- Water FG: Front wave overlapping toys -->
 			<div class="water-container water-fg" style="height: {waterPercentage * 100}%;">
 				<div class="wave wave-front">
 					<svg viewBox="0 0 240 28" preserveAspectRatio="none" class="wave-svg">
@@ -150,6 +220,7 @@
 					</svg>
 				</div>
 			</div>
+			{/if}
 		</div>
 		<div class="glass-shine" aria-hidden="true"></div>
 	</div>
@@ -221,11 +292,82 @@
 		font-family: var(--font-display);
 	}
 
+	.mode-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.45rem;
+	}
+
+	.mode-label {
+		font-family: var(--font-body);
+		font-size: 0.62rem;
+		font-weight: 700;
+		color: var(--color-text-muted);
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+
+	.mode-toggle {
+		display: inline-flex;
+		border-radius: 8px;
+		border: 3px solid var(--color-border);
+		box-shadow: 0 3px 0 var(--color-border);
+		overflow: hidden;
+		background: rgba(250, 240, 221, 0.65);
+	}
+
+	.mode-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		padding: 0.3rem 0.55rem;
+		border: none;
+		background: transparent;
+		font-family: var(--font-display);
+		font-size: 0.52rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		color: var(--color-text-muted);
+		cursor: pointer;
+		transition:
+			background 0.12s ease,
+			color 0.12s ease;
+	}
+
+	.mode-btn + .mode-btn {
+		border-left: 2px solid var(--color-border);
+	}
+
+	.mode-btn.active {
+		background: #7ec8b8;
+		color: #1b3d36;
+	}
+
+	.mode-btn:not(.active):hover {
+		background: rgba(126, 200, 184, 0.35);
+	}
+
 	.hint {
 		font-family: var(--font-body);
 		font-size: 0.68rem;
 		font-weight: 700;
 		color: var(--color-text-muted);
+	}
+
+	.claw-machine.mode-water {
+		padding-top: 0.55rem;
+	}
+
+	.playpen-water {
+		background:
+			linear-gradient(rgba(224, 247, 250, 0.55), rgba(224, 247, 250, 0.35)),
+			linear-gradient(rgba(250, 240, 221, 0.85), rgba(250, 240, 221, 0.85)),
+			url('/images/minecraft_green_planks.png');
+		background-size:
+			auto,
+			auto,
+			144px;
 	}
 
 	.claw-machine {
@@ -261,7 +403,7 @@
 		top: 50%;
 		transform: translate(-50%, -50%);
 		font-size: 1rem;
-		animation: claw-dangle 2.8s ease-in-out infinite;
+		animation: claw-dangle 4.5s ease-in-out infinite;
 	}
 
 	@keyframes claw-dangle {
@@ -295,30 +437,46 @@
 		padding: 0;
 		border: none;
 		background: transparent;
-		font-size: 3rem;
+		box-shadow: none;
 		line-height: 1;
 		cursor: grab;
 		user-select: none;
 		touch-action: none;
+		text-size-adjust: none;
+		-webkit-text-size-adjust: none;
 		will-change: transform;
-		filter: drop-shadow(0 3px 6px rgba(61, 44, 42, 0.15));
-		transition: filter 0.15s ease;
-		width: 72px;
-		height: 72px;
+		width: var(--toy-size);
+		height: var(--toy-size);
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		z-index: 2;
 	}
 
+	.playpen :global(.physics-toy-emoji) {
+		display: block;
+		line-height: 1;
+		font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+		text-size-adjust: none;
+		-webkit-text-size-adjust: none;
+	}
+
+	.playpen-water :global(.physics-toy) {
+		cursor: default;
+		z-index: 4;
+	}
+
 	.playpen :global(.physics-toy.grabbed) {
 		cursor: grabbing;
-		filter: drop-shadow(0 6px 12px rgba(61, 44, 42, 0.35));
 		z-index: 5;
 	}
 
 	.playpen :global(.physics-toy:active) {
 		cursor: grabbing;
+	}
+
+	.playpen-water :global(.physics-toy:active) {
+		cursor: default;
 	}
 
 	.playpen :global(.physics-toy.popping) {
@@ -509,7 +667,7 @@
 	.splash-effect {
 		position: absolute;
 		pointer-events: none;
-		z-index: 4;
+		z-index: 5;
 		display: flex;
 		justify-content: center;
 		align-items: flex-end;

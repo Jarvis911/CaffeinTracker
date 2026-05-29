@@ -45,6 +45,10 @@
   "toybox": {
     "title": "Đống đồ uống của bạn",
     "hint": "Chạm & kéo — hỗn loạn vật lý! Nhấp đúp để xóa đồ uống.",
+    "hint_water": "Đồ uống chìm xuống nước — mực nước theo caffeine. Nhấp đúp để xóa.",
+    "mode_label": "Chế độ vật lý",
+    "mode_chaos": "Hỗn loạn",
+    "mode_water": "Nước",
     "clear": "Xóa sạch",
     "clear_title": "Xóa toàn bộ đồ uống hôm nay",
     "empty": "Ghi nhận đồ uống và xem nó rơi vào đây"

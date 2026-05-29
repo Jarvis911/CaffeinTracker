@@ -45,6 +45,10 @@
   "toybox": {
     "title": "Your drink pile",
     "hint": "Tap & drag — physics chaos! Double-click to pop a drink.",
+    "hint_water": "Drinks sink into the water — level follows your caffeine. Double-click to pop.",
+    "mode_label": "Physics mode",
+    "mode_chaos": "Chaos",
+    "mode_water": "Water",
     "clear": "Clear",
     "clear_title": "Clear all today's drinks",
     "empty": "Log a drink and watch it plop in here"
