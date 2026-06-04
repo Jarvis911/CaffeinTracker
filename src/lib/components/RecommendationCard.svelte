@@ -40,16 +40,16 @@
 <style>
 	.rec {
 		padding: 1rem;
-		border-radius: 14px;
-		border: 3.5px solid var(--color-border);
+		border-radius: 20px;
+		border: 2.5px solid var(--color-border);
 		background: 
 			linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
 			url('/images/minecraft_green_planks.png');
 		background-size: auto, 144px;
 		box-shadow:
-			inset 0 4px 0 rgba(255, 255, 255, 0.6),
-			inset 0 -4px 0 rgba(0, 0, 0, 0.08),
-			0 5px 0 var(--color-border);
+			inset 0 3px 0 rgba(255, 255, 255, 0.6),
+			inset 0 -3px 0 rgba(0, 0, 0, 0.08),
+			0 4px 0 var(--color-border);
 	}
 
 	.top {
@@ -91,11 +91,11 @@
 		height: 2.25rem;
 		display: grid;
 		place-items: center;
-		border-radius: 8px;
-		border: 2px solid var(--color-border);
+		border-radius: 12px;
+		border: 1.5px solid var(--color-border);
 		font-weight: 700;
 		font-size: 0.85rem;
-		box-shadow: 0 2px 0 var(--color-border);
+		box-shadow: 0 1.5px 0 var(--color-border);
 	}
 
 	.score.high {
@@ -131,14 +131,14 @@
 			linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
 			url('/images/minecraft_green_planks.png');
 		background-size: auto, 96px;
-		border: 3.5px solid var(--color-border);
-		border-radius: 10px;
+		border: 2.5px solid var(--color-btn-border);
+		border-radius: var(--btn-radius);
 		padding: 0.55rem;
 		cursor: pointer;
 		box-shadow:
-			inset 0 3px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -3px 0 rgba(0, 0, 0, 0.25),
-			0 4px 0 var(--color-border);
+			inset 0 2.5px 0 rgba(255, 255, 255, 0.85),
+			inset 0 -2.5px 0 rgba(0, 0, 0, 0.25),
+			0 3px 0 var(--color-btn-border);
 		transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
 		display: inline-flex;
 		align-items: center;
@@ -157,7 +157,7 @@
 		box-shadow:
 			inset 0 2px 0 rgba(255, 255, 255, 0.85),
 			inset 0 -2px 0 rgba(0, 0, 0, 0.45),
-			0 0px 0 var(--color-border);
+			0 0px 0 var(--color-btn-border);
 		filter: brightness(0.85);
 	}
 </style>

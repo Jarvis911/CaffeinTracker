@@ -219,8 +219,9 @@ export class DrinkPhysicsBox {
 				}
 
 				// Splash detection on water entry
-				if (body.positionPrev) {
-					const wasAbove = body.positionPrev.y <= waterY;
+				const bodyAny = body as any;
+				if (bodyAny.positionPrev) {
+					const wasAbove = bodyAny.positionPrev.y <= waterY;
 					const isBelow = body.position.y > waterY;
 					if (wasAbove && isBelow && body.velocity.y > 0.5) {
 						this.options?.onSplash?.(body.position.x, waterY, body.velocity.y);

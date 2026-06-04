@@ -73,8 +73,8 @@
 		gap: 0.75rem;
 		width: 100%;
 		padding: 0.85rem 1rem;
-		border-radius: 12px;
-		border: 3.5px solid var(--color-border);
+		border-radius: var(--btn-radius);
+		border: 3.5px solid var(--color-btn-border);
 		background: 
 			linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
 			url('/images/minecraft_green_planks.png');
@@ -82,7 +82,7 @@
 		box-shadow:
 			inset 0 3px 0 rgba(255, 255, 255, 0.85),
 			inset 0 -5px 0 rgba(0, 0, 0, 0.2),
-			0 5px 0 var(--color-border);
+			0 5px 0 var(--color-btn-border);
 		text-align: left;
 		cursor: pointer;
 		transition:
@@ -97,7 +97,7 @@
 		box-shadow:
 			inset 0 3px 0 rgba(255, 255, 255, 0.85),
 			inset 0 -5px 0 rgba(0, 0, 0, 0.25),
-			0 5px 0 var(--color-border);
+			0 5px 0 var(--color-btn-border);
 	}
 
 	.provider:hover {
@@ -109,7 +109,7 @@
 		box-shadow:
 			inset 0 2px 0 rgba(255, 255, 255, 0.85),
 			inset 0 -2px 0 rgba(0, 0, 0, 0.2),
-			0 0px 0 var(--color-border);
+			0 0px 0 var(--color-btn-border);
 	}
 
 	.emoji {
@@ -175,17 +175,17 @@
 		font-family: var(--font-display);
 		font-weight: 600;
 		color: #ffffff;
-		text-shadow: 1.5px 1.5px 0 var(--color-border);
+		text-shadow: 1.5px 1.5px 0 var(--color-btn-border);
 		background-image: url('/images/minecraft_green_planks.png');
 		background-size: 80px;
-		border: 3px solid var(--color-border);
-		border-radius: 8px;
+		border: 3px solid var(--color-btn-border);
+		border-radius: var(--btn-radius);
 		padding: 0.35rem 0.65rem;
 		cursor: pointer;
 		box-shadow:
 			inset 0 2px 0 rgba(255, 255, 255, 0.85),
 			inset 0 -3px 0 rgba(0, 0, 0, 0.3),
-			0 3.5px 0 var(--color-border);
+			0 3.5px 0 var(--color-btn-border);
 		font-size: 0.7rem;
 		transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
 	}
@@ -199,7 +199,7 @@
 		box-shadow:
 			inset 0 2px 0 rgba(255, 255, 255, 0.85),
 			inset 0 -2px 0 rgba(0, 0, 0, 0.3),
-			0 0px 0 var(--color-border);
+			0 0px 0 var(--color-btn-border);
 	}
 
 	.note ul {

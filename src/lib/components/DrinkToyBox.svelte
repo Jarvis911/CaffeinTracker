@@ -185,14 +185,14 @@
 		align-items: center;
 		gap: 0.3rem;
 		background: #e88ba0; /* rose pink clear button */
-		border: 3px solid var(--color-border);
+		border: 2px solid var(--color-btn-border);
 		box-shadow:
-			inset 0 2.5px 0 rgba(255, 255, 255, 0.5),
-			inset 0 -2.5px 0 rgba(0, 0, 0, 0.1),
-			0 3.5px 0 var(--color-border);
+			inset 0 2px 0 rgba(255, 255, 255, 0.5),
+			inset 0 -2px 0 rgba(0, 0, 0, 0.1),
+			0 2.5px 0 var(--color-btn-border);
 		color: #3d2c2a;
 		padding: 0.35rem 0.65rem;
-		border-radius: 8px;
+		border-radius: var(--btn-radius);
 		font-family: var(--font-display);
 		font-size: 0.55rem;
 		font-weight: 700;
@@ -210,7 +210,7 @@
 		box-shadow:
 			inset 0 2.5px 0 rgba(255, 255, 255, 0.5),
 			inset 0 -2.5px 0 rgba(0, 0, 0, 0.1),
-			0 0px 0 var(--color-border);
+			0 0px 0 var(--color-btn-border);
 	}
 
 	.trash-icon {
@@ -230,28 +230,28 @@
 
 	.claw-machine {
 		position: relative;
-		border-radius: 12px;
+		border-radius: 20px;
 		padding: 0.55rem;
 		background-image: url('/images/minecraft_green_planks.png');
 		background-size: 96px;
-		border: 4px solid var(--color-border);
+		border: 2.5px solid var(--color-border);
 		box-shadow:
-			inset 0 3px 0 var(--color-wood-light),
-			inset 0 -3px 0 var(--color-wood-dark),
-			0 5px 0 var(--color-border);
+			inset 0 2.5px 0 var(--color-wood-light),
+			inset 0 -2.5px 0 var(--color-wood-dark),
+			0 4px 0 var(--color-border);
 	}
 
 	.claw-rail {
 		position: relative;
 		height: 1.6rem;
 		margin-bottom: 0.45rem;
-		border-radius: 8px;
+		border-radius: 12px;
 		background: 
 			linear-gradient(rgba(75, 120, 86, 0.85), rgba(75, 120, 86, 0.85)),
 			url('/images/minecraft_green_planks.png');
 		background-size: auto, 80px;
-		border: 3px solid var(--color-border);
-		box-shadow: inset 0 2.5px 0 rgba(0, 0, 0, 0.2);
+		border: 2px solid var(--color-border);
+		box-shadow: inset 0 2px 0 rgba(0, 0, 0, 0.2);
 		overflow: hidden;
 	}
 
@@ -277,14 +277,14 @@
 	.playpen {
 		position: relative;
 		height: 9.5rem;
-		border-radius: 8px;
+		border-radius: 14px;
 		overflow: hidden;
 		background:
 			linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
 			url('/images/minecraft_green_planks.png');
 		background-size: auto, 144px;
-		border: 3px solid var(--color-border);
-		box-shadow: inset 0 4px 0 rgba(0, 0, 0, 0.15);
+		border: 2px solid var(--color-border);
+		box-shadow: inset 0 3px 0 rgba(0, 0, 0, 0.15);
 	}
 
 	.playpen :global(.physics-toy) {
@@ -354,7 +354,7 @@
 		pointer-events: none;
 		position: absolute;
 		inset: 0.55rem;
-		border-radius: 8px;
+		border-radius: 14px;
 		background: linear-gradient(
 			125deg,
 			rgba(255, 255, 255, 0.3) 0%,

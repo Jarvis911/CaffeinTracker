@@ -3,17 +3,22 @@
 	import { _ } from 'svelte-i18n';
 
 	const links = $derived([
-		{ href: '/', label: $_('nav.home'), icon: '🏠' },
-		{ href: '/log', label: $_('nav.log'), icon: '☕' },
-		{ href: '/connect', label: $_('nav.sync'), icon: '💗' },
-		{ href: '/insights', label: $_('nav.you'), icon: '✨' }
+		{ href: '/home-cozy', label: $_('nav.home_cozy'), icon: '/images/home.png' },
+		{ href: '/log', label: $_('nav.log'), icon: '/images/cafe.png' },
+		{ href: '/connect', label: $_('nav.sync'), icon: '/images/stats.png' },
+		{ href: '/insights', label: $_('nav.you'), icon: '/images/profile.png' }
 	]);
 </script>
 
 <nav class="nav" aria-label="Main">
 	{#each links as link}
-		<a href={link.href} class:active={page.url.pathname === link.href}>
-			<span class="icon" aria-hidden="true">{link.icon}</span>
+		<a
+			href={link.href}
+			class:active={page.url.pathname === link.href ||
+				(link.href === '/home-cozy' &&
+					(page.url.pathname === '/' || page.url.pathname === '/home-pixel'))}
+		>
+			<img src={link.icon} alt="" class="nav-icon-img" aria-hidden="true" />
 			<span class="label">{link.label}</span>
 		</a>
 	{/each}
@@ -30,19 +35,13 @@
 		justify-content: space-around;
 		align-items: center;
 		padding: 0.65rem 0.5rem calc(0.65rem + env(safe-area-inset-bottom));
-		background: 
-			linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
-			url('/images/minecraft_green_planks.png');
-		background-size: auto, 120px;
-		border-top: 4px solid var(--color-border);
-		border-left: 4px solid var(--color-border);
-		border-right: 4px solid var(--color-border);
-		border-top-left-radius: 16px;
-		border-top-right-radius: 16px;
-		box-shadow:
-			inset 0 4px 0 rgba(255, 255, 255, 0.25),
-			inset 0 -4px 0 rgba(0, 0, 0, 0.2),
-			0 -4px 12px rgba(61, 44, 42, 0.15);
+		background-color: #f7cbd2; /* Soft pink matching mockup */
+		border-top: 3px solid #3d2c2a;
+		border-left: 3px solid #3d2c2a;
+		border-right: 3px solid #3d2c2a;
+		border-top-left-radius: 24px;
+		border-top-right-radius: 24px;
+		box-shadow: 0 -3px 10px rgba(61, 44, 42, 0.1);
 		z-index: 50;
 	}
 
@@ -51,57 +50,45 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		gap: 0.1rem;
-		padding: 0.4rem 0.55rem;
-		border-radius: 10px;
-		border: 3px solid var(--color-border);
-		background-image: url('/images/minecraft_green_planks.png');
-		background-size: 80px;
-		color: #ffffff;
-		text-shadow: 1.5px 1.5px 0 var(--color-border);
+		gap: 0.2rem;
+		padding: 0.45rem 0.55rem;
+		border-radius: 16px;
+		color: #3d2c2a;
 		text-decoration: none;
-		font-size: 0.62rem;
+		font-family: var(--font-body);
+		font-size: 0.68rem;
 		font-weight: 700;
-		box-shadow:
-			inset 0 3px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -3px 0 rgba(0, 0, 0, 0.3),
-			0 4px 0 var(--color-border);
-		transition:
-			transform 0.1s ease,
-			box-shadow 0.1s ease,
-			filter 0.15s ease;
-		min-width: 4.8rem;
-		height: 2.75rem;
+		transition: transform 0.1s ease, background-color 0.2s ease;
+		min-width: 4.4rem;
+		flex: 1;
+		max-width: 5.8rem;
+		height: auto;
+		border: none;
+		background: transparent;
+		box-shadow: none;
 	}
 
 	a:hover {
-		filter: brightness(1.15);
+		background-color: rgba(255, 255, 255, 0.25);
 	}
 
 	a.active {
-		background: 
-			linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
-			url('/images/minecraft_green_planks.png');
-		background-size: auto, 80px;
-		color: var(--color-text);
-		text-shadow: none;
-		transform: translateY(4px);
-		box-shadow:
-			inset 0 2px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -2px 0 rgba(0, 0, 0, 0.2),
-			0 0px 0 var(--color-border);
+		background-color: #f0a2b5; /* Highlight pink color for active tab */
+		transform: none;
+		box-shadow: none;
 	}
 
-	.icon {
-		font-size: 1.15rem;
-		line-height: 1;
+	.nav-icon-img {
+		width: 2.6rem;
+		height: 2.6rem;
+		object-fit: contain;
+		image-rendering: pixelated;
 	}
 
 	.label {
 		font-family: var(--font-body);
 		font-weight: 700;
-		text-transform: uppercase;
-		font-size: 0.55rem;
-		letter-spacing: 0.02em;
+		font-size: 0.64rem;
+		letter-spacing: 0.01em;
 	}
 </style>

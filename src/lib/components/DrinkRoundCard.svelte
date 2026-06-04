@@ -37,8 +37,8 @@
 	.tile {
 		width: 3.25rem;
 		height: 3.25rem;
-		border-radius: 10px;
-		border: 3px solid var(--color-border);
+		border-radius: 16px;
+		border: 2px solid var(--color-border);
 		background: 
 			linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
 			url('/images/minecraft_green_planks.png');
@@ -46,9 +46,9 @@
 		display: grid;
 		place-items: center;
 		box-shadow:
-			inset 0 3px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -6px 0 rgba(0, 0, 0, 0.2),
-			0 5px 0 var(--color-border);
+			inset 0 2.5px 0 rgba(255, 255, 255, 0.85),
+			inset 0 -4px 0 rgba(0, 0, 0, 0.2),
+			0 3.5px 0 var(--color-border);
 		transition:
 			transform 0.1s ease,
 			box-shadow 0.1s ease,
@@ -59,16 +59,16 @@
 		filter: brightness(1.15);
 		transform: translateY(-2px);
 		box-shadow:
-			inset 0 3px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -6px 0 rgba(0, 0, 0, 0.35),
-			0 7px 0 var(--color-border);
+			inset 0 2.5px 0 rgba(255, 255, 255, 0.85),
+			inset 0 -4px 0 rgba(0, 0, 0, 0.35),
+			0 5px 0 var(--color-border);
 	}
 
 	.round-card:active .tile {
-		transform: translateY(5px);
+		transform: translateY(3.5px);
 		box-shadow:
-			inset 0 2px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -2px 0 rgba(0, 0, 0, 0.35),
+			inset 0 1.5px 0 rgba(255, 255, 255, 0.85),
+			inset 0 -1.5px 0 rgba(0, 0, 0, 0.35),
 			0 0px 0 var(--color-border);
 		filter: brightness(0.85);
 	}

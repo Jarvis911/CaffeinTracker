@@ -19,10 +19,10 @@
     "water": "Water"
   },
   "nav": {
-    "home": "Home",
-    "log": "Log",
-    "sync": "Sync",
-    "you": "You"
+    "home_cozy": "Home",
+    "log": "History/Log",
+    "sync": "Statistics",
+    "you": "Settings"
   },
   "profile": {
     "title": "Your profile",
@@ -40,7 +40,36 @@
     "go_to_sync": "Go to Sync",
     "language": "Language / Ngôn ngữ",
     "lang_en": "English",
-    "lang_vi": "Tiếng Việt"
+    "lang_vi": "Tiếng Việt",
+    "garden_title": "YOUR CAFFEINE GARDEN PROFILE",
+    "garden_subtitle": "Track your balance.",
+    "edit_profile": "Edit Profile",
+    "save_profile": "Save Profile",
+    "back_to_profile": "Back to Profile",
+    "total_caffeine": "Total Caffeine",
+    "garden_level": "Garden Level",
+    "days_logged": "Days Registered",
+    "achievements_count": "Achievements",
+    "level_title": "Caffeine Tracker Level {level}",
+    "achievements_title": "Achievements",
+    "achievement_early_bird": "Early Bird",
+    "achievement_early_bird_desc": "Log a drink before 8:00 AM",
+    "achievement_night_owl": "Night Owl",
+    "achievement_night_owl_desc": "Log a drink after 8:00 PM",
+    "achievement_botanist": "Botanist",
+    "achievement_botanist_desc": "Reach garden level 3 (total caffeine from 1000mg)",
+    "achievement_healthy_connection": "Healthy Connection",
+    "achievement_healthy_connection_desc": "Connect a fitness provider in Sync tab",
+    "achievement_steel_discipline": "Steel Discipline",
+    "achievement_steel_discipline_desc": "Keep caffeine under daily limit",
+    "achievement_ai_vision": "AI Vision",
+    "achievement_ai_vision_desc": "Log a drink using AI scan",
+    "achievement_collector": "Collector",
+    "achievement_collector_desc": "Log 3 different kinds of drinks",
+    "achievement_caffeine_hunter": "Caffeine Hunter",
+    "achievement_caffeine_hunter_desc": "Reach 2000mg total caffeine logged",
+    "achievement_tea_master": "Tea Master",
+    "achievement_tea_master_desc": "Log at least 1 tea-category drink"
   },
   "toybox": {
     "title": "Your drink pile",
@@ -64,6 +93,23 @@
     "logged_toast": "Logged!",
     "no_results": "No drinks found.",
     "caffeine": "caffeine",
-    "sugar": "sugar"
+    "sugar": "sugar",
+    "cv_title": "AI Drink Recognition",
+    "cv_subtitle": "Take a photo or upload an image to auto-detect",
+    "cv_btn_camera": "Use Camera 📷",
+    "cv_btn_upload": "Upload Photo 📁",
+    "cv_btn_show_scanner": "AI Recognition 📷",
+    "cv_btn_hide_scanner": "Close AI Scan ✕",
+    "cv_btn_cancel": "Cancel",
+    "cv_btn_capture": "Capture ⚡",
+    "cv_btn_scan_again": "Scan Again 🔄",
+    "cv_btn_confirm_log": "Log this drink! ✅",
+    "cv_preset_title": "Or try a sample photo:",
+    "cv_state_idle": "Awaiting image source...",
+    "cv_state_camera": "Camera active...",
+    "cv_state_scanning": "Scanning and identifying drink...",
+    "cv_detected_title": "Detected!",
+    "cv_confidence": "Confidence",
+    "cv_not_your_drink": "Not your drink? Correct it:"
   }
 }

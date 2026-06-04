@@ -96,12 +96,13 @@ class AppState {
 		this.persist();
 	}
 
-	logDrink(drinkId: string, amount = 1) {
+	logDrink(drinkId: string, amount = 1, scanned = false) {
 		const entry: LoggedDrink = {
 			id: crypto.randomUUID(),
 			drinkId,
 			at: new Date().toISOString(),
-			amount
+			amount,
+			scanned
 		};
 		this.logs = [entry, ...this.logs];
 		this.persist();

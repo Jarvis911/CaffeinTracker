@@ -68,16 +68,16 @@
 		width: 100%;
 		height: 100%;
 		padding: 0.65rem 0.4rem;
-		border-radius: 12px;
-		border: 3.5px solid var(--color-border);
+		border-radius: 18px;
+		border: 2.5px solid var(--color-border);
 		background: 
 			linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
 			url('/images/minecraft_green_planks.png');
 		background-size: auto, 96px;
 		box-shadow:
-			inset 0 4px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -7px 0 rgba(0, 0, 0, 0.2),
-			0 6px 0 var(--color-border);
+			inset 0 3px 0 rgba(255, 255, 255, 0.85),
+			inset 0 -5px 0 rgba(0, 0, 0, 0.2),
+			0 4px 0 var(--color-border);
 		cursor: pointer;
 		text-align: center;
 		gap: 0.35rem;
@@ -93,31 +93,31 @@
 		background: url('/images/minecraft_green_planks.png');
 		background-size: 96px;
 		box-shadow:
-			inset 0 4px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -7px 0 rgba(0, 0, 0, 0.25),
-			0 6px 0 var(--color-border);
+			inset 0 3px 0 rgba(255, 255, 255, 0.85),
+			inset 0 -5px 0 rgba(0, 0, 0, 0.25),
+			0 4px 0 var(--color-border);
 	}
 
 	.grid-card:hover {
 		filter: brightness(1.15);
 		transform: translateY(-2px);
 		box-shadow:
-			inset 0 4px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -7px 0 rgba(0, 0, 0, 0.35),
-			0 8px 0 var(--color-border);
+			inset 0 3px 0 rgba(255, 255, 255, 0.85),
+			inset 0 -5px 0 rgba(0, 0, 0, 0.35),
+			0 5.5px 0 var(--color-border);
 	}
 
 	.grid-card.is-favorite-card:hover {
 		filter: brightness(1.15);
 		transform: translateY(-2px);
 		box-shadow:
-			inset 0 4px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -7px 0 rgba(0, 0, 0, 0.45),
-			0 8px 0 var(--color-border);
+			inset 0 3px 0 rgba(255, 255, 255, 0.85),
+			inset 0 -5px 0 rgba(0, 0, 0, 0.45),
+			0 5.5px 0 var(--color-border);
 	}
 
 	.grid-card:active {
-		transform: translateY(6px);
+		transform: translateY(4px);
 		box-shadow:
 			inset 0 2px 0 rgba(255, 255, 255, 0.85),
 			inset 0 -2px 0 rgba(0, 0, 0, 0.35),
@@ -173,12 +173,12 @@
 		width: 1.75rem;
 		height: 1.75rem;
 		border-radius: 50%;
-		border: 2px solid var(--color-border);
+		border: 1.5px solid var(--color-border);
 		background: #faf0dd;
 		display: grid;
 		place-items: center;
 		cursor: pointer;
-		box-shadow: 0 3px 0 var(--color-border);
+		box-shadow: 0 2px 0 var(--color-border);
 		color: var(--color-text-muted);
 		transition:
 			transform 0.1s ease,
@@ -194,7 +194,7 @@
 	}
 
 	.heart-btn:active {
-		transform: translateY(3px);
+		transform: translateY(2px);
 		box-shadow: 0 0px 0 var(--color-border);
 	}
 
@@ -226,11 +226,11 @@
 		left: 50%;
 		transform: translateX(-50%) translateY(6px);
 		background: var(--color-accent-deep); /* dark brown wood */
-		border: 2.5px solid var(--color-border);
-		box-shadow: 0 3px 0 var(--color-border);
+		border: 1.75px solid var(--color-border);
+		box-shadow: 0 2px 0 var(--color-border);
 		color: #faf0dd;
 		padding: 0.45rem 0.65rem;
-		border-radius: 8px;
+		border-radius: 12px;
 		font-size: 0.65rem;
 		white-space: nowrap;
 		display: flex;

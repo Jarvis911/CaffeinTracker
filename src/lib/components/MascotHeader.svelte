@@ -31,11 +31,11 @@
 
 <style>
 	.retro-window {
-		border: 3.5px solid var(--color-border);
+		border: 2.5px solid var(--color-border);
 		background: var(--color-surface);
-		border-radius: 14px;
+		border-radius: 20px;
 		overflow: hidden;
-		box-shadow: 0 6px 0 var(--color-border);
+		box-shadow: 0 4.5px 0 var(--color-border);
 		margin-bottom: 1.5rem;
 	}
 
@@ -46,7 +46,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		border-bottom: 3.5px solid var(--color-border);
+		border-bottom: 2.5px solid var(--color-border);
 		font-family: var(--font-display);
 		font-size: 0.65rem;
 		font-weight: 700;
@@ -62,9 +62,9 @@
 		width: 1.15rem;
 		height: 1.15rem;
 		background: #eed4b5;
-		border: 2px solid var(--color-border);
-		box-shadow: 0 1.5px 0 var(--color-border);
-		border-radius: 4px;
+		border: 1.25px solid var(--color-border);
+		box-shadow: 0 1px 0 var(--color-border);
+		border-radius: 6px;
 		display: grid;
 		place-items: center;
 		font-size: 0.55rem;
@@ -90,15 +90,15 @@
 		flex-direction: column;
 		align-items: center;
 		flex-shrink: 0;
-		filter: drop-shadow(0 3px 0 var(--color-border));
+		filter: drop-shadow(0 2px 0 var(--color-border));
 	}
 
 	.crt-screen {
 		width: 3.5rem;
 		height: 3.1rem;
 		background: #2e5844; /* screen color */
-		border: 3.5px solid var(--color-border);
-		border-radius: 8px;
+		border: 2.5px solid var(--color-border);
+		border-radius: 12px;
 		position: relative;
 		display: grid;
 		place-items: center;
@@ -123,17 +123,17 @@
 		width: 0.75rem;
 		height: 0.35rem;
 		background: #eed4b5;
-		border-left: 3px solid var(--color-border);
-		border-right: 3px solid var(--color-border);
+		border-left: 2px solid var(--color-border);
+		border-right: 2px solid var(--color-border);
 	}
 
 	.monitor-base {
 		width: 1.85rem;
 		height: 0.25rem;
 		background: #eed4b5;
-		border: 3px solid var(--color-border);
+		border: 2px solid var(--color-border);
 		border-top: none;
-		border-radius: 4px;
+		border-radius: 6px;
 	}
 
 	.header-text {
@@ -141,9 +141,9 @@
 		flex-direction: column;
 		gap: 0.15rem;
 		background: rgba(250, 240, 221, 0.95);
-		border: 3px solid var(--color-border);
-		box-shadow: 0 4px 0 var(--color-border);
-		border-radius: 10px;
+		border: 2px solid var(--color-border);
+		box-shadow: 0 3px 0 var(--color-border);
+		border-radius: 16px;
 		padding: 0.45rem 0.65rem;
 		backdrop-filter: blur(2px);
 		flex-grow: 1;
