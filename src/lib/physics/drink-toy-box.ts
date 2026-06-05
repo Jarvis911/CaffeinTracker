@@ -53,6 +53,11 @@ export interface DrinkPhysicsBoxOptions {
 	mode?: PhysicsMode;
 }
 
+export interface DrinkPhysicsBoxOptions {
+	onDoubleClick?: (id: string) => void;
+	onSplash?: (x: number, y: number, velocityY: number) => void;
+}
+
 export class DrinkPhysicsBox {
 	readonly engine: Matter.Engine;
 	readonly world: Matter.World;

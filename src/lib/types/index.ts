@@ -39,6 +39,7 @@ export interface LoggedDrink {
 	drinkId: string;
 	at: string;
 	amount: number;
+	scanned?: boolean;
 }
 
 export interface DrinkRecommendation {

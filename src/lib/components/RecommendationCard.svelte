@@ -40,14 +40,16 @@
 <style>
 	.rec {
 		padding: 1rem;
-		border-radius: 1.35rem;
-		background: linear-gradient(
-			145deg,
-			color-mix(in srgb, var(--color-surface) 92%, white),
-			var(--color-surface)
-		);
-		border: 1px solid var(--color-border);
-		box-shadow: var(--shadow-soft);
+		border-radius: 20px;
+		border: 2.5px solid var(--color-border);
+		background: 
+			linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
+			url('/images/minecraft_green_planks.png');
+		background-size: auto, 144px;
+		box-shadow:
+			inset 0 3px 0 rgba(255, 255, 255, 0.6),
+			inset 0 -3px 0 rgba(0, 0, 0, 0.08),
+			0 4px 0 var(--color-border);
 	}
 
 	.top {
@@ -89,9 +91,11 @@
 		height: 2.25rem;
 		display: grid;
 		place-items: center;
-		border-radius: 0.75rem;
-		font-weight: 800;
+		border-radius: 12px;
+		border: 1.5px solid var(--color-border);
+		font-weight: 700;
 		font-size: 0.85rem;
+		box-shadow: 0 1.5px 0 var(--color-border);
 	}
 
 	.score.high {
@@ -119,18 +123,41 @@
 	.log-btn {
 		margin-top: 0.75rem;
 		width: 100%;
+		font-family: var(--font-display);
+		font-weight: 600;
+		color: var(--color-text);
+		text-shadow: none;
+		background: 
+			linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
+			url('/images/minecraft_green_planks.png');
+		background-size: auto, 96px;
+		border: 2.5px solid var(--color-btn-border);
+		border-radius: var(--btn-radius);
 		padding: 0.55rem;
-		border: none;
-		border-radius: 999px;
-		background: var(--color-accent-soft);
-		color: var(--color-accent-deep);
-		font-weight: 700;
-		font-size: 0.85rem;
 		cursor: pointer;
-		transition: background 0.2s ease;
+		box-shadow:
+			inset 0 2.5px 0 rgba(255, 255, 255, 0.85),
+			inset 0 -2.5px 0 rgba(0, 0, 0, 0.25),
+			0 3px 0 var(--color-btn-border);
+		transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		text-transform: uppercase;
+		font-size: 0.75rem;
+		letter-spacing: 0.03em;
 	}
 
 	.log-btn:hover {
-		background: color-mix(in srgb, var(--color-accent) 35%, white);
+		filter: brightness(1.15);
+	}
+
+	.log-btn:active {
+		transform: translateY(4px);
+		box-shadow:
+			inset 0 2px 0 rgba(255, 255, 255, 0.85),
+			inset 0 -2px 0 rgba(0, 0, 0, 0.45),
+			0 0px 0 var(--color-btn-border);
+		filter: brightness(0.85);
 	}
 </style>

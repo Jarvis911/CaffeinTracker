@@ -19,10 +19,10 @@
     "water": "Nước"
   },
   "nav": {
-    "home": "Trang chủ",
+    "home_cozy": "Trang chủ",
     "log": "Nhật ký",
-    "sync": "Đồng bộ",
-    "you": "Hồ sơ"
+    "sync": "Thống kê",
+    "you": "Cài đặt"
   },
   "profile": {
     "title": "Hồ sơ của bạn",
@@ -40,7 +40,36 @@
     "go_to_sync": "Đến trang Đồng bộ",
     "language": "Ngôn ngữ / Language",
     "lang_en": "English",
-    "lang_vi": "Tiếng Việt"
+    "lang_vi": "Tiếng Việt",
+    "garden_title": "HỒ SƠ CAFFEINE GARDEN CỦA BẠN",
+    "garden_subtitle": "Theo dõi sự cân bằng của bạn.",
+    "edit_profile": "Chỉnh sửa hồ sơ",
+    "save_profile": "Lưu hồ sơ",
+    "back_to_profile": "Quay lại hồ sơ",
+    "total_caffeine": "Tổng Caffeine",
+    "garden_level": "Cấp Độ Khu Vườn",
+    "days_logged": "Số Ngày Đăng Ký",
+    "achievements_count": "Thành Tựu",
+    "level_title": "Kẻ Theo Dõi Caffeine Cấp {level}",
+    "achievements_title": "Thành tựu",
+    "achievement_early_bird": "Bình Minh Bừng Sáng",
+    "achievement_early_bird_desc": "Log đồ uống trước 8:00 sáng",
+    "achievement_night_owl": "Kẻ Gác Đêm",
+    "achievement_night_owl_desc": "Log đồ uống sau 8:00 tối",
+    "achievement_botanist": "Nhà Thực Vật Học",
+    "achievement_botanist_desc": "Đạt cấp khu vườn 3 (tổng caffeine từ 1000mg)",
+    "achievement_healthy_connection": "Kết Nối Sức Khỏe",
+    "achievement_healthy_connection_desc": "Kết nối ứng dụng sức khỏe ở tab Đồng bộ",
+    "achievement_steel_discipline": "Kỷ Luật Thép",
+    "achievement_steel_discipline_desc": "Giữ lượng caffeine dưới hạn định",
+    "achievement_ai_vision": "Mắt Thần AI",
+    "achievement_ai_vision_desc": "Log đồ uống bằng AI camera quét",
+    "achievement_collector": "Nhà Sưu Tầm",
+    "achievement_collector_desc": "Log 3 loại đồ uống khác nhau",
+    "achievement_caffeine_hunter": "Thợ Săn Caffeine",
+    "achievement_caffeine_hunter_desc": "Đạt tổng lượng caffeine tích lũy từ 2000mg trở lên",
+    "achievement_tea_master": "Nhà Thưởng Trà",
+    "achievement_tea_master_desc": "Log ít nhất 1 loại đồ uống từ trà"
   },
   "toybox": {
     "title": "Đống đồ uống của bạn",
@@ -68,6 +97,23 @@
     "logged_toast": "Đã ghi!",
     "no_results": "Không tìm thấy đồ uống nào phù hợp.",
     "caffeine": "caffeine",
-    "sugar": "đường"
+    "sugar": "đường",
+    "cv_title": "Nhận diện bằng AI",
+    "cv_subtitle": "Chụp ảnh hoặc tải ảnh đồ uống lên để quét tự động",
+    "cv_btn_camera": "Chụp ảnh 📷",
+    "cv_btn_upload": "Tải ảnh lên 📁",
+    "cv_btn_show_scanner": "Nhận diện bằng AI 📷",
+    "cv_btn_hide_scanner": "Đóng Quét AI ✕",
+    "cv_btn_cancel": "Hủy",
+    "cv_btn_capture": "Chụp hình ⚡",
+    "cv_btn_scan_again": "Quét lại 🔄",
+    "cv_btn_confirm_log": "Ghi nhận món này! ✅",
+    "cv_preset_title": "Hoặc thử với ảnh mẫu:",
+    "cv_state_idle": "Đang chờ hình ảnh...",
+    "cv_state_camera": "Đang mở camera...",
+    "cv_state_scanning": "Đang quét và nhận diện đồ uống...",
+    "cv_detected_title": "Đã phát hiện!",
+    "cv_confidence": "Độ tin cậy",
+    "cv_not_your_drink": "Không phải món này? Chọn lại:"
   }
 }

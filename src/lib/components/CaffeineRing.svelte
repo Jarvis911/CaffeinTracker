@@ -89,8 +89,9 @@
 	}
 
 	.ring-value {
+		font-family: var(--font-display);
 		font-size: 2rem;
-		font-weight: 800;
+		font-weight: 700;
 		line-height: 1;
 		color: var(--color-text);
 	}
