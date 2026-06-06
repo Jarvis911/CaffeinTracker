@@ -1,6 +1,6 @@
 # Caffein Tracker — Supabase (mobile backend)
 
-Separate backend for the **Flutter mobile app**. The Svelte web app can keep using `localStorage`; mobile syncs to Supabase.
+Separate backend for the **Flutter mobile app** and **web Google sign-in**. The web app still stores drink logs in `localStorage`; auth links your Google account via Supabase.
 
 ## Setup
 
@@ -16,7 +16,23 @@ supabase db push
 
 Or paste `migrations/20260520000000_mobile_schema.sql` into **SQL Editor** → Run.
 
-5. Copy **Project URL** and **anon public key** into `mobile/caffein_tracker/.env` (see mobile README).
+5. Copy **Project URL** and **anon public key** into:
+   - `mobile/caffein_tracker/.env`
+   - root `.env` as `PUBLIC_SUPABASE_URL` and `PUBLIC_SUPABASE_ANON_KEY` (see `.env.example`)
+
+## Google sign-in (web)
+
+1. **Authentication** → Providers → **Google** → Enable.
+2. Create [Google OAuth credentials](https://console.cloud.google.com/apis/credentials) (Web application).
+3. Add Supabase callback URL (shown on the provider page), e.g.  
+   `https://YOUR_PROJECT.supabase.co/auth/v1/callback`
+4. Paste Google Client ID + secret into Supabase.
+5. **Authentication** → URL Configuration → Redirect URLs:
+   - `http://localhost:5173/auth/callback`
+   - `https://your-domain.com/auth/callback` (production)
+   - `io.supabase.caffeintracker://login-callback` (Flutter mobile)
+
+Web login page: `/login` — or **Settings** → Account.
 
 ## Tables
 

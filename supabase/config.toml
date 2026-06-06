@@ -11,8 +11,11 @@ major_version = 15
 
 [auth]
 enabled = true
-site_url = "io.supabase.caffeintracker://login-callback"
-additional_redirect_urls = ["io.supabase.caffeintracker://login-callback"]
+site_url = "http://localhost:5173"
+additional_redirect_urls = [
+  "http://localhost:5173/auth/callback",
+  "io.supabase.caffeintracker://login-callback"
+]
 
 [auth.email]
 enable_signup = true

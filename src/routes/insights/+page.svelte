@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { page } from '$app/state';
+	import AuthPanel from '$lib/components/auth/AuthPanel.svelte';
 	import { getDailySugarCap } from '$lib/personalization/recommendations';
 	import { app } from '$lib/state/app.svelte';
 	import type { UserProfile } from '$lib/types';
@@ -106,6 +108,8 @@
 	>
 		<!-- Slide 1: Profile View / Edit View -->
 		<div class="carousel-slide">
+			<AuthPanel user={page.data.user} />
+
 			{#if !isEditing}
 				<!-- Profile Card -->
 				<div class="garden-card profile-card-inner">

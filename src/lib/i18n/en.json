@@ -24,6 +24,21 @@
     "sync": "Statistics",
     "you": "Settings"
   },
+  "auth": {
+    "title": "Account",
+    "login_title": "Sign in",
+    "login_subtitle": "Save your progress and sync across devices with Google.",
+    "login_fine_print": "Your drink logs stay on this device until cloud sync is enabled.",
+    "continue_with_google": "Continue with Google",
+    "signing_in": "Redirecting…",
+    "signing_out": "Signing out…",
+    "sign_out": "Sign out",
+    "sign_in_hint": "Sign in to link your profile to your Google account.",
+    "signed_in_hint": "Signed in with Google. Local logs still save on this device.",
+    "not_configured": "Add PUBLIC_SUPABASE_URL and PUBLIC_SUPABASE_ANON_KEY to a .env file in the project root.",
+    "sign_in_failed": "Sign-in failed. Please try again.",
+    "continue_without_account": "Continue without signing in"
+  },
   "profile": {
     "title": "Your profile",
     "subtitle": "Tune limits — we adapt recommendations automatically",

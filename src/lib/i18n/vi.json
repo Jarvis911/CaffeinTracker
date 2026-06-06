@@ -24,6 +24,21 @@
     "sync": "Thống kê",
     "you": "Cài đặt"
   },
+  "auth": {
+    "title": "Tài khoản",
+    "login_title": "Đăng nhập",
+    "login_subtitle": "Lưu tiến trình và đồng bộ trên nhiều thiết bị với Google.",
+    "login_fine_print": "Nhật ký đồ uống vẫn lưu trên thiết bị này cho đến khi bật đồng bộ đám mây.",
+    "continue_with_google": "Tiếp tục với Google",
+    "signing_in": "Đang chuyển hướng…",
+    "signing_out": "Đang đăng xuất…",
+    "sign_out": "Đăng xuất",
+    "sign_in_hint": "Đăng nhập để liên kết hồ sơ với tài khoản Google.",
+    "signed_in_hint": "Đã đăng nhập bằng Google. Nhật ký cục bộ vẫn lưu trên thiết bị này.",
+    "not_configured": "Thêm PUBLIC_SUPABASE_URL và PUBLIC_SUPABASE_ANON_KEY vào file .env ở thư mục gốc dự án.",
+    "sign_in_failed": "Đăng nhập thất bại. Vui lòng thử lại.",
+    "continue_without_account": "Tiếp tục mà không đăng nhập"
+  },
   "profile": {
     "title": "Hồ sơ của bạn",
     "subtitle": "Tinh chỉnh giới hạn — chúng tôi sẽ tự động điều chỉnh gợi ý",

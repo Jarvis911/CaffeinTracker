@@ -22,6 +22,7 @@ A cozy caffeine & sugar drink tracker with **personalized recommendations** from
 - [SvelteKit 2](https://kit.svelte.dev)
 - [Tailwind CSS 4](https://tailwindcss.com)
 - Local persistence via `localStorage`
+- Optional Google sign-in via Supabase Auth (`/login`)
 
 ## Getting started (web)
 
