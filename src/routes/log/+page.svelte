@@ -12,10 +12,18 @@
 
 	let loggedId = $state<string | null>(null);
 	let quickLogTab = $state<'fav' | 'recent'>('fav');
-	
 	let searchQuery = $state('');
 	let selectedCategory = $state('all');
 	let showScanner = $state(false);
+
+	const categories = [
+		{ id: 'all', label: 'All', icon: 'apps' },
+		{ id: 'coffee', label: 'Coffee', icon: 'coffee' },
+		{ id: 'tea', label: 'Tea', icon: 'eco' },
+		{ id: 'energy', label: 'Energy', icon: 'bolt' },
+		{ id: 'soda', label: 'Soda', icon: 'local_drink' },
+		{ id: 'other', label: 'Other', icon: 'category' }
+	];
 
 	const filteredDrinks = $derived.by(() => {
 		const query = searchQuery.toLowerCase().trim();
@@ -43,7 +51,6 @@
 	let fileInput = $state<HTMLInputElement | null>(null);
 	let stream = $state<MediaStream | null>(null);
 
-	// Log drink logic
 	function log(id: string, scanned = false) {
 		app.logDrink(id, 1, scanned);
 		loggedId = id;
@@ -52,7 +59,6 @@
 		}, 1800);
 	}
 
-	// Toggle favorite in user profile
 	function toggleFavorite(id: string) {
 		let preferred = [...app.profile.preferredDrinkIds];
 		if (preferred.includes(id)) {
@@ -63,55 +69,45 @@
 		app.updateProfile({ preferredDrinkIds: preferred });
 	}
 
-	// Favorites list from profile
-	const favoriteDrinks = $derived.by(() => {
-		return DRINK_CATALOG.filter((d) => app.profile.preferredDrinkIds.includes(d.id));
-	});
+	const favoriteDrinks = $derived.by(() =>
+		DRINK_CATALOG.filter((d) => app.profile.preferredDrinkIds.includes(d.id))
+	);
 
-	// Last 4 unique logged drinks
 	const recentDrinks = $derived.by(() => {
 		const ids: string[] = [];
 		for (const entry of app.logs) {
 			if (!ids.includes(entry.drinkId)) {
 				const exists = DRINK_CATALOG.some((d) => d.id === entry.drinkId);
-				if (exists) {
-					ids.push(entry.drinkId);
-				}
+				if (exists) ids.push(entry.drinkId);
 			}
 			if (ids.length >= 4) break;
 		}
 		return ids.map((id) => DRINK_CATALOG.find((d) => d.id === id)!).filter(Boolean);
 	});
 
-	// Start Camera Stream
 	async function startCamera() {
 		try {
 			capturedImageUrl = null;
 			detectedDrink = null;
 			scanState = 'camera';
-			// Wait for video element to render
 			setTimeout(async () => {
 				try {
 					stream = await navigator.mediaDevices.getUserMedia({
 						video: { facingMode: 'environment' }
 					});
-					if (videoElement) {
-						videoElement.srcObject = stream;
-					}
+					if (videoElement) videoElement.srcObject = stream;
 				} catch (err) {
-					console.error('Camera access failed inside timeout:', err);
-					alert('Camera access denied or unavailable. Please use "Upload Photo" instead.');
+					console.error('Camera access failed:', err);
+					alert('Camera access denied. Please use "Upload Photo" instead.');
 					resetScanner();
 				}
 			}, 50);
 		} catch (err) {
 			console.error('Error accessing camera:', err);
-			alert('Camera access denied or unavailable. Please use "Upload Photo" instead.');
 			resetScanner();
 		}
 	}
 
-	// Capture Photo from Camera Stream
 	function capturePhoto() {
 		if (!videoElement) return;
 		const canvas = document.createElement('canvas');
@@ -126,7 +122,6 @@
 		}
 	}
 
-	// Stop Camera Stream
 	function stopCamera() {
 		if (stream) {
 			stream.getTracks().forEach((track) => track.stop());
@@ -134,12 +129,10 @@
 		}
 	}
 
-	// Trigger File input click
 	function triggerUpload() {
 		fileInput?.click();
 	}
 
-	// Handle Image File Upload
 	function handleFileUpload(event: Event) {
 		const target = event.target as HTMLInputElement;
 		if (target.files && target.files[0]) {
@@ -153,9 +146,7 @@
 		}
 	}
 
-
-
-	let scanInterval: any;
+	let scanInterval: ReturnType<typeof setInterval> | undefined;
 	function runMockScan(targetDrinkId?: string) {
 		stopCamera();
 		scanState = 'scanning';
@@ -174,28 +165,20 @@
 			'Finalizing neural network inference...'
 		];
 
-		let step = 0;
 		scanInterval = setInterval(() => {
 			scanProgress += 10;
-			
-			// Append logs at specific progress points
 			const logIndex = Math.floor((scanProgress / 100) * logPhrases.length);
 			if (logPhrases[logIndex] && !scanLogs.includes(`[AI] ${logPhrases[logIndex]}`)) {
 				scanLogs = [...scanLogs, `[AI] ${logPhrases[logIndex]}`];
 			}
-
 			if (scanProgress >= 100) {
 				clearInterval(scanInterval);
-				
-				// Determine detected drink
 				if (targetDrinkId) {
-					detectedDrink = DRINK_CATALOG.find(d => d.id === targetDrinkId) || DRINK_CATALOG[0];
+					detectedDrink = DRINK_CATALOG.find((d) => d.id === targetDrinkId) || DRINK_CATALOG[0];
 				} else {
-					// Random selection from catalog if uploaded/photographed
-					const randomIndex = Math.floor(Math.random() * DRINK_CATALOG.length);
-					detectedDrink = DRINK_CATALOG[randomIndex];
+					detectedDrink = DRINK_CATALOG[Math.floor(Math.random() * DRINK_CATALOG.length)];
 				}
-				confidence = Math.floor(88 + Math.random() * 11); // 88% - 98%
+				confidence = Math.floor(88 + Math.random() * 11);
 				scanState = 'detected';
 			}
 		}, 200);
@@ -218,22 +201,26 @@
 	});
 </script>
 
-<div class="compact-header wood-board fade-in">
-	<div class="header-inner">
-		<span class="header-icon" aria-hidden="true">☕</span>
-		<div class="header-titles fade-in">
-			<h2 class="header-title">{$_('log.title')}</h2>
-			<p class="header-subtitle">{$_('log.subtitle')}</p>
+<svelte:head>
+	<title>Log — Zakka Caffeine</title>
+</svelte:head>
+
+<!-- Top App Bar -->
+<header class="top-bar">
+	<div class="top-bar-inner">
+		<div class="top-bar-title">
+			<h2 class="page-headline">New Log Entry</h2>
+			<p class="page-subtitle">Finding focus through the ritual of brewing.</p>
 		</div>
 	</div>
-</div>
+</header>
 
-<div class="log-page-container">
+<div class="log-page fade-in">
 
-	<!-- Tabbed Quick Log Row -->
+	<!-- ── Quick Log Row (Favorites / Recent) ────────────────── -->
 	{#if favoriteDrinks.length > 0 || recentDrinks.length > 0}
-		<div class="quick-log-section fade-in wood-board" style="animation-delay: 0.15s">
-			<div class="quick-log-tabs">
+		<section class="quick-section">
+			<div class="quick-tabs">
 				{#if favoriteDrinks.length > 0}
 					<button
 						type="button"
@@ -241,246 +228,254 @@
 						class:active={quickLogTab === 'fav'}
 						onclick={() => (quickLogTab = 'fav')}
 					>
-						❤️ {$_('log.favorites')}
+						<span class="material-symbols-outlined tab-icon">favorite</span>
+						Favorites
 					</button>
 				{/if}
 				{#if recentDrinks.length > 0}
 					<button
 						type="button"
 						class="tab-btn"
-						class:active={quickLogTab === 'recent' || (favoriteDrinks.length === 0 && quickLogTab === 'fav')}
+						class:active={quickLogTab === 'recent' || (favoriteDrinks.length === 0)}
 						onclick={() => (quickLogTab = 'recent')}
 					>
-						⚡ {$_('log.recent')}
+						<span class="material-symbols-outlined tab-icon">history</span>
+						Recent
 					</button>
 				{/if}
 			</div>
-			<div class="wood-inner-board quick-log-inner">
-				<div class="horizontal-scroll">
-					{#if (quickLogTab === 'fav' && favoriteDrinks.length > 0) || (favoriteDrinks.length > 0 && recentDrinks.length === 0)}
-						{#each favoriteDrinks as drink (drink.id)}
-							<DrinkRoundCard drink={drink} onSelect={() => log(drink.id)} />
-						{/each}
-					{:else if recentDrinks.length > 0}
-						{#each recentDrinks as drink (drink.id)}
-							<DrinkRoundCard drink={drink} onSelect={() => log(drink.id)} />
-						{/each}
-					{:else}
-						<p class="quick-log-empty">{$_('log.no_results')}</p>
-					{/if}
-				</div>
+			<div class="quick-scroll">
+				{#if quickLogTab === 'fav' && favoriteDrinks.length > 0}
+					{#each favoriteDrinks as drink (drink.id)}
+						<DrinkRoundCard {drink} onSelect={() => log(drink.id)} />
+					{/each}
+				{:else if recentDrinks.length > 0}
+					{#each recentDrinks as drink (drink.id)}
+						<DrinkRoundCard {drink} onSelect={() => log(drink.id)} />
+					{/each}
+				{/if}
 			</div>
-		</div>
+		</section>
 	{/if}
 
-	<!-- AI Scanner Trigger Button -->
-	<div class="scanner-toggle-container fade-in" style="animation-delay: 0.18s">
+	<!-- ── AI Scanner Toggle ─────────────────────────────────── -->
+	<div class="scanner-toggle-row">
 		<button
 			type="button"
-			class="btn-3d-cute scanner-toggle-btn"
+			class="scanner-toggle-btn"
 			class:active={showScanner}
 			onclick={() => {
 				showScanner = !showScanner;
-				if (!showScanner) {
-					stopCamera();
-				}
+				if (!showScanner) stopCamera();
 			}}
 		>
-			{#if showScanner}
-				✕ {$_('log.cv_btn_hide_scanner')}
-			{:else}
-				🤖📷 {$_('log.cv_btn_show_scanner')}
-			{/if}
+			<span class="material-symbols-outlined">{showScanner ? 'close' : 'photo_camera'}</span>
+			{showScanner ? 'Hide AI Scanner' : 'AI Drink Scanner'}
 		</button>
 	</div>
 
-	<!-- Computer Vision Scanner Section -->
+	<!-- ── CV Scanner ────────────────────────────────────────── -->
 	{#if showScanner}
-		<div class="grid-section fade-in wood-board" style="animation-delay: 0.2s">
-			<h2 class="section-title">{$_('log.cv_title')}</h2>
-			<p class="cv-subtitle">{$_('log.cv_subtitle')}</p>
-			
-			<div class="wood-inner-board cv-scanner-container">
+		<section class="scanner-section fade-in">
+			<div class="scanner-header">
+				<h3 class="scanner-title">AI Vision Scanner</h3>
+				<p class="scanner-subtitle">Point your camera or upload a photo of any drink</p>
+			</div>
+
+			<div class="scanner-body">
 				{#if scanState === 'idle'}
-					<!-- Idle Mode: Choice to upload or open camera -->
-					<div class="scanner-idle-view">
+					<div class="scanner-idle">
+						<div class="scanner-placeholder">
+							<span class="material-symbols-outlined scanner-ph-icon">photo_camera</span>
+							<p class="scanner-ph-text">Capture or upload a drink photo</p>
+						</div>
 						<div class="scanner-actions">
-							<button type="button" class="btn-3d-cute action-btn" onclick={startCamera}>
-								{$_('log.cv_btn_camera')}
+							<button type="button" class="btn-primary scan-btn" onclick={startCamera}>
+								<span class="material-symbols-outlined">videocam</span>
+								Open Camera
 							</button>
-							<button type="button" class="btn-primary action-btn" onclick={triggerUpload}>
-								{$_('log.cv_btn_upload')}
+							<button type="button" class="btn-ghost scan-btn" onclick={triggerUpload}>
+								<span class="material-symbols-outlined">upload</span>
+								Upload Photo
 							</button>
 							<input
 								type="file"
 								accept="image/*"
 								bind:this={fileInput}
 								onchange={handleFileUpload}
-								class="hidden-file-input"
 								style="display: none;"
 							/>
 						</div>
 					</div>
 
 				{:else if scanState === 'camera'}
-					<!-- Camera Mode: Live stream -->
-					<div class="scanner-camera-view">
-						<div class="camera-feed-wrapper">
-							<video bind:this={videoElement} autoplay playsinline class="camera-video">
+					<div class="scanner-camera">
+						<div class="camera-wrapper">
+							<video bind:this={videoElement} autoplay playsinline class="camera-feed">
 								<track kind="captions" />
 							</video>
-							<div class="camera-overlay-reticle"></div>
+							<div class="camera-reticle" aria-hidden="true"></div>
 						</div>
 						<div class="scanner-actions">
-							<button type="button" class="btn-3d-cute capture-btn" onclick={capturePhoto}>
-								{$_('log.cv_btn_capture')}
+							<button type="button" class="btn-primary scan-btn" onclick={capturePhoto}>
+								<span class="material-symbols-outlined">camera</span>
+								Capture
 							</button>
-							<button type="button" class="btn-primary cancel-btn" onclick={resetScanner}>
-								{$_('log.cv_btn_cancel')}
+							<button type="button" class="btn-ghost scan-btn" onclick={resetScanner}>
+								Cancel
 							</button>
 						</div>
 					</div>
 
 				{:else if scanState === 'scanning'}
-					<!-- Scanning Mode: Animation overlay & Logs -->
-					<div class="scanner-scanning-view">
-						<div class="scan-target-wrapper">
+					<div class="scanner-analyzing">
+						<div class="scan-target">
 							{#if capturedImageUrl}
-								<img src={capturedImageUrl} alt="Scanning source" class="scan-image" />
+								<img src={capturedImageUrl} alt="Scanning source" class="scan-img" />
 							{:else}
-								<!-- Fallback preset Svelte card -->
-								<div class="scan-placeholder-card">
-									<span class="scan-placeholder-emoji">🔍☕🥤</span>
+								<div class="scan-placeholder-img">
+									<span aria-hidden="true">🔍☕🥤</span>
 								</div>
 							{/if}
-							<div class="laser-scanner"></div>
+							<div class="laser" aria-hidden="true"></div>
 						</div>
-						
-						<div class="scan-progress-bar-wrapper">
-							<div class="scan-progress-bar" style="width: {scanProgress}%"></div>
+						<div class="progress-row">
+							<div class="progress-track-wide">
+								<div class="progress-fill-wide" style:width="{scanProgress}%"></div>
+							</div>
+							<span class="progress-pct">{scanProgress}%</span>
 						</div>
-						<span class="scan-percentage">{scanProgress}%</span>
-						
-						<div class="scan-terminal-logs">
-							{#each scanLogs as logMsg}
-								<div class="log-line fade-in">{logMsg}</div>
+						<div class="terminal-logs" aria-live="polite">
+							{#each scanLogs as line, i (i)}
+								<div class="log-line fade-in">{line}</div>
 							{/each}
 						</div>
 					</div>
 
 				{:else if scanState === 'detected' && detectedDrink}
-					<!-- Detected Mode: Display result + options -->
-					<div class="scanner-detected-view fade-in">
-						<div class="detected-badge">{$_('log.cv_detected_title')}</div>
-						
-						<div class="detected-card">
-							<div class="detected-emoji-wrap">
-								<span class="detected-emoji">{detectedDrink.emoji}</span>
+					<div class="scanner-result fade-in">
+						<div class="result-badge">
+							<span class="material-symbols-outlined fill" style="font-size:1rem">check_circle</span>
+							Drink Detected
+						</div>
+
+						<div class="result-card">
+							<div class="result-emoji-wrap">
+								<span class="result-emoji" aria-hidden="true">{detectedDrink.emoji}</span>
 							</div>
-							<div class="detected-details">
-								<h3 class="detected-name">{detectedDrink.name}</h3>
-								<div class="confidence-meter">
-									<span class="confidence-label">{$_('log.cv_confidence')}: {confidence}%</span>
-									<div class="confidence-bar-outer">
-										<div class="confidence-bar-inner" style="width: {confidence}%"></div>
+							<div class="result-details">
+								<h4 class="result-name">{detectedDrink.name}</h4>
+								<div class="confidence-row">
+									<span class="confidence-label">Confidence: {confidence}%</span>
+									<div class="confidence-bar">
+										<div class="confidence-fill" style:width="{confidence}%"></div>
 									</div>
 								</div>
 							</div>
 						</div>
 
-						<div class="detected-nutrition">
-							<div class="nutrition-chip caffeine-color">
-								<span class="nut-val">{detectedDrink.caffeineMg} mg</span>
-								<span class="nut-label">{$_('log.caffeine')}</span>
+						<div class="nutrition-chips">
+							<div class="nut-chip caffeine">
+								<span class="nut-val">{detectedDrink.caffeineMg}mg</span>
+								<span class="nut-key">Caffeine</span>
 							</div>
-							<div class="nutrition-chip sugar-color">
-								<span class="nut-val">{detectedDrink.sugarG} g</span>
-								<span class="nut-label">{$_('log.sugar')}</span>
+							<div class="nut-chip sugar">
+								<span class="nut-val">{detectedDrink.sugarG}g</span>
+								<span class="nut-key">Sugar</span>
 							</div>
-							<div class="nutrition-chip calories-color">
-								<span class="nut-val">{detectedDrink.calories} kcal</span>
-								<span class="nut-label">calories</span>
+							<div class="nut-chip calories">
+								<span class="nut-val">{detectedDrink.calories}</span>
+								<span class="nut-key">kcal</span>
 							</div>
 						</div>
 
-						<!-- Correction selection if AI was wrong -->
-						<div class="correction-wrapper">
-							<label for="drink-correction" class="correction-label">{$_('log.cv_not_your_drink')}</label>
+						<div class="correction-row">
+							<label for="drink-correction" class="correction-label">Not your drink?</label>
 							<select
 								id="drink-correction"
 								class="correction-select"
 								value={detectedDrink.id}
 								onchange={(e) => {
 									const val = (e.target as HTMLSelectElement).value;
-									const found = DRINK_CATALOG.find(d => d.id === val);
+									const found = DRINK_CATALOG.find((d) => d.id === val);
 									if (found) detectedDrink = found;
 								}}
 							>
-								{#each DRINK_CATALOG as drink}
+								{#each DRINK_CATALOG as drink (drink.id)}
 									<option value={drink.id}>{drink.emoji} {drink.name}</option>
 								{/each}
 							</select>
 						</div>
 
 						<div class="scanner-actions">
-							<button type="button" class="btn-3d-cute confirm-btn" onclick={() => {
-								log(detectedDrink!.id, true);
-								resetScanner();
-							}}>
-								{$_('log.cv_btn_confirm_log')}
+							<button
+								type="button"
+								class="btn-primary scan-btn"
+								onclick={() => {
+									log(detectedDrink!.id, true);
+									resetScanner();
+								}}
+							>
+								<span class="material-symbols-outlined">add_circle</span>
+								Add to Ritual
 							</button>
-							<button type="button" class="btn-primary reset-btn" onclick={resetScanner}>
-								{$_('log.cv_btn_scan_again')}
+							<button type="button" class="btn-ghost scan-btn" onclick={resetScanner}>
+								Scan Again
 							</button>
 						</div>
 					</div>
 				{/if}
 			</div>
-		</div>
+		</section>
 	{/if}
 
-	<!-- Search Bar -->
-	<div class="search-container fade-in" style="animation-delay: 0.22s">
-		<div class="search-input-wrapper">
-			<span class="search-icon" aria-hidden="true">🔍</span>
+	<!-- ── Search Bar ─────────────────────────────────────────── -->
+	<div class="search-row">
+		<div class="search-wrapper">
+			<span class="material-symbols-outlined search-icon">search</span>
 			<input
 				type="text"
-				placeholder={$_('log.search_placeholder')}
+				placeholder="Search drinks..."
 				bind:value={searchQuery}
 				class="search-input"
+				aria-label="Search drinks"
 			/>
 			{#if searchQuery}
 				<button
 					type="button"
-					class="clear-search"
+					class="search-clear"
 					onclick={() => (searchQuery = '')}
 					aria-label="Clear search"
-				>✕</button>
+				>
+					<span class="material-symbols-outlined">close</span>
+				</button>
 			{/if}
 		</div>
 	</div>
 
-	<!-- Category Filter Chips -->
-	<div class="categories-row fade-in" style="animation-delay: 0.25s">
-		{#each ['all', 'coffee', 'tea', 'energy', 'soda', 'other'] as cat}
+	<!-- ── Category Filter Chips ──────────────────────────────── -->
+	<div class="categories-scroll" role="group" aria-label="Filter by category">
+		{#each categories as cat (cat.id)}
 			<button
 				type="button"
-				class="category-chip"
-				class:active={selectedCategory === cat}
-				onclick={() => (selectedCategory = cat)}
+				class="cat-chip"
+				class:active={selectedCategory === cat.id}
+				onclick={() => (selectedCategory = cat.id)}
+				aria-pressed={selectedCategory === cat.id}
 			>
-				{$_(`log.category_${cat}`)}
+				<span class="material-symbols-outlined cat-icon">{cat.icon}</span>
+				{cat.label}
 			</button>
 		{/each}
 	</div>
 
-	<!-- Grid selection of drinks -->
-	<div class="grid-section fade-in" style="animation-delay: 0.28s">
+	<!-- ── Drink Grid ─────────────────────────────────────────── -->
+	<section class="grid-section">
 		{#if filteredDrinks.length > 0}
-			<div class="grid">
+			<div class="drink-grid">
 				{#each filteredDrinks as drink (drink.id)}
 					<DrinkGridCard
-						drink={drink}
+						{drink}
 						isFavorite={app.profile.preferredDrinkIds.includes(drink.id)}
 						onSelect={() => log(drink.id)}
 						onToggleFavorite={() => toggleFavorite(drink.id)}
@@ -489,471 +484,311 @@
 			</div>
 		{:else}
 			<div class="empty-state">
-				<span class="empty-emoji" aria-hidden="true">🥤🔍</span>
-				<p>{$_('log.no_results')}</p>
+				<span class="empty-icon" aria-hidden="true">🥤</span>
+				<p>No drinks found. Try a different search.</p>
 			</div>
 		{/if}
-	</div>
+	</section>
+
+	<!-- ── Drink Toy Box (Physics Sandbox) ───────────────────── -->
+	<section class="toybox-section">
+		<DrinkToyBox items={toyItems} />
+	</section>
 </div>
 
-<!-- Floating Logged Toast (Retro OS Warning Dialog) -->
+<!-- Log Toast Notification -->
 {#if loggedId}
-	<div class="toast-overlay" role="status">
-		<div class="toast-box retro-dialog">
-			<div class="dialog-title-bar">
-				<span class="dialog-title">WARNING.EXE</span>
-				<button type="button" class="dialog-close-x" onclick={() => (loggedId = null)} aria-label="Close dialog">X</button>
-			</div>
-			<div class="dialog-body">
-				<span class="toast-emoji" aria-hidden="true">🥤</span>
-				<div class="dialog-content">
-					<p class="dialog-text">{$_('log.logged_toast')}</p>
-					<div class="dialog-buttons">
-						<button class="btn-3d-cute dialog-ok-btn" onclick={() => (loggedId = null)}>OK</button>
-					</div>
-				</div>
-			</div>
-		</div>
+	{@const drink = DRINK_CATALOG.find((d) => d.id === loggedId)}
+	<div class="toast" role="status" aria-live="polite">
+		<span class="material-symbols-outlined toast-icon fill">check_circle</span>
+		<span><strong>{drink?.name ?? 'Drink'}</strong> added to your ritual</span>
 	</div>
 {/if}
 
-<section class="fade-in toy-wrap" style="animation-delay: 0.25s">
-	<DrinkToyBox items={toyItems} />
-</section>
-
 <style>
-	.log-page-container {
+	/* ── Top Bar ──────────────────────────────────────────── */
+	.top-bar {
+		background: var(--color-surface);
+		border-bottom: 1px solid rgba(197, 200, 187, 0.2);
+		padding: 1.25rem var(--space-container) 1rem;
+		max-width: 768px;
+		margin-inline: auto;
+	}
+
+	.top-bar-inner {
+		max-width: 768px;
+		margin-inline: auto;
+	}
+
+	.page-headline {
+		font-family: var(--font-display);
+		font-size: 1.625rem;
+		font-weight: 600;
+		color: var(--color-on-surface);
+		margin: 0 0 0.25rem;
+		letter-spacing: -0.01em;
+	}
+
+	.page-subtitle {
+		font-family: var(--font-body);
+		font-size: 0.9rem;
+		font-style: italic;
+		color: var(--color-on-surface-variant);
+		margin: 0;
+	}
+
+	/* ── Log Page ────────────────────────────────────────── */
+	.log-page {
+		max-width: 768px;
+		margin-inline: auto;
+		padding: var(--space-gutter) var(--space-container);
 		display: flex;
 		flex-direction: column;
-		gap: 1.15rem;
-		margin-top: 0.5rem;
+		gap: 1.25rem;
 	}
 
-	.toy-wrap {
-		margin-top: 1.5rem;
-	}
-
-	.scanner-toggle-container {
+	/* ── Quick Log ───────────────────────────────────────── */
+	.quick-section {
 		display: flex;
-		justify-content: center;
-		width: 100%;
-		margin-bottom: 0.15rem;
+		flex-direction: column;
+		gap: 0.6rem;
 	}
 
-	.scanner-toggle-btn {
-		width: 100%;
-		max-width: 18rem;
-		text-align: center;
-	}
-
-	/* Search bar styles */
-	.search-container {
-		width: 100%;
-	}
-
-	.search-input-wrapper {
-		position: relative;
-		width: 100%;
+	.quick-tabs {
 		display: flex;
+		gap: 0.5rem;
+	}
+
+	.tab-btn {
+		display: inline-flex;
 		align-items: center;
-	}
-
-	.search-icon {
-		position: absolute;
-		left: 1.1rem;
-		font-size: 0.95rem;
-		color: var(--color-text-muted);
-		pointer-events: none;
-	}
-
-	.search-input {
-		width: 100%;
-		padding: 0.85rem 2.5rem 0.85rem 2.6rem;
+		gap: 0.35rem;
+		padding: 0.4rem 0.875rem;
+		border-radius: var(--radius-full);
+		border: 1px solid var(--color-outline-variant);
+		background: transparent;
+		color: var(--color-on-surface-variant);
 		font-family: var(--font-body);
-		font-size: 0.95rem;
-		color: var(--color-text);
-		border-radius: 16px;
-		border: 2.5px solid var(--color-border);
-		background: var(--color-surface);
-		box-shadow: var(--shadow-soft);
-		outline: none;
-		transition:
-			border-color 0.2s ease,
-			box-shadow 0.2s ease;
-	}
-
-	.search-input:focus {
-		border-color: var(--color-mint-deep);
-		box-shadow: var(--shadow-lift);
-	}
-
-	.clear-search {
-		position: absolute;
-		right: 1rem;
-		background: none;
-		border: none;
-		color: var(--color-text-muted);
-		font-size: 1.3rem;
+		font-size: 0.8rem;
+		font-weight: 600;
 		cursor: pointer;
-		padding: 0;
-		line-height: 1;
-		display: grid;
-		place-items: center;
-		width: 1.5rem;
-		height: 1.5rem;
-		border-radius: 999px;
-		transition:
-			background 0.2s ease,
-			color 0.2s ease;
+		transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 	}
 
-	.clear-search:hover {
-		background: var(--color-bg-accent);
-		color: var(--color-text);
+	.tab-btn:hover {
+		background: var(--color-surface-container);
 	}
 
-	/* Category chips styles */
-	.categories-row {
+	.tab-btn.active {
+		background: var(--color-primary-container);
+		color: var(--color-on-primary-container);
+		border-color: transparent;
+	}
+
+	.tab-icon {
+		font-size: 1rem;
+	}
+
+	.quick-scroll {
 		display: flex;
 		gap: 0.5rem;
 		overflow-x: auto;
-		scroll-behavior: smooth;
-		scrollbar-width: none; /* Hide standard Firefox scrollbar */
-		padding-bottom: 0.25rem;
-		margin-inline: -1.25rem;
-		padding-inline: 1.25rem;
-	}
-
-	.categories-row::-webkit-scrollbar {
-		display: none; /* Hide Chrome/Safari scrollbar */
-	}
-
-	.category-chip {
-		flex-shrink: 0;
-		padding: 0.5rem 1.05rem;
-		border-radius: var(--btn-radius);
-		border: 2px solid var(--color-border);
-		background: var(--color-surface);
-		color: var(--color-text-muted);
-		font-family: var(--font-display);
-		font-weight: 700;
-		font-size: 0.8rem;
-		cursor: pointer;
-		box-shadow: var(--shadow-soft);
-		transition:
-			background 0.25s ease,
-			color 0.25s ease,
-			border-color 0.25s ease,
-			transform 0.15s ease,
-			box-shadow 0.25s ease;
-	}
-
-	.category-chip:hover {
-		border-color: var(--color-btn-border);
-		transform: translateY(-1px);
-	}
-
-	.category-chip:active {
-		transform: scale(0.96);
-	}
-
-	.category-chip.active {
-		background: linear-gradient(135deg, var(--color-mint), var(--color-mint-deep));
-		color: #ffffff;
-		border-color: transparent;
-		box-shadow: 0 4px 12px rgba(94, 143, 96, 0.35);
-	}
-
-	/* Grid styles */
-	.grid-section {
-		margin-top: 0.15rem;
-	}
-
-	.grid {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 0.75rem;
-		width: 100%;
-	}
-
-	.empty-state {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		padding: 3rem 1.5rem;
-		border-radius: 20px;
-		border: 2px dashed var(--color-border);
-		background: var(--color-surface);
-		text-align: center;
-	}
-
-	.empty-emoji {
-		font-size: 2.5rem;
-		margin-bottom: 0.6rem;
-		filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.05));
-	}
-
-	.empty-state p {
-		font-family: var(--font-body);
-		font-size: 0.88rem;
-		font-weight: 700;
-		color: var(--color-text-muted);
-		margin: 0;
-	}
-
-	/* Compact Header */
-	.compact-header {
-		padding: 0.45rem 0.75rem;
-		margin-bottom: 0.65rem;
-		border-radius: 16px;
-	}
-	.header-inner {
-		display: flex;
-		align-items: center;
-		gap: 0.55rem;
-	}
-	.header-icon {
-		font-size: 1.25rem;
-	}
-	.header-titles {
-		display: flex;
-		flex-direction: column;
-		gap: 0.02rem;
-	}
-	.header-title {
-		margin: 0;
-		font-size: 0.72rem;
-		font-weight: 700;
-		color: var(--color-text);
-		line-height: 1.15;
-	}
-	.header-subtitle {
-		margin: 0;
-		font-family: var(--font-body);
-		font-size: 0.58rem;
-		font-weight: 700;
-		color: var(--color-text);
-		line-height: 1.2;
-	}
-
-	/* Tabbed Quick Log */
-	.quick-log-section {
-		display: flex;
-		flex-direction: column;
-		gap: 0.35rem;
-		padding: 0.55rem 0.65rem 0.45rem;
-	}
-	.quick-log-tabs {
-		display: flex;
-		gap: 0.35rem;
-		margin-bottom: 0.15rem;
-	}
-	.tab-btn {
-		font-family: var(--font-display);
-		font-weight: 700;
-		font-size: 0.58rem;
-		color: var(--color-text);
-		background-color: #eed4b5;
-		border: 1.75px solid var(--color-btn-border);
-		border-radius: var(--btn-radius);
-		padding: 0.2rem 0.55rem;
-		cursor: pointer;
-		box-shadow: 0 1.5px 0 var(--color-btn-border);
-		transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.2s ease;
-		text-transform: uppercase;
-	}
-	.tab-btn:hover {
-		background-color: #ffdca8;
-	}
-	.tab-btn:active, .tab-btn.active {
-		background-color: #99cc99; /* sprout green */
-		transform: translateY(1.5px);
-		box-shadow: 0 0px 0 var(--color-btn-border);
-	}
-	.quick-log-inner {
-		padding: 0.35rem !important;
-	}
-	.quick-log-empty {
-		margin: 0;
-		font-family: var(--font-body);
-		font-size: 0.68rem;
-		font-weight: 700;
-		color: var(--color-text-muted);
-		padding: 0.3rem;
-	}
-
-	.horizontal-scroll {
-		display: flex;
-		gap: 0.55rem;
-		overflow-x: auto;
-		scroll-behavior: smooth;
 		scrollbar-width: none;
-		padding: 0.1rem;
+		padding: 0.15rem 0;
 	}
 
-	.horizontal-scroll::-webkit-scrollbar {
+	.quick-scroll::-webkit-scrollbar {
 		display: none;
 	}
 
-	/* Grid styles */
-	.grid-section {
-		padding: 0.55rem;
-	}
-
-	/* CV Scanner Styles */
-	.cv-subtitle {
-		margin: -0.35rem 0 0.75rem 0;
-		font-family: var(--font-body);
-		font-size: 0.68rem;
-		font-weight: 700;
-		color: var(--color-text-muted);
-	}
-
-	.cv-scanner-container {
-		padding: 0.75rem !important;
-		min-height: 14.5rem;
+	/* ── Scanner Toggle ──────────────────────────────────── */
+	.scanner-toggle-row {
 		display: flex;
-		flex-direction: column;
 		justify-content: center;
 	}
 
-	/* Idle view */
-	.scanner-idle-view {
+	.scanner-toggle-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.625rem 1.25rem;
+		border-radius: var(--radius-full);
+		border: 1px solid var(--color-outline-variant);
+		background: var(--color-surface-container-lowest);
+		color: var(--color-on-surface-variant);
+		font-family: var(--font-body);
+		font-size: 0.875rem;
+		font-weight: 600;
+		cursor: pointer;
+		box-shadow: var(--shadow-card);
+		transition: background 0.2s ease, color 0.2s ease;
+	}
+
+	.scanner-toggle-btn:hover,
+	.scanner-toggle-btn.active {
+		background: var(--color-surface-container);
+		color: var(--color-primary);
+	}
+
+	.scanner-toggle-btn .material-symbols-outlined {
+		font-size: 1.125rem;
+	}
+
+	/* ── Scanner Section ─────────────────────────────────── */
+	.scanner-section {
+		background: var(--color-surface-container-lowest);
+		border-radius: var(--radius-xl);
+		box-shadow: var(--shadow-card);
+		border: 1px solid rgba(117, 120, 109, 0.1);
+		overflow: hidden;
+	}
+
+	.scanner-header {
+		padding: var(--space-gutter) var(--space-gutter) 0;
+	}
+
+	.scanner-title {
+		font-family: var(--font-display);
+		font-size: 1rem;
+		font-weight: 600;
+		color: var(--color-on-surface);
+		margin: 0 0 0.2rem;
+	}
+
+	.scanner-subtitle {
+		font-family: var(--font-body);
+		font-size: 0.8rem;
+		color: var(--color-on-surface-variant);
+		margin: 0 0 0.875rem;
+	}
+
+	.scanner-body {
+		padding: 0 var(--space-gutter) var(--space-gutter);
+	}
+
+	.scanner-idle {
 		display: flex;
 		flex-direction: column;
-		gap: 0.85rem;
-		width: 100%;
+		gap: 1rem;
 		align-items: center;
+	}
+
+	.scanner-placeholder {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 2rem;
+		width: 100%;
+		background: var(--color-surface-container);
+		border-radius: var(--radius-lg);
+		border: 1px dashed var(--color-outline-variant);
+	}
+
+	.scanner-ph-icon {
+		font-size: 2.5rem;
+		color: var(--color-outline);
+	}
+
+	.scanner-ph-text {
+		font-family: var(--font-body);
+		font-size: 0.85rem;
+		color: var(--color-outline);
+		margin: 0;
 	}
 
 	.scanner-actions {
 		display: flex;
-		gap: 0.65rem;
+		gap: 0.75rem;
 		width: 100%;
 		justify-content: center;
-		margin-top: 0.25rem;
+		flex-wrap: wrap;
 	}
 
-	.action-btn {
+	.scan-btn {
 		flex: 1;
-		max-width: 10rem;
+		min-width: 8rem;
+		max-width: 14rem;
+		padding: 0.75rem 1rem;
+		font-size: 0.875rem;
 	}
 
-
-
-	/* Camera View */
-	.scanner-camera-view {
+	.scanner-camera {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 0.65rem;
-		width: 100%;
+		gap: 0.875rem;
 	}
 
-	.camera-feed-wrapper {
+	.camera-wrapper {
 		position: relative;
 		width: 100%;
-		max-width: 14rem;
+		max-width: 20rem;
 		aspect-ratio: 4 / 3;
-		border: 2.5px solid var(--color-border);
-		border-radius: 16px;
+		border-radius: var(--radius-xl);
 		overflow: hidden;
 		background: #000;
 	}
 
-	.camera-video {
+	.camera-feed {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
 	}
 
-	.camera-overlay-reticle {
+	.camera-reticle {
 		position: absolute;
 		inset: 1.5rem;
-		border: 2px dashed rgba(153, 204, 153, 0.65);
-		pointer-events: none;
-		border-radius: 6px;
-	}
-
-	.camera-overlay-reticle::before,
-	.camera-overlay-reticle::after {
-		content: '';
-		position: absolute;
-		width: 12px;
-		height: 12px;
-		border-color: #99cc99;
-		border-style: solid;
+		border: 2px dashed rgba(176, 206, 155, 0.7);
+		border-radius: var(--radius-lg);
 		pointer-events: none;
 	}
 
-	.camera-overlay-reticle::before {
-		top: -3px;
-		left: -3px;
-		border-width: 3px 0 0 3px;
-	}
-	
-	.camera-overlay-reticle::after {
-		bottom: -3px;
-		right: -3px;
-		border-width: 0 3px 3px 0;
-	}
-
-	/* Scanning view */
-	.scanner-scanning-view {
+	.scanner-analyzing {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 0.55rem;
-		width: 100%;
+		gap: 0.75rem;
 	}
 
-	.scan-target-wrapper {
+	.scan-target {
 		position: relative;
 		width: 100%;
-		max-width: 12rem;
+		max-width: 14rem;
 		aspect-ratio: 4 / 3;
-		border: 2.5px solid var(--color-border);
-		border-radius: 16px;
+		border-radius: var(--radius-xl);
 		overflow: hidden;
-		background: var(--color-surface);
-		display: flex;
-		align-items: center;
-		justify-content: center;
+		background: var(--color-surface-container);
 	}
 
-	.scan-image {
+	.scan-img {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
 	}
 
-	.scan-placeholder-card {
+	.scan-placeholder-img {
 		width: 100%;
 		height: 100%;
-		background: linear-gradient(135deg, var(--color-wood-medium), var(--color-wood-dark));
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		font-size: 2rem;
+		animation: pulse 1.2s ease-in-out infinite alternate;
 	}
 
-	.scan-placeholder-emoji {
-		font-size: 2.2rem;
-		animation: pulse-emoji 1.2s ease-in-out infinite alternate;
+	@keyframes pulse {
+		from { opacity: 0.7; transform: scale(0.95); }
+		to { opacity: 1; transform: scale(1.05); }
 	}
 
-	@keyframes pulse-emoji {
-		from { transform: scale(0.95); opacity: 0.8; }
-		to { transform: scale(1.15); opacity: 1; }
-	}
-
-	.laser-scanner {
+	.laser {
 		position: absolute;
 		left: 0;
 		right: 0;
-		height: 4px;
-		background: #99cc99;
-		box-shadow: 0 0 8px #99cc99, 0 0 16px #99cc99;
+		height: 3px;
+		background: var(--color-primary);
+		box-shadow: 0 0 8px var(--color-primary);
 		animation: scan-move 1.8s ease-in-out infinite alternate;
 	}
 
@@ -962,329 +797,419 @@
 		100% { top: 100%; }
 	}
 
-	.scan-progress-bar-wrapper {
+	.progress-row {
 		width: 100%;
-		height: 12px;
-		background: var(--color-surface);
-		border: 2px solid var(--color-border);
-		border-radius: 10px;
-		overflow: hidden;
-		position: relative;
-		box-shadow: inset 0 1.5px 0 rgba(0, 0, 0, 0.1);
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
 	}
 
-	.scan-progress-bar {
+	.progress-track-wide {
+		flex: 1;
+		height: 6px;
+		background: var(--color-surface-container);
+		border-radius: var(--radius-full);
+		overflow: hidden;
+	}
+
+	.progress-fill-wide {
 		height: 100%;
-		background: #5e8f60;
+		background: var(--color-primary);
+		border-radius: var(--radius-full);
 		transition: width 0.2s ease;
 	}
 
-	.scan-percentage {
-		font-family: var(--font-display);
-		font-size: 0.65rem;
-		font-weight: 700;
+	.progress-pct {
+		font-family: var(--font-body);
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: var(--color-primary);
+		min-width: 2.5rem;
+		text-align: right;
 	}
 
-	.scan-terminal-logs {
+	.terminal-logs {
 		width: 100%;
-		background: #1e1e1e;
-		border: 2px solid var(--color-border);
-		border-radius: 14px;
-		padding: 0.45rem;
-		height: 4.8rem;
+		background: var(--color-inverse-surface);
+		border-radius: var(--radius-lg);
+		padding: 0.625rem 0.875rem;
+		height: 5.5rem;
 		overflow-y: auto;
 		display: flex;
 		flex-direction: column;
-		gap: 0.25rem;
-		box-shadow: inset 0 2px 0 rgba(0, 0, 0, 0.4);
+		gap: 0.2rem;
+		scrollbar-width: thin;
+		scrollbar-color: rgba(255,255,255,0.2) transparent;
 	}
 
 	.log-line {
-		color: #5eff5e;
+		color: #b9ce9b;
 		font-family: 'Courier New', Courier, monospace;
-		font-size: 0.55rem;
-		font-weight: bold;
-		text-align: left;
+		font-size: 0.6rem;
+		font-weight: 600;
 	}
 
-	/* Detected View */
-	.scanner-detected-view {
+	/* Detected Result */
+	.scanner-result {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 0.75rem;
+		gap: 0.875rem;
 		width: 100%;
 	}
 
-	.detected-badge {
-		background: #b84d66;
-		color: #ffffff;
-		border: 1.5px solid var(--color-border);
-		box-shadow: 0 1.5px 0 var(--color-border);
+	.result-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		background: rgba(80, 98, 56, 0.1);
+		color: var(--color-primary);
+		padding: 0.25rem 0.875rem;
+		border-radius: var(--radius-full);
+		font-family: var(--font-body);
+		font-size: 0.75rem;
+		font-weight: 600;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+	}
+
+	.result-badge .material-symbols-outlined {
+		font-size: 1rem;
+	}
+
+	.result-badge .fill {
+		font-variation-settings: 'FILL' 1;
+	}
+
+	.result-card {
+		display: flex;
+		align-items: center;
+		gap: 0.875rem;
+		background: var(--color-surface-container);
+		border-radius: var(--radius-xl);
+		padding: 0.875rem;
+		width: 100%;
+	}
+
+	.result-emoji-wrap {
+		width: 3.5rem;
+		height: 3.5rem;
+		border-radius: var(--radius-lg);
+		background: var(--color-surface-container-lowest);
+		border: 1px solid var(--color-outline-variant);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-shadow: var(--shadow-card);
+		flex-shrink: 0;
+	}
+
+	.result-emoji {
+		font-size: 2rem;
+	}
+
+	.result-details {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+	}
+
+	.result-name {
 		font-family: var(--font-display);
-		font-weight: 700;
-		font-size: 0.55rem;
-		padding: 0.15rem 0.55rem;
-		border-radius: 14px;
+		font-size: 1rem;
+		font-weight: 600;
+		color: var(--color-on-surface);
+		margin: 0;
+	}
+
+	.confidence-row {
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+	}
+
+	.confidence-label {
+		font-family: var(--font-body);
+		font-size: 0.7rem;
+		font-weight: 500;
+		color: var(--color-on-surface-variant);
+	}
+
+	.confidence-bar {
+		height: 4px;
+		background: var(--color-surface-container-high);
+		border-radius: var(--radius-full);
+		overflow: hidden;
+	}
+
+	.confidence-fill {
+		height: 100%;
+		background: var(--color-primary);
+		border-radius: var(--radius-full);
+	}
+
+	.nutrition-chips {
+		display: flex;
+		gap: 0.5rem;
+		width: 100%;
+	}
+
+	.nut-chip {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: 0.5rem 0.25rem;
+		border-radius: var(--radius-lg);
+		box-shadow: var(--shadow-card);
+		text-align: center;
+	}
+
+	.nut-chip.caffeine { background: rgba(213, 234, 181, 0.4); }
+	.nut-chip.sugar { background: rgba(255, 219, 208, 0.4); }
+	.nut-chip.calories { background: rgba(240, 238, 233, 0.8); }
+
+	.nut-val {
+		font-family: var(--font-display);
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: var(--color-on-surface);
+	}
+
+	.nut-key {
+		font-family: var(--font-body);
+		font-size: 0.65rem;
+		font-weight: 500;
+		color: var(--color-outline);
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 	}
 
-	.detected-card {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-		background: var(--color-surface);
-		border: 2px solid var(--color-border);
-		box-shadow: 0 3px 0 var(--color-border);
-		border-radius: 16px;
-		padding: 0.55rem;
-		width: 100%;
-	}
-
-	.detected-emoji-wrap {
-		width: 2.8rem;
-		height: 2.8rem;
-		border-radius: 12px;
-		background: var(--color-wood-tan);
-		border: 1.75px solid var(--color-border);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 1.8rem;
-		box-shadow: inset 0 1.5px 0 rgba(0,0,0,0.06);
-	}
-
-	.detected-details {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		gap: 0.2rem;
-	}
-
-	.detected-name {
-		margin: 0;
-		font-size: 0.85rem;
-		color: var(--color-text);
-		font-weight: 800;
-	}
-
-	.confidence-meter {
-		display: flex;
-		flex-direction: column;
-		gap: 0.15rem;
-	}
-
-	.confidence-label {
-		font-size: 0.52rem;
-		font-weight: 700;
-		color: var(--color-text-muted);
-	}
-
-	.confidence-bar-outer {
-		height: 6px;
-		background: var(--color-wood-tan);
-		border: 1px solid var(--color-border);
-		border-radius: 6px;
-		overflow: hidden;
-	}
-
-	.confidence-bar-inner {
-		height: 100%;
-		background: #99cc99;
-	}
-
-	.detected-nutrition {
-		display: flex;
-		gap: 0.45rem;
-		width: 100%;
-		justify-content: center;
-	}
-
-	.nutrition-chip {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		padding: 0.25rem 0.5rem;
-		border: 1.5px solid var(--color-border);
-		border-radius: 12px;
-		flex: 1;
-		box-shadow: 0 1.5px 0 var(--color-border);
-	}
-
-	.caffeine-color { background-color: #eed4b5; }
-	.sugar-color { background-color: #f7d2db; }
-	.calories-color { background-color: #e2f3e4; }
-
-	.nut-val {
-		font-family: var(--font-display);
-		font-weight: 700;
-		font-size: 0.68rem;
-		color: var(--color-text);
-	}
-
-	.nut-label {
-		font-family: var(--font-body);
-		font-size: 0.48rem;
-		font-weight: 700;
-		color: var(--color-text-muted);
-		text-transform: uppercase;
-	}
-
-	.correction-wrapper {
+	.correction-row {
 		width: 100%;
 		display: flex;
 		flex-direction: column;
-		gap: 0.2rem;
-		align-items: center;
-		margin-top: 0.15rem;
+		gap: 0.35rem;
 	}
 
 	.correction-label {
-		font-family: var(--font-display);
-		font-size: 0.55rem;
-		font-weight: 700;
-		color: var(--color-text-muted);
+		font-family: var(--font-body);
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: var(--color-outline);
 		text-transform: uppercase;
+		letter-spacing: 0.05em;
 	}
 
 	.correction-select {
-		padding: 0.25rem 0.45rem;
-		border-radius: 12px;
-		border: 2px solid var(--color-border);
-		background-color: var(--color-surface);
+		padding: 0.5rem 0.75rem;
+		border-radius: var(--radius-lg);
+		border: 1px solid var(--color-outline-variant);
+		background: var(--color-surface-container-lowest);
 		font-family: var(--font-body);
-		font-weight: 700;
-		font-size: 0.65rem;
-		color: var(--color-text);
+		font-size: 0.875rem;
+		color: var(--color-on-surface);
 		outline: none;
 		cursor: pointer;
-		box-shadow: 0 1.5px 0 var(--color-border);
-		max-width: 10rem;
 		width: 100%;
-		text-align: center;
-	}
-	
-	.correction-select:focus {
-		border-color: var(--color-mint-deep);
+		box-shadow: var(--shadow-card);
 	}
 
-	/* Premium Floating Toast styles */
-	.toast-overlay {
+	.correction-select:focus {
+		border-color: var(--color-primary);
+	}
+
+	/* ── Search Bar ───────────────────────────────────────── */
+	.search-row {
+		width: 100%;
+	}
+
+	.search-wrapper {
+		position: relative;
+		display: flex;
+		align-items: center;
+	}
+
+	.search-icon {
+		position: absolute;
+		left: 0.875rem;
+		color: var(--color-outline);
+		font-size: 1.25rem;
+		pointer-events: none;
+	}
+
+	.search-input {
+		width: 100%;
+		padding: 0.75rem 2.75rem 0.75rem 2.75rem;
+		border-radius: var(--radius-full);
+		border: 1px solid var(--color-outline-variant);
+		background: var(--color-surface-container-lowest);
+		font-family: var(--font-body);
+		font-size: 0.95rem;
+		color: var(--color-on-surface);
+		box-shadow: var(--shadow-card);
+		outline: none;
+		transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	.search-input:focus {
+		border-color: var(--color-primary);
+	}
+
+	.search-clear {
+		position: absolute;
+		right: 0.75rem;
+		background: none;
+		border: none;
+		color: var(--color-outline);
+		cursor: pointer;
+		padding: 0.25rem;
+		border-radius: 50%;
+		display: grid;
+		place-items: center;
+		transition: background 0.2s ease;
+	}
+
+	.search-clear:hover {
+		background: var(--color-surface-container);
+	}
+
+	.search-clear .material-symbols-outlined {
+		font-size: 1.125rem;
+	}
+
+	/* ── Category Chips ──────────────────────────────────── */
+	.categories-scroll {
+		display: flex;
+		gap: 0.5rem;
+		overflow-x: auto;
+		scrollbar-width: none;
+		padding: 0.1rem 0 0.25rem;
+		margin-inline: calc(-1 * var(--space-container));
+		padding-inline: var(--space-container);
+	}
+
+	.categories-scroll::-webkit-scrollbar {
+		display: none;
+	}
+
+	.cat-chip {
+		flex-shrink: 0;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		padding: 0.45rem 0.875rem;
+		border-radius: var(--radius-full);
+		border: 1px solid var(--color-outline-variant);
+		background: var(--color-surface-container-lowest);
+		color: var(--color-on-surface-variant);
+		font-family: var(--font-body);
+		font-size: 0.8rem;
+		font-weight: 600;
+		cursor: pointer;
+		box-shadow: var(--shadow-card);
+		transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+	}
+
+	.cat-chip:hover {
+		background: var(--color-surface-container);
+	}
+
+	.cat-chip.active {
+		background: var(--color-primary);
+		color: var(--color-on-primary);
+		border-color: transparent;
+	}
+
+	.cat-icon {
+		font-size: 1rem;
+	}
+
+	/* ── Drink Grid ───────────────────────────────────────── */
+	.grid-section {
+		width: 100%;
+	}
+
+	.drink-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 0.75rem;
+	}
+
+	@media (min-width: 480px) {
+		.drink-grid {
+			grid-template-columns: repeat(4, 1fr);
+		}
+	}
+
+	.empty-state {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 3rem 1.5rem;
+		border-radius: var(--radius-xl);
+		border: 1px dashed var(--color-outline-variant);
+		background: var(--color-surface-container-lowest);
+		text-align: center;
+	}
+
+	.empty-icon {
+		font-size: 2.5rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.empty-state p {
+		font-family: var(--font-body);
+		font-size: 0.875rem;
+		color: var(--color-outline);
+		margin: 0;
+	}
+
+	/* ── Toy Box ─────────────────────────────────────────── */
+	.toybox-section {
+		margin-top: 0.5rem;
+	}
+
+	/* ── Toast ───────────────────────────────────────────── */
+	.toast {
 		position: fixed;
-		top: 6.5rem;
+		bottom: 6rem;
 		left: 50%;
 		transform: translateX(-50%);
 		z-index: 100;
-	}
-
-	.retro-dialog {
-		background: var(--color-surface);
-		border: 2.5px solid var(--color-border);
-		box-shadow: 0 4.5px 0 var(--color-border);
-		border-radius: 18px;
-		width: 16rem;
-		overflow: hidden;
-		animation:
-			toastPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) both,
-			toastFadeOut 0.3s ease 2.5s both;
-	}
-
-	.dialog-title-bar {
-		background: #b22222; /* Warning Red */
-		color: #ffffff;
-		padding: 0.35rem 0.55rem;
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
-		border-bottom: 2.5px solid var(--color-border);
-		font-family: var(--font-display);
-		font-size: 0.55rem;
-		font-weight: 700;
-	}
-
-	.dialog-close-x {
-		background: none;
-		border: none;
-		padding: 0;
-		color: #ffffff;
-		font-weight: 800;
-		cursor: pointer;
-		font-family: inherit;
-	}
-
-	.dialog-body {
-		padding: 0.75rem;
-		display: flex;
-		align-items: flex-start;
-		gap: 0.65rem;
-		background: var(--color-wood-tan);
-	}
-
-	.toast-emoji {
-		font-size: 1.6rem;
-		flex-shrink: 0;
-	}
-
-	.dialog-content {
-		display: flex;
-		flex-direction: column;
-		gap: 0.55rem;
-		flex-grow: 1;
-	}
-
-	.dialog-text {
-		margin: 0;
+		gap: 0.5rem;
+		background: var(--color-inverse-surface);
+		color: var(--color-inverse-on-surface);
+		padding: 0.75rem 1.25rem;
+		border-radius: var(--radius-full);
+		box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15);
 		font-family: var(--font-body);
-		font-size: 0.75rem;
-		font-weight: 700;
-		line-height: 1.35;
-		color: var(--color-text);
+		font-size: 0.875rem;
+		white-space: nowrap;
+		animation: toastIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) both,
+			toastOut 0.3s ease 1.5s both;
 	}
 
-	.dialog-buttons {
-		display: flex;
-		justify-content: flex-end;
+	.toast-icon {
+		color: var(--color-primary-fixed-dim);
+		font-size: 1.125rem;
 	}
 
-	.dialog-ok-btn {
-		padding: 0.3rem 0.85rem;
-		font-size: 0.62rem;
-		box-shadow:
-			inset 0 2px 0 rgba(255, 255, 255, 0.5),
-			inset 0 -2px 0 rgba(0, 0, 0, 0.1),
-			0 3.5px 0 var(--color-btn-border);
+	.toast-icon.fill {
+		font-variation-settings: 'FILL' 1;
 	}
 
-	.dialog-ok-btn:active {
-		transform: translateY(3.5px);
-		box-shadow:
-			inset 0 2px 0 rgba(255, 255, 255, 0.5),
-			inset 0 -2px 0 rgba(0, 0, 0, 0.1),
-			0 0px 0 var(--color-btn-border);
+	@keyframes toastIn {
+		from { opacity: 0; transform: translateX(-50%) translateY(12px) scale(0.9); }
+		to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
 	}
 
-	@keyframes toastPop {
-		0% {
-			opacity: 0;
-			transform: scale(0.8) translateY(12px);
-		}
-		100% {
-			opacity: 1;
-			transform: scale(1) translateY(0);
-		}
-	}
-
-	@keyframes toastFadeOut {
-		0% {
-			opacity: 1;
-		}
-		90% {
-			opacity: 1;
-		}
-		100% {
-			opacity: 0;
-			pointer-events: none;
-		}
+	@keyframes toastOut {
+		from { opacity: 1; }
+		to { opacity: 0; }
 	}
 </style>

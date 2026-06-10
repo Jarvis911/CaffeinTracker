@@ -9,20 +9,26 @@
 </script>
 
 <svelte:head>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
 	<link
 		rel="stylesheet"
-		href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap"
+		href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+	/>
+	<link
+		rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
 	/>
 	<link rel="icon" href={favicon} />
-	<title>Caffein Tracker</title>
+	<title>Zakka Caffeine</title>
 	<meta
 		name="description"
-		content="A cute caffeine companion that personalizes your coffee and sugar drinks using fitness health data."
+		content="A mindful caffeine companion. Track your ritual with intention."
 	/>
 </svelte:head>
 
 {#if $isLoading}
-	<!-- Do not render until dictionary is loaded -->
+	<!-- Dictionary loading -->
 {:else}
 	<div class="app-shell">
 		{@render children()}

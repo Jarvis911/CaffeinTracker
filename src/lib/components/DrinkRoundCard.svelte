@@ -10,88 +10,67 @@
 	} = $props();
 </script>
 
-<button type="button" class="round-card" onclick={onSelect} aria-label="Log {drink.name}">
-	<div class="tile">
-		{#if drink.imageUrl}
-			<img src={drink.imageUrl} alt={drink.name} class="drink-img" />
-		{:else}
-			<span class="drink-emoji" aria-hidden="true">{drink.emoji}</span>
-		{/if}
-	</div>
+<button type="button" class="chip" onclick={onSelect} aria-label="Quick log {drink.name}">
+	{#if drink.imageUrl}
+		<img src={drink.imageUrl} alt="" class="chip-img" aria-hidden="true" />
+	{:else}
+		<span class="chip-emoji" aria-hidden="true">{drink.emoji}</span>
+	{/if}
+	<span class="chip-name">{drink.name}</span>
+	<span class="chip-mg">{drink.caffeineMg}mg</span>
 </button>
 
 <style>
-	.round-card {
-		display: flex;
-		flex-direction: column;
+	.chip {
+		display: inline-flex;
 		align-items: center;
-		border: none;
-		background: none;
-		cursor: pointer;
-		padding: 0.1rem;
-		width: 3.5rem;
+		gap: 0.4rem;
 		flex-shrink: 0;
-		text-align: center;
+		padding: 0.5rem 0.875rem 0.5rem 0.625rem;
+		border-radius: var(--radius-full);
+		background: var(--color-surface-container-lowest);
+		border: 1px solid var(--color-outline-variant);
+		box-shadow: var(--shadow-card);
+		cursor: pointer;
+		text-align: left;
+		transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
 	}
 
-	.tile {
-		width: 3.25rem;
-		height: 3.25rem;
-		border-radius: 16px;
-		border: 2px solid var(--color-border);
-		background: 
-			linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
-			url('/images/minecraft_green_planks.png');
-		background-size: auto, 80px;
-		display: grid;
-		place-items: center;
-		box-shadow:
-			inset 0 2.5px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -4px 0 rgba(0, 0, 0, 0.2),
-			0 3.5px 0 var(--color-border);
-		transition:
-			transform 0.1s ease,
-			box-shadow 0.1s ease,
-			filter 0.15s ease;
+	.chip:hover {
+		background: rgba(80, 98, 56, 0.05);
+		border-color: var(--color-primary);
 	}
 
-	.round-card:hover .tile {
-		filter: brightness(1.15);
-		transform: translateY(-2px);
-		box-shadow:
-			inset 0 2.5px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -4px 0 rgba(0, 0, 0, 0.35),
-			0 5px 0 var(--color-border);
+	.chip:active {
+		transform: scale(0.96);
 	}
 
-	.round-card:active .tile {
-		transform: translateY(3.5px);
-		box-shadow:
-			inset 0 1.5px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -1.5px 0 rgba(0, 0, 0, 0.35),
-			0 0px 0 var(--color-border);
-		filter: brightness(0.85);
-	}
-
-	.drink-img {
-		width: 2.4rem;
-		height: 2.4rem;
+	.chip-img {
+		width: 1.5rem;
+		height: 1.5rem;
 		object-fit: contain;
-		filter: drop-shadow(0 2px 4px rgba(61, 44, 42, 0.1));
-		transition: transform 0.2s ease;
+		border-radius: var(--radius-sm);
 	}
 
-	.round-card:hover .drink-img {
-		transform: scale(1.1) rotate(5deg);
-	}
-
-	.drink-emoji {
-		font-size: 2.1rem;
+	.chip-emoji {
+		font-size: 1.25rem;
 		line-height: 1;
-		transition: transform 0.2s ease;
 	}
 
-	.round-card:hover .drink-emoji {
-		transform: scale(1.1) rotate(-5deg);
+	.chip-name {
+		font-family: var(--font-body);
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: var(--color-on-surface);
+	}
+
+	.chip-mg {
+		font-family: var(--font-body);
+		font-size: 0.65rem;
+		font-weight: 600;
+		color: var(--color-primary);
+		background: rgba(80, 98, 56, 0.08);
+		padding: 0.1rem 0.35rem;
+		border-radius: var(--radius-full);
 	}
 </style>

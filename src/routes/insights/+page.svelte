@@ -12,17 +12,15 @@
 		getGardenLevel
 	} from '$lib/personalization/achievements';
 
-	let isEditing = $state(false);
-
-	// Calculate stats reactively
+	// ── Stats (reactive) ──────────────────────────────────────
 	const totalCaffeine = $derived(getTotalCaffeine(app.logs));
 	const daysLogged = $derived(getDaysLogged(app.logs));
 	const gardenLevel = $derived(getGardenLevel(totalCaffeine));
 	const achievementsList = $derived(checkAchievements(app.logs, app.profile, app.connectedProviders));
-	const unlockedAchievementsCount = $derived(achievementsList.filter(a => a.unlocked).length);
-
+	const unlockedCount = $derived(achievementsList.filter((a) => a.unlocked).length);
 	const sugarCap = $derived(getDailySugarCap(app.profile.sugarSensitivity));
 
+	// ── Profile edit ──────────────────────────────────────────
 	function setSensitivity(value: UserProfile['sugarSensitivity']) {
 		app.updateProfile({ sugarSensitivity: value });
 	}
@@ -42,858 +40,802 @@
 		}
 	}
 
-	// Slide navigation
-	let activeSlide = $state<'profile' | 'achievements'>('profile');
-	let containerElement = $state<HTMLDivElement | null>(null);
-
-	function scrollToSlide(slide: 'profile' | 'achievements') {
-		activeSlide = slide;
-		if (containerElement) {
-			const targetX = slide === 'profile' ? 0 : containerElement.clientWidth;
-			containerElement.scrollTo({ left: targetX, behavior: 'smooth' });
-		}
-	}
-
-	function handleScroll(e: Event) {
-		const target = e.currentTarget as HTMLDivElement;
-		const slideWidth = target.clientWidth;
-		if (target.scrollLeft < slideWidth / 2) {
-			activeSlide = 'profile';
-		} else {
-			activeSlide = 'achievements';
-		}
-	}
+	// ── View state ────────────────────────────────────────────
+	type View = 'profile' | 'achievements' | 'edit';
+	let activeView = $state<View>('profile');
 </script>
 
-<div class="profile-page fade-in">
-	<!-- Custom Garden Scroll Header -->
-	<header class="scroll-header">
-		<div class="scroll-inner">
-			<div class="scroll-rolls-left" aria-hidden="true"></div>
-			<div class="scroll-center">
-				<h1 class="header-title">{$_('profile.garden_title')}</h1>
-			</div>
-			<div class="scroll-rolls-right" aria-hidden="true"></div>
-		</div>
-		<div class="subtitle-banner">
-			<span>{$_('profile.garden_subtitle')}</span>
-		</div>
-	</header>
+<svelte:head>
+	<title>Profile — Zakka Caffeine</title>
+</svelte:head>
 
-	<!-- Carousel Navigation Dots -->
-	<div class="carousel-nav" aria-label="Slide navigation">
+<!-- Top App Bar -->
+<header class="top-bar">
+	<div class="top-bar-inner">
+		<h1 class="app-title">Zakka Caffeine</h1>
+		<button class="icon-btn" aria-label="Account">
+			<span class="material-symbols-outlined">account_circle</span>
+		</button>
+	</div>
+</header>
+
+<main class="profile-page fade-in">
+
+	<!-- ── Profile Hero ─────────────────────────────────────── -->
+	<section class="hero-section">
+		<div class="avatar-ring">
+			<div class="avatar-inner">
+				<span class="avatar-letter">
+					{app.profile.name.charAt(0).toUpperCase()}
+				</span>
+			</div>
+		</div>
+		<h2 class="user-name">{app.profile.name}</h2>
+		<p class="user-tagline">Mindful Caffeine Tracking</p>
+	</section>
+
+	<!-- ── Stats Bento ──────────────────────────────────────── -->
+	<section class="bento-grid">
+		<div class="bento-card primary-card">
+			<span class="bento-label">Daily Limit</span>
+			<span class="bento-value">{app.profile.dailyCaffeineLimitMg}<span class="bento-unit">mg</span></span>
+		</div>
+		<div class="bento-card">
+			<span class="bento-label">Days Logged</span>
+			<span class="bento-value secondary-val">{daysLogged}</span>
+		</div>
+		<div class="bento-card">
+			<span class="bento-label">Total Caffeine</span>
+			<span class="bento-value">{totalCaffeine}<span class="bento-unit">mg</span></span>
+		</div>
+		<div class="bento-card">
+			<span class="bento-label">Achievements</span>
+			<span class="bento-value secondary-val">{unlockedCount}<span class="bento-unit"> / {achievementsList.length}</span></span>
+		</div>
+	</section>
+
+	<!-- ── View Tabs ────────────────────────────────────────── -->
+	<div class="view-tabs" role="tablist">
 		<button
 			type="button"
-			class="dot-btn"
-			class:active={activeSlide === 'profile'}
-			onclick={() => scrollToSlide('profile')}
+			class="view-tab"
+			class:active={activeView === 'profile'}
+			onclick={() => (activeView = 'profile')}
+			role="tab"
+			aria-selected={activeView === 'profile'}
 		>
-			{$_('profile.title')}
+			<span class="material-symbols-outlined tab-icon">manage_accounts</span>
+			Settings
 		</button>
 		<button
 			type="button"
-			class="dot-btn"
-			class:active={activeSlide === 'achievements'}
-			onclick={() => scrollToSlide('achievements')}
+			class="view-tab"
+			class:active={activeView === 'achievements'}
+			onclick={() => (activeView = 'achievements')}
+			role="tab"
+			aria-selected={activeView === 'achievements'}
 		>
-			{$_('profile.achievements_title')}
+			<span class="material-symbols-outlined tab-icon">workspace_premium</span>
+			Achievements
 		</button>
 	</div>
 
-	<!-- Carousel Container -->
-	<div 
-		class="carousel-container" 
-		bind:this={containerElement}
-		onscroll={handleScroll}
-	>
-		<!-- Slide 1: Profile View / Edit View -->
-		<div class="carousel-slide">
+	<!-- ── Settings View ────────────────────────────────────── -->
+	{#if activeView === 'profile'}
+		<div class="settings-view fade-in">
+
+			<!-- Auth Panel -->
 			<AuthPanel user={page.data.user} />
 
-			{#if !isEditing}
-				<!-- Profile Card -->
-				<div class="garden-card profile-card-inner">
-					<!-- Avatar Card Header -->
-					<div class="avatar-card-header">
-						<div class="avatar-frame">
-							<img src="/images/bunny_avatar.png" alt="Bunny avatar" class="avatar-img" />
+			<!-- Consumption Settings Group -->
+			<div class="settings-label">Consumption</div>
+			<div class="settings-group">
+				<!-- Daily Limit -->
+				<div class="settings-row limit-row">
+					<div class="settings-row-lead">
+						<span class="material-symbols-outlined settings-icon">coffee_maker</span>
+						<div>
+							<p class="settings-row-title">Daily Limit</p>
+							<p class="settings-row-desc">Your soft ceiling for caffeine</p>
 						</div>
-						<div class="avatar-details">
-							<h2 class="user-name">{app.profile.name}</h2>
-							<p class="user-level">
-								{$_('profile.level_title', { values: { level: gardenLevel } })}
+					</div>
+					<div class="limit-display">
+						<span class="limit-value">{app.profile.dailyCaffeineLimitMg}</span>
+						<span class="limit-unit">mg</span>
+					</div>
+				</div>
+				<div class="limit-slider-row">
+					<input
+						type="range"
+						min="100"
+						max="600"
+						step="25"
+						value={app.profile.dailyCaffeineLimitMg}
+						oninput={(e) => setLimit(Number(e.currentTarget.value))}
+						aria-label="Daily caffeine limit"
+					/>
+					<div class="slider-labels">
+						<span>100mg</span>
+						<span>600mg</span>
+					</div>
+				</div>
+
+				<div class="settings-divider"></div>
+
+				<!-- Display Name -->
+				<div class="settings-row">
+					<div class="settings-row-lead">
+						<span class="material-symbols-outlined settings-icon">badge</span>
+						<div>
+							<p class="settings-row-title">Display Name</p>
+						</div>
+					</div>
+				</div>
+				<div class="name-input-row">
+					<input
+						type="text"
+						value={app.profile.name}
+						oninput={(e) => setName(e.currentTarget.value)}
+						placeholder="Your name"
+						aria-label="Display name"
+					/>
+				</div>
+
+				<div class="settings-divider"></div>
+
+				<!-- Sugar Sensitivity -->
+				<div class="settings-row">
+					<div class="settings-row-lead">
+						<span class="material-symbols-outlined settings-icon">water_drop</span>
+						<div>
+							<p class="settings-row-title">Sugar Sensitivity</p>
+							<p class="settings-row-desc">Daily cap: {sugarCap}g</p>
+						</div>
+					</div>
+				</div>
+				<div class="radio-group">
+					{#each ['low', 'medium', 'high'] as level (level)}
+						<button
+							type="button"
+							class="radio-btn"
+							class:active={app.profile.sugarSensitivity === level}
+							onclick={() => setSensitivity(level as UserProfile['sugarSensitivity'])}
+						>
+							{level}
+						</button>
+					{/each}
+				</div>
+			</div>
+
+			<!-- Atmosphere Settings Group -->
+			<div class="settings-label">Language</div>
+			<div class="settings-group">
+				<div class="settings-row">
+					<div class="settings-row-lead">
+						<span class="material-symbols-outlined settings-icon">translate</span>
+						<div>
+							<p class="settings-row-title">Interface Language</p>
+						</div>
+					</div>
+				</div>
+				<div class="radio-group">
+					<button
+						type="button"
+						class="radio-btn"
+						class:active={$locale === 'en'}
+						onclick={() => toggleLanguage('en')}
+					>
+						English
+					</button>
+					<button
+						type="button"
+						class="radio-btn"
+						class:active={$locale === 'vi'}
+						onclick={() => toggleLanguage('vi')}
+					>
+						Tiếng Việt
+					</button>
+				</div>
+			</div>
+
+			<!-- Fitness Sync Link -->
+			<div class="settings-label">Integrations</div>
+			<div class="settings-group">
+				<a href="/connect" class="settings-row settings-link-row">
+					<div class="settings-row-lead">
+						<span class="material-symbols-outlined settings-icon">monitor_heart</span>
+						<div>
+							<p class="settings-row-title">Fitness Sync</p>
+							<p class="settings-row-desc">
+								{app.connectedProviders.length > 0
+									? `${app.connectedProviders.length} provider(s) connected`
+									: 'Connect Apple Health, Google Fit & more'}
 							</p>
 						</div>
 					</div>
+					<span class="material-symbols-outlined arrow-icon">chevron_right</span>
+				</a>
+			</div>
 
-					<div class="profile-card-content">
-						<!-- Left Stats List -->
-						<div class="stats-list">
-							<div class="stat-item">
-								<span class="stat-icon" aria-hidden="true">🫘</span>
-								<div class="stat-text">
-									<strong class="stat-label">[{$_('profile.total_caffeine')}]</strong>
-									<span class="stat-value">{totalCaffeine}mg</span>
-								</div>
-							</div>
-							<div class="stat-item">
-								<span class="stat-icon" aria-hidden="true">🌳</span>
-								<div class="stat-text">
-									<strong class="stat-label">[{$_('profile.garden_level')}]</strong>
-									<span class="stat-value">{gardenLevel}</span>
-								</div>
-							</div>
-							<div class="stat-item">
-								<span class="stat-icon" aria-hidden="true">📅</span>
-								<div class="stat-text">
-									<strong class="stat-label">[{$_('profile.days_logged')}]</strong>
-									<span class="stat-value">{daysLogged}</span>
-								</div>
-							</div>
-							<div class="stat-item">
-								<span class="stat-icon" aria-hidden="true">🏅</span>
-								<div class="stat-text">
-									<strong class="stat-label">[{$_('profile.achievements_count')}]</strong>
-									<span class="stat-value">{unlockedAchievementsCount} / {achievementsList.length}</span>
-								</div>
-							</div>
+			<!-- Footer Actions -->
+			<div class="footer-actions">
+				<button class="btn-ghost export-btn">
+					<span class="material-symbols-outlined">download</span>
+					Export Intake History
+				</button>
+			</div>
+		</div>
+
+	<!-- ── Achievements View ─────────────────────────────────── -->
+	{:else if activeView === 'achievements'}
+		<div class="achievements-view fade-in">
+			<div class="garden-level-card">
+				<span class="material-symbols-outlined garden-icon fill">nature</span>
+				<div>
+					<p class="garden-label">Garden Level</p>
+					<p class="garden-value">{gardenLevel}</p>
+				</div>
+			</div>
+
+			<div class="achievements-list">
+				{#each achievementsList as ach (ach.titleKey)}
+					<div class="achievement-item" class:locked={!ach.unlocked}>
+						<div class="ach-icon-wrap" class:unlocked={ach.unlocked}>
+							<img src={ach.icon} alt="" class="ach-icon-img" />
+							<span class="ach-status-indicator" aria-hidden="true">
+								{ach.unlocked ? '✓' : '🔒'}
+							</span>
 						</div>
-
-						<!-- Right Illustration -->
-						<div class="illustration-side">
-							<img src="/images/profile_picnic.png" alt="Picnic Illustration" class="picnic-img" />
+						<div class="ach-info">
+							<h4 class="ach-title">{$_(ach.titleKey)}</h4>
+							<p class="ach-desc">{$_(ach.descKey)}</p>
 						</div>
 					</div>
-				</div>
+				{/each}
+			</div>
 
-				<!-- Wooden Edit Sign Button -->
-				<div class="wooden-button-wrapper">
-					<div class="pole left"></div>
-					<div class="pole right"></div>
-					<button
-						type="button"
-						class="wooden-sign-btn"
-						onclick={() => (isEditing = true)}
-					>
-						{$_('profile.edit_profile')}
-					</button>
-				</div>
-			{:else}
-				<!-- Edit View Card -->
-				<div class="garden-card edit-card-inner">
-					<h2 class="edit-card-title">{$_('profile.edit_profile')}</h2>
-
-					<form class="edit-form" onsubmit={(e) => e.preventDefault()}>
-						<label class="field">
-							<span class="field-title">{$_('profile.display_name')}</span>
-							<input
-								type="text"
-								value={app.profile.name}
-								oninput={(e) => setName(e.currentTarget.value)}
-								class="pixel-input"
-							/>
-						</label>
-
-						<label class="field">
-							<span class="field-title">{$_('profile.caffeine_limit')}</span>
-							<input
-								type="range"
-								min="100"
-								max="600"
-								step="25"
-								value={app.profile.dailyCaffeineLimitMg}
-								oninput={(e) => setLimit(Number(e.currentTarget.value))}
-								class="pixel-range"
-							/>
-							<output class="pixel-output">{app.profile.dailyCaffeineLimitMg} mg</output>
-						</label>
-
-						<fieldset class="field border-none p-0">
-							<span class="field-title">{$_('profile.sugar_sensitivity')}</span>
-							<div class="radio-row">
-								{#each ['low', 'medium', 'high'] as level}
-									<button
-										type="button"
-										class="radio-btn"
-										class:active={app.profile.sugarSensitivity === level}
-										onclick={() => setSensitivity(level as UserProfile['sugarSensitivity'])}
-									>
-										{level}
-									</button>
-								{/each}
-							</div>
-							<p class="hint">{$_('profile.sugar_guidance', { values: { cap: sugarCap } })}</p>
-						</fieldset>
-
-						<fieldset class="field border-none p-0 mt-3">
-							<span class="field-title">{$_('profile.language')}</span>
-							<div class="radio-row">
-								<button
-									type="button"
-									class="radio-btn"
-									class:active={$locale === 'en'}
-									onclick={() => toggleLanguage('en')}
-								>
-									{$_('profile.lang_en')}
-								</button>
-								<button
-									type="button"
-									class="radio-btn"
-									class:active={$locale === 'vi'}
-									onclick={() => toggleLanguage('vi')}
-								>
-									{$_('profile.lang_vi')}
-								</button>
-							</div>
-						</fieldset>
-					</form>
-				</div>
-
-				<!-- Wooden Back Sign Button -->
-				<div class="wooden-button-wrapper">
-					<div class="pole left"></div>
-					<div class="pole right"></div>
-					<button
-						type="button"
-						class="wooden-sign-btn save-btn"
-						onclick={() => (isEditing = false)}
-					>
-						{$_('profile.back_to_profile')}
-					</button>
+			{#if app.hasFitnessData}
+				<div class="personalize-card">
+					<h3 class="personalize-title">How we personalize</h3>
+					<ul class="personalize-tips">
+						<li>{$_('profile.tip_sleep')}</li>
+						<li>{$_('profile.tip_hr')}</li>
+						<li>{$_('profile.tip_afternoon')}</li>
+						<li>{$_('profile.tip_active')}</li>
+					</ul>
 				</div>
 			{/if}
 		</div>
-
-		<!-- Slide 2: Achievements View -->
-		<div class="carousel-slide">
-			<div class="garden-card achievements-card-inner">
-				<h2 class="achievements-card-title">{$_('profile.achievements_title')}</h2>
-				
-				<div class="achievements-scroll-wrapper">
-					<div class="achievements-list">
-						{#each achievementsList as ach}
-							<div class="achievement-item" class:locked={!ach.unlocked}>
-								<div class="achievement-icon-wrapper">
-									<img src={ach.icon} alt="" class="achievement-icon-img" />
-									{#if !ach.unlocked}
-										<span class="lock-indicator" aria-label="Locked">🔒</span>
-									{:else}
-										<span class="check-indicator" aria-label="Unlocked">✅</span>
-									{/if}
-								</div>
-								<div class="achievement-info">
-									<h3 class="achievement-title">{$_(ach.titleKey)}</h3>
-									<p class="achievement-desc">{$_(ach.descKey)}</p>
-								</div>
-							</div>
-						{/each}
-					</div>
-				</div>
-			</div>
-			
-			<!-- Spacer to match height of Slide 1 with button post spacing -->
-			<div class="slide-bottom-spacer"></div>
-		</div>
-	</div>
-
-	<!-- Bottom Section: How we personalize / Sync tips -->
-	<footer class="footer-tips">
-		{#if app.hasFitnessData}
-			<section class="card-panel">
-				<h2 class="section-title">{$_('profile.how_we_personalize')}</h2>
-				<ul class="tips">
-					<li>{$_('profile.tip_sleep')}</li>
-					<li>{$_('profile.tip_hr')}</li>
-					<li>{$_('profile.tip_afternoon')}</li>
-					<li>{$_('profile.tip_active')}</li>
-				</ul>
-			</section>
-		{:else}
-			<section class="card-panel">
-				<p class="hint m-0">{$_('profile.connect_hint')}</p>
-				<a href="/connect" class="btn-primary go-to-sync-btn">{$_('profile.go_to_sync')}</a>
-			</section>
-		{/if}
-	</footer>
-</div>
+	{/if}
+</main>
 
 <style>
-	/* Custom styles mapping to Sprout Lands & Cozy pixel design */
-	.profile-page {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		padding-bottom: 2rem;
+	/* ── Top Bar ─────────────────────────────────────────── */
+	.top-bar {
+		position: sticky;
+		top: 0;
+		z-index: 40;
+		background: var(--color-surface);
+		border-bottom: 1px solid rgba(197, 200, 187, 0.2);
 	}
 
-	/* Scroll Header */
-	.scroll-header {
-		position: relative;
-		margin-bottom: 0.2rem;
-		text-align: center;
-	}
-
-	.scroll-inner {
+	.top-bar-inner {
 		display: flex;
+		justify-content: space-between;
 		align-items: center;
-		justify-content: center;
-		height: 3.5rem;
-		background-color: #faf0dd; /* scroll paper background */
-		border-top: 3px solid #3d2c2a;
-		border-bottom: 3px solid #3d2c2a;
-		position: relative;
-		margin-inline: 14px;
-		box-shadow: 0 4px 0 rgba(61, 44, 42, 0.15);
+		max-width: 768px;
+		margin-inline: auto;
+		padding: var(--space-unit) var(--space-container);
 	}
 
-	.scroll-rolls-left,
-	.scroll-rolls-right {
-		position: absolute;
-		width: 14px;
-		top: -3px;
-		bottom: -3px;
-		background-color: #e5cc9c;
-		border: 3px solid #3d2c2a;
-		border-radius: 4px;
+	.app-title {
+		font-family: var(--font-display);
+		font-size: 1.25rem;
+		font-weight: 600;
+		color: var(--color-primary);
+		margin: 0;
 	}
 
-	.scroll-rolls-left {
-		left: -14px;
-		box-shadow: -2px 4px 0 rgba(61, 44, 42, 0.15);
-	}
-
-	.scroll-rolls-right {
-		right: -14px;
-		box-shadow: 2px 4px 0 rgba(61, 44, 42, 0.15);
-	}
-
-	.scroll-center {
-		flex: 1;
+	.icon-btn {
+		padding: 0.5rem;
+		border-radius: var(--radius-full);
+		border: none;
+		background: transparent;
+		color: var(--color-primary);
+		cursor: pointer;
 		display: grid;
 		place-items: center;
+		transition: background 0.2s ease;
 	}
 
-	.scroll-header .header-title {
-		margin: 0;
-		font-family: var(--font-display);
-		font-size: 0.95rem;
-		font-weight: 800;
-		color: #3d2c2a;
-		letter-spacing: 0.05em;
-		text-transform: uppercase;
-		text-align: center;
+	.icon-btn:hover {
+		background: var(--color-surface-container-low);
 	}
 
-	.subtitle-banner {
-		display: inline-flex;
-		background-color: #3d2c2a;
-		color: #faf0dd;
-		padding: 0.25rem 1rem;
-		border-radius: 12px;
-		font-size: 0.68rem;
-		font-weight: 700;
-		margin-top: -6px;
-		position: relative;
-		z-index: 2;
-		box-shadow: 0 2.5px 0 rgba(0, 0, 0, 0.15);
+	.icon-btn .material-symbols-outlined {
+		font-size: 1.75rem;
 	}
 
-	/* Carousel navigation */
-	.carousel-nav {
-		display: flex;
-		justify-content: center;
-		gap: 0.6rem;
-		margin-top: 0.25rem;
+	/* ── Profile Page ────────────────────────────────────── */
+	.profile-page {
+		max-width: 768px;
+		margin-inline: auto;
+		padding: 0 var(--space-container) var(--space-section);
 	}
 
-	.dot-btn {
-		font-family: var(--font-display);
-		font-size: 0.68rem;
-		font-weight: 700;
-		color: var(--color-text-muted);
-		background-color: var(--color-bg-accent);
-		border: 2px solid var(--color-border);
-		border-radius: 14px;
-		padding: 0.25rem 0.75rem;
-		cursor: pointer;
-		box-shadow: 0 2.5px 0 var(--color-border);
-		transition: all 0.1s ease;
-	}
-
-	.dot-btn:hover {
-		background-color: var(--color-accent);
-	}
-
-	.dot-btn.active {
-		background-color: #e88ba0; /* Soft pink */
-		color: #ffffff;
-		border-color: #b84d66;
-		box-shadow: 0 2.5px 0 #b84d66;
-		transform: translateY(1px);
-	}
-
-	/* Swipe Carousel */
-	.carousel-container {
-		display: flex;
-		overflow-x: auto;
-		scroll-snap-type: x mandatory;
-		scrollbar-width: none;
-		gap: 1.25rem;
-		margin-inline: -1.25rem;
-		padding-inline: 1.25rem;
-		scroll-behavior: smooth;
-	}
-
-	.carousel-container::-webkit-scrollbar {
-		display: none;
-	}
-
-	.carousel-slide {
-		flex: 0 0 100%;
-		scroll-snap-align: start;
-		box-sizing: border-box;
+	/* ── Hero ────────────────────────────────────────────── */
+	.hero-section {
 		display: flex;
 		flex-direction: column;
-	}
-
-	/* Garden custom frame card */
-	.garden-card {
-		background-image: url('/images/frame.png');
-		background-size: 100% 100%;
-		background-repeat: no-repeat;
-		image-rendering: pixelated;
-		padding: 1.5rem 1.6rem;
-		position: relative;
-		display: flex;
-		flex-direction: column;
-		min-height: 18.5rem;
-	}
-
-	/* Avatar Section */
-	.avatar-card-header {
-		display: flex;
 		align-items: center;
-		gap: 0.75rem;
-		margin-bottom: 0.9rem;
-		border-bottom: 2px dashed rgba(61, 44, 42, 0.15);
-		padding-bottom: 0.75rem;
+		padding: 2rem 0 1.5rem;
+		gap: 0.5rem;
 	}
 
-	.avatar-frame {
-		width: 3.8rem;
-		height: 3.8rem;
-		border: 3px solid #3d2c2a;
-		border-radius: 12px;
-		overflow: hidden;
-		background-color: #eed4b5;
-		image-rendering: pixelated;
-		box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+	.avatar-ring {
+		width: 7rem;
+		height: 7rem;
+		border-radius: 50%;
+		padding: 4px;
+		background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+		margin-bottom: 0.25rem;
 	}
 
-	.avatar-img {
+	.avatar-inner {
 		width: 100%;
 		height: 100%;
-		object-fit: cover;
-		image-rendering: pixelated;
+		border-radius: 50%;
+		background: var(--color-surface-container-lowest);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border: 3px solid var(--color-surface);
 	}
 
-	.avatar-details {
-		display: flex;
-		flex-direction: column;
-		gap: 0.15rem;
+	.avatar-letter {
+		font-family: var(--font-display);
+		font-size: 2.5rem;
+		font-weight: 600;
+		color: var(--color-primary);
 	}
 
 	.user-name {
-		margin: 0;
 		font-family: var(--font-display);
-		font-size: 1.05rem;
-		font-weight: 800;
-		color: #3d2c2a;
-	}
-
-	.user-level {
+		font-size: 1.625rem;
+		font-weight: 600;
+		color: var(--color-on-surface);
 		margin: 0;
-		font-size: 0.72rem;
-		font-weight: 700;
-		color: #8b6f6a;
+		letter-spacing: -0.01em;
 	}
 
-	/* Card Content Layout */
-	.profile-card-content {
-		display: flex;
-		flex-grow: 1;
-		gap: 0.5rem;
-		align-items: center;
+	.user-tagline {
+		font-family: var(--font-body);
+		font-size: 0.875rem;
+		color: var(--color-on-surface-variant);
+		margin: 0;
 	}
 
-	.stats-list {
-		flex: 1.1;
+	/* ── Bento Stats ─────────────────────────────────────── */
+	.bento-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 0.75rem;
+		margin-bottom: 1.5rem;
+	}
+
+	.bento-card {
+		background: var(--color-surface-container-lowest);
+		border-radius: var(--radius-xl);
+		box-shadow: var(--shadow-card);
+		padding: var(--space-gutter);
 		display: flex;
 		flex-direction: column;
-		gap: 0.55rem;
-	}
-
-	.stat-item {
-		display: flex;
 		align-items: center;
-		gap: 0.5rem;
-	}
-
-	.stat-icon {
-		font-size: 1.15rem;
-		filter: drop-shadow(0 1.5px 0 rgba(0, 0, 0, 0.15));
-	}
-
-	.stat-text {
-		display: flex;
-		flex-direction: column;
-		line-height: 1.15;
-	}
-
-	.stat-label {
-		font-size: 0.55rem;
-		color: #8b6f6a;
-		text-transform: uppercase;
-		letter-spacing: 0.02em;
-	}
-
-	.stat-value {
-		font-family: var(--font-display);
-		font-size: 0.78rem;
-		font-weight: 800;
-		color: #3d2c2a;
-	}
-
-	.illustration-side {
-		flex: 0.9;
-		display: flex;
 		justify-content: center;
-		align-items: center;
-	}
-
-	.picnic-img {
-		max-width: 100%;
-		max-height: 9rem;
-		object-fit: contain;
-		image-rendering: pixelated;
-		filter: drop-shadow(0 4px 6px rgba(61, 44, 42, 0.15));
-	}
-
-	/* Wooden Button sign style */
-	.wooden-button-wrapper {
-		position: relative;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		margin-top: 1rem;
-		margin-bottom: 0.2rem;
-		z-index: 5;
-	}
-
-	.wooden-button-wrapper .pole {
-		width: 7px;
-		height: 1.25rem;
-		background-color: #795238;
-		border: 2px solid #3d2c2a;
-		position: absolute;
-		top: -0.65rem;
-		z-index: -1;
-	}
-
-	.wooden-button-wrapper .pole.left {
-		left: 28%;
-	}
-
-	.wooden-button-wrapper .pole.right {
-		right: 28%;
-	}
-
-	.wooden-sign-btn {
-		background-color: #d1a179;
-		border: 3px solid #3d2c2a;
-		padding: 0.45rem 1.6rem;
-		color: #3d2c2a;
-		font-family: var(--font-display);
-		font-size: 0.8rem;
-		font-weight: 800;
-		cursor: pointer;
-		text-transform: uppercase;
-		box-shadow:
-			inset -2.5px -2.5px 0 0 #b37f58,
-			inset 2.5px 2.5px 0 0 #fbe2cd,
-			0 4px 0 #3d2c2a;
-		transition: transform 0.1s ease, box-shadow 0.1s ease;
-		border-radius: 4px;
-	}
-
-	.wooden-sign-btn:hover {
-		background-color: #e5bd98;
-	}
-
-	.wooden-sign-btn:active {
-		transform: translateY(4px);
-		box-shadow:
-			inset -2.5px -2.5px 0 0 #b37f58,
-			inset 2.5px 2.5px 0 0 #fbe2cd,
-			0 0px 0 #3d2c2a;
-	}
-
-	/* Slide bottom spacing */
-	.slide-bottom-spacer {
-		height: 2.85rem;
-	}
-
-	/* Edit View Card Content */
-	.edit-card-inner {
-		min-height: 18.5rem;
-	}
-
-	.edit-card-title {
-		margin: 0 0 0.8rem;
-		font-family: var(--font-display);
-		font-size: 0.95rem;
-		font-weight: 800;
-		color: #3d2c2a;
-		text-transform: uppercase;
 		text-align: center;
-		border-bottom: 2px dashed rgba(61, 44, 42, 0.15);
-		padding-bottom: 0.45rem;
+		gap: 0.35rem;
 	}
 
-	.edit-form {
-		display: flex;
-		flex-direction: column;
-		gap: 0.7rem;
+	.primary-card {
+		background: rgba(80, 98, 56, 0.06);
+		border: 1px solid rgba(80, 98, 56, 0.12);
 	}
 
-	.field {
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
-		border: none;
-		padding: 0;
-		margin: 0;
-	}
-
-	.field-title {
-		font-size: 0.68rem;
-		font-weight: 800;
-		color: #8b6f6a;
+	.bento-label {
+		font-family: var(--font-body);
+		font-size: 0.7rem;
+		font-weight: 600;
 		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--color-on-surface-variant);
+	}
+
+	.bento-value {
+		font-family: var(--font-display);
+		font-size: 1.375rem;
+		font-weight: 600;
+		color: var(--color-primary);
+	}
+
+	.secondary-val {
+		color: var(--color-secondary);
+	}
+
+	.bento-unit {
+		font-family: var(--font-body);
+		font-size: 0.75rem;
+		font-weight: 500;
+		color: var(--color-outline);
+	}
+
+	/* ── View Tabs ───────────────────────────────────────── */
+	.view-tabs {
+		display: flex;
+		gap: 0.5rem;
+		margin-bottom: 1.25rem;
+		background: var(--color-surface-container);
+		padding: 0.25rem;
+		border-radius: var(--radius-full);
+	}
+
+	.view-tab {
+		flex: 1;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.4rem;
+		padding: 0.5rem 1rem;
+		border-radius: var(--radius-full);
+		border: none;
+		background: transparent;
+		color: var(--color-on-surface-variant);
+		font-family: var(--font-body);
+		font-size: 0.8rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition: background 0.2s ease, color 0.2s ease;
 		letter-spacing: 0.02em;
 	}
 
-	.pixel-input {
-		padding: 0.4rem 0.65rem !important;
-		border-radius: 8px !important;
-		font-size: 0.78rem !important;
+	.view-tab:hover {
+		color: var(--color-on-surface);
 	}
 
-	.pixel-range {
-		margin: 0.15rem 0 !important;
+	.view-tab.active {
+		background: var(--color-surface-container-lowest);
+		color: var(--color-primary);
+		box-shadow: var(--shadow-card);
 	}
 
-	.pixel-output {
-		font-size: 0.8rem;
-		font-weight: 800;
-		align-self: flex-end;
-		margin-top: -0.1rem;
+	.tab-icon {
+		font-size: 1.125rem;
 	}
 
-	.radio-row {
+	/* ── Settings View ───────────────────────────────────── */
+	.settings-view {
 		display: flex;
-		gap: 0.4rem;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.settings-label {
+		font-family: var(--font-body);
+		font-size: 0.7rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: var(--color-outline);
+		padding: 0.5rem 0.25rem 0.2rem;
+	}
+
+	.settings-group {
+		background: var(--color-surface-container-lowest);
+		border-radius: var(--radius-xl);
+		box-shadow: var(--shadow-card);
+		overflow: hidden;
+		border: 1px solid rgba(117, 120, 109, 0.08);
+		margin-bottom: 0.5rem;
+	}
+
+	.settings-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: var(--space-gutter);
+	}
+
+	.settings-link-row {
+		text-decoration: none;
+		cursor: pointer;
+		transition: background 0.2s ease;
+	}
+
+	.settings-link-row:hover {
+		background: var(--color-surface-container-low);
+	}
+
+	.settings-row-lead {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.settings-icon {
+		color: var(--color-primary);
+		font-size: 1.375rem;
+	}
+
+	.settings-row-title {
+		font-family: var(--font-body);
+		font-size: 0.95rem;
+		font-weight: 600;
+		color: var(--color-on-surface);
+		margin: 0;
+	}
+
+	.settings-row-desc {
+		font-family: var(--font-body);
+		font-size: 0.75rem;
+		color: var(--color-on-surface-variant);
+		margin: 0.1rem 0 0;
+	}
+
+	.settings-divider {
+		height: 1px;
+		background: rgba(197, 200, 187, 0.3);
+		margin-inline: var(--space-gutter);
+	}
+
+	.limit-row {
+		border-bottom: none;
+	}
+
+	.limit-display {
+		display: flex;
+		align-items: baseline;
+		gap: 0.2rem;
+	}
+
+	.limit-value {
+		font-family: var(--font-display);
+		font-size: 1.25rem;
+		font-weight: 600;
+		color: var(--color-primary);
+	}
+
+	.limit-unit {
+		font-family: var(--font-body);
+		font-size: 0.75rem;
+		color: var(--color-outline);
+	}
+
+	.limit-slider-row {
+		padding: 0 var(--space-gutter) var(--space-gutter);
+	}
+
+	.slider-labels {
+		display: flex;
+		justify-content: space-between;
+		margin-top: 0.35rem;
+	}
+
+	.slider-labels span {
+		font-family: var(--font-body);
+		font-size: 0.65rem;
+		color: var(--color-outline);
+	}
+
+	.name-input-row {
+		padding: 0 var(--space-gutter) var(--space-gutter);
+	}
+
+	/* Radio/option buttons */
+	.radio-group {
+		display: flex;
+		gap: 0.5rem;
+		padding: 0 var(--space-gutter) var(--space-gutter);
 	}
 
 	.radio-btn {
 		flex: 1;
-		font-family: var(--font-display);
-		font-weight: 700;
-		color: #ffffff;
-		text-shadow: 1px 1px 0 var(--color-btn-border);
-		background-image: url('/images/minecraft_green_planks.png');
-		background-size: 64px;
-		border: 2px solid var(--color-btn-border);
-		border-radius: 12px;
-		padding: 0.3rem;
+		padding: 0.5rem;
+		border-radius: var(--radius-lg);
+		border: 1px solid var(--color-outline-variant);
+		background: transparent;
+		color: var(--color-on-surface-variant);
+		font-family: var(--font-body);
+		font-size: 0.8rem;
+		font-weight: 600;
 		cursor: pointer;
-		box-shadow:
-			inset 0 1.5px 0 rgba(255, 255, 255, 0.8),
-			inset 0 -2px 0 rgba(0, 0, 0, 0.25),
-			0 2.5px 0 var(--color-btn-border);
-		font-size: 0.62rem;
-		text-transform: uppercase;
-		transition: all 0.1s ease;
+		text-transform: capitalize;
+		transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 	}
 
 	.radio-btn:hover {
-		filter: brightness(1.1);
-	}
-
-	.radio-btn:active {
-		transform: translateY(2.5px);
-		box-shadow:
-			inset 0 1.5px 0 rgba(255, 255, 255, 0.8),
-			inset 0 -1.5px 0 rgba(0, 0, 0, 0.25),
-			0 0px 0 var(--color-btn-border);
+		background: var(--color-surface-container);
 	}
 
 	.radio-btn.active {
-		background: 
-			linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
-			url('/images/minecraft_green_planks.png');
-		background-size: auto, 64px;
-		color: var(--color-text);
-		text-shadow: none;
-		box-shadow:
-			inset 0 1.5px 0 rgba(255, 255, 255, 0.8),
-			inset 0 -2px 0 rgba(0, 0, 0, 0.15),
-			0 2.5px 0 var(--color-btn-border);
+		background: var(--color-primary);
+		color: var(--color-on-primary);
+		border-color: var(--color-primary);
 	}
 
-	.hint {
-		margin: 0.15rem 0 0;
-		font-size: 0.64rem;
-		color: var(--color-text-muted);
+	.arrow-icon {
+		color: var(--color-outline);
+		font-size: 1.25rem;
+	}
+
+	/* Footer actions */
+	.footer-actions {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		margin-top: 0.5rem;
+	}
+
+	.export-btn {
+		width: 100%;
+		padding: var(--space-gutter);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		border-radius: var(--radius-xl);
+	}
+
+	/* ── Achievements View ─────────────────────────────────── */
+	.achievements-view {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.garden-level-card {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		background: rgba(80, 98, 56, 0.06);
+		border: 1px solid rgba(80, 98, 56, 0.12);
+		border-radius: var(--radius-xl);
+		padding: var(--space-gutter);
+		box-shadow: var(--shadow-card);
+	}
+
+	.garden-icon {
+		font-size: 2.25rem;
+		color: var(--color-primary);
+	}
+
+	.garden-icon.fill {
+		font-variation-settings: 'FILL' 1;
+	}
+
+	.garden-label {
+		font-family: var(--font-body);
+		font-size: 0.75rem;
 		font-weight: 600;
-	}
-
-	/* Achievements Card Content */
-	.achievements-card-inner {
-		min-height: 18.5rem;
-	}
-
-	.achievements-card-title {
-		margin: 0 0 0.65rem;
-		font-family: var(--font-display);
-		font-size: 0.95rem;
-		font-weight: 800;
-		color: #3d2c2a;
 		text-transform: uppercase;
-		text-align: center;
-		border-bottom: 2px dashed rgba(61, 44, 42, 0.15);
-		padding-bottom: 0.45rem;
+		letter-spacing: 0.08em;
+		color: var(--color-on-surface-variant);
+		margin: 0;
 	}
 
-	.achievements-scroll-wrapper {
-		overflow-y: auto;
-		flex-grow: 1;
-		max-height: 13rem;
-		padding-right: 0.2rem;
-		scrollbar-width: thin;
-		scrollbar-color: var(--color-border) transparent;
-	}
-
-	.achievements-scroll-wrapper::-webkit-scrollbar {
-		width: 4px;
-	}
-	
-	.achievements-scroll-wrapper::-webkit-scrollbar-thumb {
-		background-color: var(--color-border);
-		border-radius: 4px;
+	.garden-value {
+		font-family: var(--font-display);
+		font-size: 1.5rem;
+		font-weight: 600;
+		color: var(--color-primary);
+		margin: 0;
 	}
 
 	.achievements-list {
 		display: flex;
 		flex-direction: column;
-		gap: 0.55rem;
+		gap: 0.625rem;
 	}
 
 	.achievement-item {
 		display: flex;
 		align-items: center;
-		gap: 0.65rem;
-		background-color: rgba(238, 212, 181, 0.3);
-		border: 2px solid #3d2c2a;
-		border-radius: 12px;
-		padding: 0.45rem 0.6rem;
-		transition: background-color 0.2s ease;
+		gap: 0.875rem;
+		background: var(--color-surface-container-lowest);
+		border-radius: var(--radius-xl);
+		padding: 0.875rem;
+		box-shadow: var(--shadow-card);
+		border: 1px solid rgba(117, 120, 109, 0.08);
+		transition: box-shadow 0.2s ease;
 	}
 
 	.achievement-item.locked {
 		opacity: 0.55;
-		background-color: rgba(61, 44, 42, 0.05);
 	}
 
-	.achievement-icon-wrapper {
+	.ach-icon-wrap {
 		position: relative;
-		width: 2.2rem;
-		height: 2.2rem;
-		display: grid;
-		place-items: center;
-		background-color: #eed4b5;
-		border: 2px solid #3d2c2a;
-		border-radius: 8px;
-		font-size: 1.15rem;
+		width: 3rem;
+		height: 3rem;
+		border-radius: var(--radius-lg);
+		background: var(--color-surface-container);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		border: 1px solid var(--color-outline-variant);
 	}
 
-	.achievement-icon-img {
-		width: 100%;
-		height: 100%;
+	.ach-icon-wrap.unlocked {
+		background: rgba(213, 234, 181, 0.3);
+		border-color: rgba(185, 206, 155, 0.4);
+	}
+
+	.ach-icon-img {
+		width: 1.875rem;
+		height: 1.875rem;
 		object-fit: contain;
-		image-rendering: pixelated;
 	}
 
-	.achievement-item.locked .achievement-icon-img {
+	.achievement-item.locked .ach-icon-img {
 		filter: grayscale(1);
 	}
 
-	.lock-indicator,
-	.check-indicator {
+	.ach-status-indicator {
 		position: absolute;
-		font-size: 0.6rem;
-		bottom: -3px;
-		right: -3px;
-		background-color: #ffffff;
-		border: 1.5px solid #3d2c2a;
+		bottom: -0.25rem;
+		right: -0.25rem;
+		font-size: 0.65rem;
+		background: var(--color-surface-container-lowest);
 		border-radius: 50%;
-		width: 0.95rem;
-		height: 0.95rem;
+		width: 1rem;
+		height: 1rem;
 		display: grid;
 		place-items: center;
-		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+		border: 1px solid var(--color-outline-variant);
+		box-shadow: var(--shadow-card);
 	}
 
-	.achievement-info {
-		display: flex;
-		flex-direction: column;
-		gap: 0.08rem;
+	.ach-info {
 		flex: 1;
 	}
 
-	.achievement-title {
-		margin: 0;
+	.ach-title {
 		font-family: var(--font-display);
-		font-size: 0.72rem;
-		font-weight: 800;
-		color: #3d2c2a;
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: var(--color-on-surface);
+		margin: 0 0 0.2rem;
 	}
 
-	.achievement-desc {
+	.ach-desc {
+		font-family: var(--font-body);
+		font-size: 0.75rem;
+		color: var(--color-on-surface-variant);
 		margin: 0;
-		font-size: 0.58rem;
-		font-weight: 700;
-		color: #8b6f6a;
-		line-height: 1.2;
+		line-height: 1.4;
 	}
 
-	/* Footer section styling */
-	.footer-tips {
-		margin-top: 0.4rem;
+	.personalize-card {
+		background: var(--color-surface-container-lowest);
+		border-radius: var(--radius-xl);
+		box-shadow: var(--shadow-card);
+		padding: var(--space-gutter);
+		border-left: 3px solid var(--color-primary);
 	}
 
-	.tips {
+	.personalize-title {
+		font-family: var(--font-display);
+		font-size: 0.95rem;
+		font-weight: 600;
+		color: var(--color-on-surface);
+		margin: 0 0 0.5rem;
+	}
+
+	.personalize-tips {
 		margin: 0;
 		padding-left: 1.1rem;
-		font-size: 0.72rem;
-		font-weight: 700;
-		line-height: 1.45;
-		color: var(--color-text-muted);
-	}
-
-	.go-to-sync-btn {
-		display: inline-flex;
-		margin-top: 0.6rem;
-		text-decoration: none;
+		font-family: var(--font-body);
+		font-size: 0.8rem;
+		color: var(--color-on-surface-variant);
+		line-height: 1.6;
 	}
 </style>

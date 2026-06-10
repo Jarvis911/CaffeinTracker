@@ -1,5 +1,4 @@
 <script lang="ts">
-	import MascotHeader from '$lib/components/MascotHeader.svelte';
 	import { HEALTH_PRESETS } from '$lib/fitness/mock-health';
 	import { app } from '$lib/state/app.svelte';
 	import type { FitnessProviderId } from '$lib/types';
@@ -14,210 +13,386 @@
 			app.toggleProvider('manual');
 		}
 	}
+
+	function getProviderIcon(emoji: string): string {
+		const map: Record<string, string> = {
+			'': 'monitor_heart',
+			'🍎': 'health_and_safety',
+			'🟢': 'fitness_center',
+			'💙': 'favorite',
+			'🏃': 'directions_run',
+			'⌚': 'watch',
+			'📱': 'smartphone'
+		};
+		return map[emoji] || 'monitor_heart';
+	}
 </script>
 
-<MascotHeader
-	title="Fitness sync"
-	subtitle="Connect apps to personalize caffeine & sugar guidance"
-/>
+<svelte:head>
+	<title>Fitness Sync — Zakka Caffeine</title>
+</svelte:head>
 
-<section class="providers fade-in">
-	{#each app.providers as provider}
-		<button
-			type="button"
-			class="provider"
-			class:connected={provider.connected}
-			onclick={() => connect(provider.id)}
-		>
-			<span class="emoji" aria-hidden="true">{provider.emoji}</span>
-			<div class="info">
-				<strong>{provider.name}</strong>
-				<p>{provider.description}</p>
-				<span class="badge">{provider.connectionType}</span>
-			</div>
-			<span class="status">{provider.connected ? 'Connected' : 'Connect'}</span>
-		</button>
-	{/each}
-</section>
-
-<section class="card-panel demo fade-in">
-	<h2 class="section-title">Try demo health profiles</h2>
-	<p class="hint">Simulates data you’d get from a fitness API after OAuth.</p>
-	<div class="preset-row">
-		{#each HEALTH_PRESETS as preset, i}
-			<button type="button" class="preset" onclick={() => applyPreset(i)}>{preset.label}</button>
-		{/each}
+<!-- Top Bar -->
+<header class="top-bar">
+	<div class="top-bar-inner">
+		<a href="/insights" class="back-btn" aria-label="Back to Profile">
+			<span class="material-symbols-outlined">arrow_back</span>
+		</a>
+		<h1 class="page-headline">Fitness Sync</h1>
+		<div style="width:2.5rem"></div>
 	</div>
-</section>
+</header>
 
-<section class="card-panel note fade-in">
-	<h2 class="section-title">Production integration</h2>
-	<ul>
-		<li><strong>Google Fit / Fitbit / Garmin</strong> — OAuth 2.0 + REST APIs</li>
-		<li><strong>Apple Health</strong> — HealthKit via a native iOS companion app</li>
-		<li>Server routes under <code>/api/fitness/*</code> will handle tokens securely</li>
-	</ul>
-</section>
+<main class="connect-page fade-in">
+	<p class="page-subtitle">
+		Connect your health apps to receive personalized caffeine & sugar guidance based on your sleep,
+		heart rate, and activity.
+	</p>
+
+	<!-- ── Provider List ─────────────────────────────────────── -->
+	<section class="section-gap">
+		<h2 class="section-heading">Health Providers</h2>
+		<div class="provider-list">
+			{#each app.providers as provider (provider.id)}
+				<button
+					type="button"
+					class="provider-card"
+					class:connected={provider.connected}
+					onclick={() => connect(provider.id)}
+				>
+					<div class="provider-icon-wrap" class:connected={provider.connected}>
+						<span class="provider-emoji" aria-hidden="true">{provider.emoji}</span>
+					</div>
+					<div class="provider-info">
+						<strong class="provider-name">{provider.name}</strong>
+						<p class="provider-desc">{provider.description}</p>
+						<span class="provider-badge">{provider.connectionType}</span>
+					</div>
+					<div class="provider-status" class:connected={provider.connected}>
+						{#if provider.connected}
+							<span class="material-symbols-outlined status-icon fill">check_circle</span>
+							<span class="status-label">Connected</span>
+						{:else}
+							<span class="status-label">Connect</span>
+							<span class="material-symbols-outlined">add_circle</span>
+						{/if}
+					</div>
+				</button>
+			{/each}
+		</div>
+	</section>
+
+	<!-- ── Demo Health Presets ───────────────────────────────── -->
+	<section class="section-gap">
+		<h2 class="section-heading">Try Demo Profiles</h2>
+		<p class="section-desc">
+			Simulate data you'd receive from a fitness API after connecting.
+		</p>
+		<div class="preset-grid">
+			{#each HEALTH_PRESETS as preset, i (i)}
+				<button type="button" class="preset-btn" onclick={() => applyPreset(i)}>
+					<span class="material-symbols-outlined preset-icon">person</span>
+					{preset.label}
+				</button>
+			{/each}
+		</div>
+	</section>
+
+	<!-- ── Integration Notes ─────────────────────────────────── -->
+	<section class="info-card">
+		<div class="info-header">
+			<span class="material-symbols-outlined info-icon">info</span>
+			<h3 class="info-title">Production Integration</h3>
+		</div>
+		<ul class="info-list">
+			<li><strong>Google Fit / Fitbit / Garmin</strong> — OAuth 2.0 + REST APIs</li>
+			<li><strong>Apple Health</strong> — HealthKit via native iOS companion</li>
+			<li>Server routes under <code>/api/fitness/*</code> handle tokens securely</li>
+		</ul>
+	</section>
+</main>
 
 <style>
-	.providers {
-		display: flex;
-		flex-direction: column;
-		gap: 0.65rem;
-		margin-bottom: 1rem;
+	/* ── Top Bar ──────────────────────────────────────────── */
+	.top-bar {
+		background: var(--color-surface);
+		border-bottom: 1px solid rgba(197, 200, 187, 0.2);
+		position: sticky;
+		top: 0;
+		z-index: 40;
 	}
 
-	.provider {
+	.top-bar-inner {
 		display: flex;
 		align-items: center;
-		gap: 0.75rem;
+		justify-content: space-between;
+		max-width: 768px;
+		margin-inline: auto;
+		padding: var(--space-unit) var(--space-container);
+	}
+
+	.back-btn {
+		padding: 0.5rem;
+		border-radius: var(--radius-full);
+		color: var(--color-on-surface-variant);
+		text-decoration: none;
+		display: grid;
+		place-items: center;
+		transition: background 0.2s ease;
+	}
+
+	.back-btn:hover {
+		background: var(--color-surface-container);
+	}
+
+	.back-btn .material-symbols-outlined {
+		font-size: 1.5rem;
+	}
+
+	.page-headline {
+		font-family: var(--font-display);
+		font-size: 1.1rem;
+		font-weight: 600;
+		color: var(--color-primary);
+		margin: 0;
+	}
+
+	/* ── Connect Page ────────────────────────────────────── */
+	.connect-page {
+		max-width: 768px;
+		margin-inline: auto;
+		padding: 1.25rem var(--space-container) var(--space-section);
+	}
+
+	.page-subtitle {
+		font-family: var(--font-body);
+		font-size: 0.9rem;
+		color: var(--color-on-surface-variant);
+		margin: 0 0 var(--space-section);
+		line-height: 1.6;
+	}
+
+	.section-gap {
+		margin-bottom: var(--space-section);
+	}
+
+	.section-heading {
+		font-family: var(--font-display);
+		font-size: 1.1rem;
+		font-weight: 600;
+		color: var(--color-on-surface);
+		margin: 0 0 0.75rem;
+	}
+
+	.section-desc {
+		font-family: var(--font-body);
+		font-size: 0.85rem;
+		color: var(--color-on-surface-variant);
+		margin: 0 0 0.875rem;
+	}
+
+	/* ── Provider Cards ──────────────────────────────────── */
+	.provider-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0.625rem;
+	}
+
+	.provider-card {
+		display: flex;
+		align-items: center;
+		gap: 0.875rem;
 		width: 100%;
-		padding: 0.85rem 1rem;
-		border-radius: var(--btn-radius);
-		border: 3.5px solid var(--color-btn-border);
-		background: 
-			linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
-			url('/images/minecraft_green_planks.png');
-		background-size: auto, 96px;
-		box-shadow:
-			inset 0 3px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -5px 0 rgba(0, 0, 0, 0.2),
-			0 5px 0 var(--color-btn-border);
+		padding: 0.875rem;
+		border-radius: var(--radius-xl);
+		border: 1px solid rgba(117, 120, 109, 0.12);
+		background: var(--color-surface-container-lowest);
+		box-shadow: var(--shadow-card);
 		text-align: left;
 		cursor: pointer;
-		transition:
-			transform 0.1s ease,
-			box-shadow 0.1s ease,
-			filter 0.15s ease;
+		transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
 	}
 
-	.provider.connected {
-		background: url('/images/minecraft_green_planks.png');
-		background-size: 96px;
-		box-shadow:
-			inset 0 3px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -5px 0 rgba(0, 0, 0, 0.25),
-			0 5px 0 var(--color-btn-border);
+	.provider-card:hover {
+		border-color: var(--color-outline-variant);
+		transform: translateY(-1px);
 	}
 
-	.provider:hover {
-		filter: brightness(1.1);
+	.provider-card:active {
+		transform: scale(0.98);
+		box-shadow: var(--shadow-press);
 	}
 
-	.provider:active {
-		transform: translateY(5px);
-		box-shadow:
-			inset 0 2px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -2px 0 rgba(0, 0, 0, 0.2),
-			0 0px 0 var(--color-btn-border);
+	.provider-card.connected {
+		background: rgba(213, 234, 181, 0.12);
+		border-color: rgba(185, 206, 155, 0.4);
 	}
 
-	.emoji {
-		font-size: 1.75rem;
+	.provider-icon-wrap {
+		width: 3rem;
+		height: 3rem;
+		border-radius: var(--radius-lg);
+		background: var(--color-surface-container);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		transition: background 0.2s ease;
 	}
 
-	.info {
+	.provider-icon-wrap.connected {
+		background: rgba(80, 98, 56, 0.1);
+	}
+
+	.provider-emoji {
+		font-size: 1.5rem;
+	}
+
+	.provider-info {
 		flex: 1;
+		min-width: 0;
 	}
 
-	.info strong {
+	.provider-name {
 		display: block;
+		font-family: var(--font-body);
 		font-size: 0.95rem;
-		color: var(--color-text);
+		font-weight: 600;
+		color: var(--color-on-surface);
+		margin-bottom: 0.15rem;
 	}
 
-	.provider.connected .info strong {
-		color: var(--color-text);
-	}
-
-	.info p {
-		margin: 0.2rem 0 0.35rem;
+	.provider-desc {
+		font-family: var(--font-body);
 		font-size: 0.75rem;
-		color: var(--color-text-muted);
-		line-height: 1.35;
+		color: var(--color-on-surface-variant);
+		margin: 0 0 0.35rem;
+		line-height: 1.4;
 	}
 
-	.badge {
+	.provider-badge {
 		display: inline-block;
-		padding: 0.15rem 0.45rem;
-		border-radius: 0.35rem;
-		border: 1.5px solid var(--color-border);
+		padding: 0.1rem 0.45rem;
+		border-radius: var(--radius-full);
+		border: 1px solid var(--color-outline-variant);
+		font-family: var(--font-body);
 		font-size: 0.65rem;
-		font-weight: 700;
+		font-weight: 600;
 		text-transform: uppercase;
-		background: var(--color-wood-tan);
-		color: var(--color-text);
+		letter-spacing: 0.05em;
+		color: var(--color-outline);
+		background: var(--color-surface-container);
 	}
 
-	.status {
-		font-size: 0.75rem;
-		font-weight: 700;
-		color: var(--color-accent-deep);
+	.provider-status {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.15rem;
+		flex-shrink: 0;
+		color: var(--color-outline);
 	}
 
-	.provider.connected .status {
-		color: var(--color-mint-deep);
+	.provider-status.connected {
+		color: var(--color-primary);
 	}
 
-	.demo .hint {
-		margin: 0 0 0.75rem;
-		font-size: 0.8rem;
-		color: var(--color-text-muted);
+	.status-icon {
+		font-size: 1.375rem;
 	}
 
-	.preset-row {
+	.status-icon.fill {
+		font-variation-settings: 'FILL' 1;
+	}
+
+	.status-label {
+		font-family: var(--font-body);
+		font-size: 0.65rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	/* ── Demo Presets ────────────────────────────────────── */
+	.preset-grid {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.5rem;
 	}
 
-	.preset {
-		font-family: var(--font-display);
-		font-weight: 600;
-		color: #ffffff;
-		text-shadow: 1.5px 1.5px 0 var(--color-btn-border);
-		background-image: url('/images/minecraft_green_planks.png');
-		background-size: 80px;
-		border: 3px solid var(--color-btn-border);
-		border-radius: var(--btn-radius);
-		padding: 0.35rem 0.65rem;
-		cursor: pointer;
-		box-shadow:
-			inset 0 2px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -3px 0 rgba(0, 0, 0, 0.3),
-			0 3.5px 0 var(--color-btn-border);
-		font-size: 0.7rem;
-		transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
-	}
-
-	.preset:hover {
-		filter: brightness(1.15);
-	}
-
-	.preset:active {
-		transform: translateY(3.5px);
-		box-shadow:
-			inset 0 2px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -2px 0 rgba(0, 0, 0, 0.3),
-			0 0px 0 var(--color-btn-border);
-	}
-
-	.note ul {
-		margin: 0;
-		padding-left: 1.1rem;
+	.preset-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.5rem 1rem;
+		border-radius: var(--radius-full);
+		border: 1px solid var(--color-outline-variant);
+		background: var(--color-surface-container-lowest);
+		color: var(--color-on-surface-variant);
+		font-family: var(--font-body);
 		font-size: 0.8rem;
-		color: var(--color-text-muted);
-		line-height: 1.5;
+		font-weight: 600;
+		cursor: pointer;
+		box-shadow: var(--shadow-card);
+		transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 	}
 
-	.note li {
-		margin-bottom: 0.35rem;
+	.preset-btn:hover {
+		background: var(--color-primary-container);
+		color: var(--color-on-primary-container);
+		border-color: transparent;
+	}
+
+	.preset-icon {
+		font-size: 1rem;
+	}
+
+	/* ── Info Card ───────────────────────────────────────── */
+	.info-card {
+		background: var(--color-surface-container);
+		border-radius: var(--radius-xl);
+		padding: var(--space-gutter);
+		border: 1px solid rgba(117, 120, 109, 0.1);
+	}
+
+	.info-header {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-bottom: 0.625rem;
+	}
+
+	.info-icon {
+		color: var(--color-primary);
+		font-size: 1.25rem;
+	}
+
+	.info-title {
+		font-family: var(--font-display);
+		font-size: 0.95rem;
+		font-weight: 600;
+		color: var(--color-on-surface);
+		margin: 0;
+	}
+
+	.info-list {
+		margin: 0;
+		padding-left: 1.25rem;
+		font-family: var(--font-body);
+		font-size: 0.8rem;
+		color: var(--color-on-surface-variant);
+		line-height: 1.6;
+	}
+
+	.info-list li {
+		margin-bottom: 0.3rem;
 	}
 
 	code {
 		font-size: 0.75rem;
-		background: rgba(0, 0, 0, 0.05);
+		background: rgba(0, 0, 0, 0.06);
 		padding: 0.1rem 0.35rem;
-		border-radius: 0.25rem;
+		border-radius: var(--radius-sm);
+		font-family: 'Courier New', monospace;
 	}
 </style>

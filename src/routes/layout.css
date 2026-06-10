@@ -1,35 +1,90 @@
 @import 'tailwindcss';
 
+/* ============================================================
+   Komorebi Rituals — Design System
+   Japanese zakka + wabi-sabi aesthetic
+   ============================================================ */
+
 :root {
-	--color-bg: #f3f8f4;
-	--color-bg-accent: #e2f3e4;
-	--color-surface: #faf0dd;
-	--color-text: #3d2c2a;
-	--color-text-muted: #8b6f6a;
-	--color-border: #755c59;
-	--color-btn-border: #8b6f6a;
-	--btn-radius: 24px;
-	--color-accent: #eed4b5;
-	--color-accent-deep: #795238;
-	--color-accent-soft: #efebe9;
-	--color-mint: #99cc99;
-	--color-mint-deep: #5e8f60;
-	--color-mint-soft: #dcedc8;
-	--color-rose: #e88ba0;
-	--color-rose-deep: #b84d66;
-	--color-ring-track: #eac49e;
-	
-	/* Green board variables */
-	--color-wood-medium: #689f74; /* Softer warm forest green board face */
-	--color-wood-light: #8ebf9a;  /* Top highlight green */
-	--color-wood-dark: #4b7856;   /* Bottom depth shadow green */
-	--color-wood-tan: #e2f3e4;    /* Warm green felt inner board */
-	
-	--shadow-soft: 0 4px 0 var(--color-border);
-	--shadow-lift: 0 5.5px 0 var(--color-border);
-	--font-body: 'Quicksand', 'Nunito', system-ui, sans-serif;
-	--font-display: 'Quicksand', 'Nunito', system-ui, sans-serif;
+	/* Primary (Matcha) */
+	--color-primary: #506238;
+	--color-on-primary: #ffffff;
+	--color-primary-container: #687b4f;
+	--color-on-primary-container: #faffea;
+	--color-primary-fixed: #d5eab5;
+	--color-primary-fixed-dim: #b9ce9b;
+	--color-inverse-primary: #b9ce9b;
+
+	/* Secondary (Terracotta) */
+	--color-secondary: #99462a;
+	--color-on-secondary: #ffffff;
+	--color-secondary-container: #fe9572;
+	--color-on-secondary-container: #762c12;
+
+	/* Tertiary (Roasted Bean) */
+	--color-tertiary: #74554b;
+	--color-on-tertiary: #ffffff;
+	--color-tertiary-container: #8f6d62;
+	--color-tertiary-fixed: #ffdbd0;
+	--color-tertiary-fixed-dim: #e7bdb1;
+
+	/* Surface (Washi Paper) */
+	--color-surface: #fbf9f4;
+	--color-surface-dim: #dbdad5;
+	--color-surface-bright: #fbf9f4;
+	--color-surface-container: #f0eee9;
+	--color-surface-container-low: #f5f3ee;
+	--color-surface-container-lowest: #ffffff;
+	--color-surface-container-high: #eae8e3;
+	--color-surface-container-highest: #e4e2dd;
+	--color-surface-variant: #e4e2dd;
+
+	/* On-Surface */
+	--color-on-surface: #1b1c19;
+	--color-on-surface-variant: #45483e;
+	--color-inverse-surface: #30312e;
+	--color-inverse-on-surface: #f2f1ec;
+
+	/* Outline */
+	--color-outline: #75786d;
+	--color-outline-variant: #c5c8bb;
+
+	/* Background */
+	--color-bg: #fbf9f4;
+	--color-on-bg: #1b1c19;
+
+	/* Error */
+	--color-error: #ba1a1a;
+	--color-error-container: #ffdad6;
+	--color-on-error-container: #93000a;
+
+	/* Typography */
+	--font-display: 'Manrope', system-ui, sans-serif;
+	--font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+	/* Shadows */
+	--shadow-card: 0px 4px 20px rgba(93, 64, 55, 0.06);
+	--shadow-nav: 0px -4px 20px rgba(93, 64, 55, 0.06);
+	--shadow-press: 0px 2px 10px rgba(93, 64, 55, 0.03);
+
+	/* Border radius */
+	--radius-sm: 0.25rem;
+	--radius-md: 0.5rem;
+	--radius-lg: 0.75rem;
+	--radius-xl: 1rem;
+	--radius-2xl: 1.5rem;
+	--radius-full: 9999px;
+
+	/* Spacing rhythm */
+	--space-unit: 8px;
+	--space-gutter: 16px;
+	--space-container: 24px;
+	--space-section: 40px;
 }
+
+/* ============================================================
+   Reset & Base
+   ============================================================ */
 
 * {
 	box-sizing: border-box;
@@ -48,226 +103,240 @@ textarea {
 
 html {
 	font-family: var(--font-body);
-	color: var(--color-text);
+	color: var(--color-on-surface);
 	background: var(--color-bg);
+	-webkit-tap-highlight-color: transparent;
 }
 
 body {
 	margin: 0;
 	min-height: 100dvh;
-	background:
-		radial-gradient(ellipse 80% 50% at 50% -10%, rgba(126, 201, 168, 0.25), transparent),
-		var(--color-bg);
+	background: var(--color-bg);
 }
 
 h1,
 h2,
 h3 {
 	font-family: var(--font-display);
-	color: var(--color-text);
-	text-transform: uppercase;
-	font-weight: 700;
+	color: var(--color-on-surface);
+	font-weight: 600;
+	text-transform: none;
 }
+
+/* ============================================================
+   App Shell — 768px centered journal layout
+   ============================================================ */
 
 .app-shell {
 	min-height: 100dvh;
-	padding: 1.25rem 1.25rem 7rem;
-	max-width: 28rem;
+	padding: 0 0 7rem;
+	max-width: 768px;
 	margin-inline: auto;
 }
 
-/* Wood Board & Panels (Sprout Lands design system) - 3D Green Version */
-.wood-board {
-	border: 2.5px solid var(--color-border);
-	background-image: url('/images/minecraft_green_planks.png');
-	background-size: 120px;
-	box-shadow:
-		inset 0 3px 0 rgba(255, 255, 255, 0.25),
-		inset 0 -3px 0 rgba(0, 0, 0, 0.4),
-		0 4.5px 0 var(--color-border);
-	border-radius: 20px;
-	padding: 0.9rem;
-	position: relative;
+/* ============================================================
+   Shared Card component
+   ============================================================ */
+
+.zakka-card {
+	box-shadow: var(--shadow-card);
 }
 
-.wood-inner-board {
-	border: 2.5px solid var(--color-border);
-	background-color: var(--color-wood-tan);
-	border-radius: 14px;
-	box-shadow: inset 0 3px 0 rgba(0, 0, 0, 0.08);
-	padding: 0.75rem;
+.paper-card {
+	background: var(--color-surface-container-lowest);
+	border-radius: var(--radius-xl);
+	box-shadow: var(--shadow-card);
+	border: 1px solid rgba(197, 200, 187, 0.1);
 }
 
-.card-panel {
-	border: 2.5px solid var(--color-border);
-	padding: 1.1rem;
-	border-radius: 20px;
-	background: 
-		linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
-		url('/images/minecraft_green_planks.png');
-	background-size: auto, 144px;
-	box-shadow:
-		inset 0 3px 0 rgba(255, 255, 255, 0.6),
-		inset 0 -3px 0 rgba(0, 0, 0, 0.08),
-		0 4px 0 var(--color-border);
+.section-card {
+	background: var(--color-surface-container-lowest);
+	border-radius: var(--radius-xl);
+	box-shadow: var(--shadow-card);
+	border: 1px solid rgba(117, 120, 109, 0.1);
+	padding: var(--space-gutter);
 }
 
-input[type='text'] {
-	padding: 0.65rem 0.85rem;
-	border-radius: 12px;
-	border: 2.5px solid var(--color-border);
-	background-color: var(--color-wood-tan);
-	box-shadow: inset 0 2.5px 0 rgba(0, 0, 0, 0.1);
+/* ============================================================
+   Typography utilities
+   ============================================================ */
+
+.text-headline-lg {
+	font-family: var(--font-display);
+	font-size: clamp(1.625rem, 4vw, 2rem);
+	font-weight: 600;
+	line-height: 1.25;
+	letter-spacing: -0.02em;
+}
+
+.text-headline-md {
+	font-family: var(--font-display);
+	font-size: 1.25rem;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+.text-body-md {
 	font-family: var(--font-body);
-	font-weight: 700;
-	color: var(--color-text);
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.5;
+}
+
+.text-label-md {
+	font-family: var(--font-body);
+	font-size: 0.875rem;
+	font-weight: 600;
+	line-height: 1.4;
+	letter-spacing: 0.02em;
+}
+
+.text-label-sm {
+	font-family: var(--font-body);
+	font-size: 0.75rem;
+	font-weight: 500;
+	line-height: 1.33;
+	letter-spacing: 0.05em;
+}
+
+.label-overline {
+	font-family: var(--font-body);
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--color-outline);
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+
+.btn-primary {
+	font-family: var(--font-body);
+	font-weight: 600;
+	color: var(--color-on-primary);
+	background: var(--color-primary);
+	border: none;
+	border-radius: var(--radius-full);
+	padding: 0.875rem 1.5rem;
+	cursor: pointer;
+	box-shadow: var(--shadow-card);
+	transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	font-size: 0.875rem;
+	letter-spacing: 0.02em;
+	text-decoration: none;
+}
+
+.btn-primary:hover {
+	filter: brightness(1.08);
+}
+
+.btn-primary:active {
+	transform: scale(0.97);
+	box-shadow: var(--shadow-press);
+}
+
+.btn-ghost {
+	font-family: var(--font-body);
+	font-weight: 600;
+	color: var(--color-on-surface-variant);
+	background: transparent;
+	border: 1px solid rgba(197, 200, 187, 0.5);
+	border-radius: var(--radius-full);
+	padding: 0.875rem 1.5rem;
+	cursor: pointer;
+	transition: background 0.2s ease, border-color 0.2s ease;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	font-size: 0.875rem;
+	letter-spacing: 0.02em;
+	text-decoration: none;
+}
+
+.btn-ghost:hover {
+	background: var(--color-surface-container);
+	border-color: var(--color-outline-variant);
+}
+
+.btn-ghost:active {
+	transform: scale(0.97);
+}
+
+/* ============================================================
+   Inputs — ledger / washi paper style
+   ============================================================ */
+
+input[type='text'],
+input[type='email'],
+input[type='number'] {
+	padding: 0.75rem 1rem;
+	border-radius: var(--radius-lg);
+	border: none;
+	border-bottom: 1.5px solid var(--color-outline-variant);
+	background: var(--color-surface-container-lowest);
+	font-family: var(--font-body);
+	font-size: 1rem;
+	color: var(--color-on-surface);
 	outline: none;
+	transition: border-color 0.2s ease;
+	width: 100%;
 }
 
-input[type='text']:focus {
-	border-color: var(--color-mint-deep);
+input[type='text']:focus,
+input[type='email']:focus {
+	border-bottom-color: var(--color-primary);
 }
 
-/* Custom styled range input */
+/* Range input — bamboo/wood style */
 input[type='range'] {
 	-webkit-appearance: none;
 	appearance: none;
 	width: 100%;
-	height: 12px;
-	background: var(--color-wood-tan);
-	border: 2px solid var(--color-border);
-	border-radius: 10px;
+	height: 6px;
+	background: linear-gradient(90deg, #d1cdc0 0%, #baac9a 100%);
+	border-radius: 3px;
 	outline: none;
-	box-shadow: inset 0 2px 0 rgba(0, 0, 0, 0.1);
+	cursor: pointer;
 }
 
 input[type='range']::-webkit-slider-thumb {
 	-webkit-appearance: none;
 	appearance: none;
-	width: 22px;
-	height: 26px;
-	background: 
-		linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
-		url('/images/minecraft_green_planks.png');
-	background-size: auto, 32px;
-	border: 2px solid var(--color-border);
-	border-radius: 8px;
+	width: 20px;
+	height: 20px;
+	background: #76895c;
+	border: 2px solid #ffffff;
+	border-radius: 50%;
 	cursor: pointer;
-	box-shadow: 
-		inset 0 2.5px 0 rgba(255, 255, 255, 0.85),
-		0 2.5px 0 var(--color-border);
-	transition: filter 0.15s ease;
+	box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+	transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 input[type='range']::-webkit-slider-thumb:hover {
-	filter: brightness(1.15);
+	transform: scale(1.15);
+	box-shadow: 0px 3px 8px rgba(80, 98, 56, 0.3);
 }
 
 input[type='range']::-moz-range-thumb {
-	width: 22px;
-	height: 26px;
-	background: 
-		linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
-		url('/images/minecraft_green_planks.png');
-	background-size: auto, 32px;
-	border: 2px solid var(--color-border);
-	border-radius: 8px;
+	width: 20px;
+	height: 20px;
+	background: #76895c;
+	border: 2px solid #ffffff;
+	border-radius: 50%;
 	cursor: pointer;
-	box-shadow: 
-		inset 0 2.5px 0 rgba(255, 255, 255, 0.85),
-		0 2.5px 0 var(--color-border);
-	transition: filter 0.15s ease;
+	box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-input[type='range']::-moz-range-thumb:hover {
-	filter: brightness(1.15);
-}
-
-.section-title {
-	margin: 0 0 0.75rem;
-	font-size: 0.85rem;
-	font-weight: 700;
-	letter-spacing: 0.03em;
-}
-
-/* 3D Cute tactile buttons */
-.btn-3d-cute {
-	font-family: var(--font-display);
-	font-weight: 600;
-	color: #ffffff;
-	text-shadow: 1.5px 1.5px 0 var(--color-btn-border);
-	background-image: url('/images/minecraft_green_planks.png');
-	background-size: 96px;
-	border: 2.5px solid var(--color-btn-border);
-	border-radius: var(--btn-radius);
-	padding: 0.6rem 1.15rem;
-	cursor: pointer;
-	box-shadow:
-		inset 0 2.5px 0 rgba(255, 255, 255, 0.85),
-		inset 0 -2.5px 0 rgba(0, 0, 0, 0.45),
-		0 4px 0 var(--color-btn-border);
-	transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	text-transform: uppercase;
-	font-size: 0.75rem;
-	letter-spacing: 0.03em;
-	gap: 0.35rem;
-}
-
-.btn-3d-cute:hover {
-	filter: brightness(1.15);
-}
-
-.btn-3d-cute:active {
-	transform: translateY(4px);
-	box-shadow:
-		inset 0 2px 0 rgba(255, 255, 255, 0.85),
-		inset 0 -2px 0 rgba(0, 0, 0, 0.45),
-		0 0px 0 var(--color-btn-border);
-	filter: brightness(0.85);
-}
-
-.btn-primary {
-	font-family: var(--font-display);
-	font-weight: 600;
-	color: var(--color-text);
-	text-shadow: none;
-	background: 
-		linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
-		url('/images/minecraft_green_planks.png');
-	background-size: auto, 96px;
-	border: 2.5px solid var(--color-btn-border);
-	border-radius: var(--btn-radius);
-	padding: 0.6rem 1.15rem;
-	cursor: pointer;
-	box-shadow:
-		inset 0 2.5px 0 rgba(255, 255, 255, 0.85),
-		inset 0 -2.5px 0 rgba(0, 0, 0, 0.45),
-		0 4px 0 var(--color-btn-border);
-	transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	text-transform: uppercase;
-	font-size: 0.75rem;
-	letter-spacing: 0.03em;
-	gap: 0.35rem;
-}
-
-.btn-primary:hover {
-	filter: brightness(1.15);
-}
-
-.btn-primary:active {
-	transform: translateY(5px);
-	box-shadow:
-		inset 0 2px 0 rgba(255, 255, 255, 0.85),
-		inset 0 -2px 0 rgba(0, 0, 0, 0.45),
-		0 0px 0 var(--color-btn-border);
-	filter: brightness(0.85);
-}
+/* ============================================================
+   Misc utilities (kept from v1, adapted)
+   ============================================================ */
 
 .chip-row {
 	display: flex;
@@ -275,17 +344,50 @@ input[type='range']::-moz-range-thumb:hover {
 	gap: 0.5rem;
 }
 
+/* ============================================================
+   Fade-in animation
+   ============================================================ */
+
 .fade-in {
-	animation: fadeIn 0.45s ease both;
+	animation: fadeIn 0.5s ease both;
 }
 
 @keyframes fadeIn {
 	from {
 		opacity: 0;
-		transform: translateY(8px);
+		transform: translateY(10px);
 	}
 	to {
 		opacity: 1;
 		transform: translateY(0);
 	}
+}
+
+/* ============================================================
+   Section / Page layout helpers
+   ============================================================ */
+
+.page-content {
+	padding: 0 var(--space-container) var(--space-section);
+}
+
+.section-gap {
+	margin-bottom: var(--space-section);
+}
+
+.section-title {
+	font-family: var(--font-display);
+	font-size: 1.25rem;
+	font-weight: 600;
+	color: var(--color-on-surface);
+	margin: 0 0 var(--space-gutter);
+}
+
+/* Legacy card-panel kept for backward compat */
+.card-panel {
+	background: var(--color-surface-container-lowest);
+	border-radius: var(--radius-xl);
+	box-shadow: var(--shadow-card);
+	border: 1px solid rgba(117, 120, 109, 0.1);
+	padding: var(--space-gutter);
 }

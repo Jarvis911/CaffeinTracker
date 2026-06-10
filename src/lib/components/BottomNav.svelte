@@ -2,23 +2,26 @@
 	import { page } from '$app/state';
 	import { _ } from 'svelte-i18n';
 
-	const links = $derived([
-		{ href: '/home-cozy', label: $_('nav.home_cozy'), icon: '/images/home.png' },
-		{ href: '/log', label: $_('nav.log'), icon: '/images/cafe.png' },
-		{ href: '/connect', label: $_('nav.sync'), icon: '/images/stats.png' },
-		{ href: '/insights', label: $_('nav.you'), icon: '/images/profile.png' }
-	]);
+	const links = [
+		{ href: '/home-cozy', label: 'Ritual', icon: 'spa' },
+		{ href: '/log', label: 'Log', icon: 'add_circle' },
+		{ href: '/trends', label: 'Trends', icon: 'analytics' },
+		{ href: '/insights', label: 'Profile', icon: 'manage_accounts' }
+	];
+
+	function isActive(href: string, pathname: string): boolean {
+		if (href === '/home-cozy') {
+			return pathname === '/home-cozy' || pathname === '/' || pathname === '/home-pixel';
+		}
+		return pathname === href;
+	}
 </script>
 
-<nav class="nav" aria-label="Main">
+<nav class="nav" aria-label="Main navigation">
 	{#each links as link}
-		<a
-			href={link.href}
-			class:active={page.url.pathname === link.href ||
-				(link.href === '/home-cozy' &&
-					(page.url.pathname === '/' || page.url.pathname === '/home-pixel'))}
-		>
-			<img src={link.icon} alt="" class="nav-icon-img" aria-hidden="true" />
+		{@const active = isActive(link.href, page.url.pathname)}
+		<a href={link.href} class:active aria-current={active ? 'page' : undefined}>
+			<span class="material-symbols-outlined icon" class:fill={active}>{link.icon}</span>
 			<span class="label">{link.label}</span>
 		</a>
 	{/each}
@@ -30,18 +33,16 @@
 		bottom: 0;
 		left: 50%;
 		transform: translateX(-50%);
-		width: min(100%, 28rem);
+		width: min(100%, 768px);
 		display: flex;
 		justify-content: space-around;
 		align-items: center;
-		padding: 0.65rem 0.5rem calc(0.65rem + env(safe-area-inset-bottom));
-		background-color: #f7cbd2; /* Soft pink matching mockup */
-		border-top: 3px solid #3d2c2a;
-		border-left: 3px solid #3d2c2a;
-		border-right: 3px solid #3d2c2a;
-		border-top-left-radius: 24px;
-		border-top-right-radius: 24px;
-		box-shadow: 0 -3px 10px rgba(61, 44, 42, 0.1);
+		padding: 0.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom));
+		background: var(--color-surface);
+		border-top: 1px solid rgba(197, 200, 187, 0.3);
+		border-top-left-radius: 0.75rem;
+		border-top-right-radius: 0.75rem;
+		box-shadow: var(--shadow-nav);
 		z-index: 50;
 	}
 
@@ -51,44 +52,39 @@
 		align-items: center;
 		justify-content: center;
 		gap: 0.2rem;
-		padding: 0.45rem 0.55rem;
-		border-radius: 16px;
-		color: #3d2c2a;
+		padding: 0.35rem 1rem 0.25rem;
+		border-radius: var(--radius-full);
+		color: var(--color-on-surface-variant);
 		text-decoration: none;
 		font-family: var(--font-body);
-		font-size: 0.68rem;
-		font-weight: 700;
-		transition: transform 0.1s ease, background-color 0.2s ease;
-		min-width: 4.4rem;
-		flex: 1;
-		max-width: 5.8rem;
-		height: auto;
-		border: none;
-		background: transparent;
-		box-shadow: none;
+		font-size: 0.75rem;
+		font-weight: 600;
+		letter-spacing: 0.02em;
+		transition: color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+		min-width: 4rem;
 	}
 
 	a:hover {
-		background-color: rgba(255, 255, 255, 0.25);
+		color: var(--color-primary);
 	}
 
 	a.active {
-		background-color: #f0a2b5; /* Highlight pink color for active tab */
-		transform: none;
-		box-shadow: none;
+		background: var(--color-primary-container);
+		color: var(--color-on-primary-container);
 	}
 
-	.nav-icon-img {
-		width: 2.6rem;
-		height: 2.6rem;
-		object-fit: contain;
-		image-rendering: pixelated;
+	.icon {
+		font-size: 1.5rem;
+		font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+		transition: font-variation-settings 0.2s ease;
+	}
+
+	.icon.fill {
+		font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 	}
 
 	.label {
-		font-family: var(--font-body);
-		font-weight: 700;
-		font-size: 0.64rem;
-		letter-spacing: 0.01em;
+		font-size: 0.7rem;
+		line-height: 1;
 	}
 </style>

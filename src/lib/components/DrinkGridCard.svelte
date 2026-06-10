@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { _ } from 'svelte-i18n';
 	import type { DrinkTemplate } from '$lib/types';
 
 	let {
@@ -16,28 +15,35 @@
 </script>
 
 <div class="card-wrapper">
-	<button type="button" class="grid-card" class:is-favorite-card={isFavorite} onclick={onSelect} aria-label="Log {drink.name}">
+	<button
+		type="button"
+		class="grid-card"
+		class:is-favorite={isFavorite}
+		onclick={onSelect}
+		aria-label="Log {drink.name}"
+	>
 		{#if drink.imageUrl}
 			<img src={drink.imageUrl} alt={drink.name} class="drink-img" />
 		{:else}
 			<span class="drink-emoji" aria-hidden="true">{drink.emoji}</span>
 		{/if}
+		<span class="drink-name">{drink.name}</span>
+		<span class="caffeine-badge">{drink.caffeineMg}mg</span>
 
-		<!-- Tooltip containing details -->
+		<!-- Tooltip -->
 		<div class="tooltip" role="tooltip">
 			<span class="tooltip-title">{drink.name}</span>
-			<span class="tooltip-detail">⚡ {drink.caffeineMg} mg {$_('log.caffeine')}</span>
-			<span class="tooltip-detail">🍬 {drink.sugarG}g {$_('log.sugar')}</span>
-			<span class="tooltip-detail">🔥 {drink.calories} kcal</span>
+			<span class="tooltip-row">⚡ {drink.caffeineMg} mg caffeine</span>
+			<span class="tooltip-row">🍬 {drink.sugarG}g sugar</span>
+			<span class="tooltip-row">🔥 {drink.calories} kcal</span>
 		</div>
 	</button>
 
-	<!-- Heart/Favorite icon button -->
 	{#if onToggleFavorite}
 		<button
 			type="button"
 			class="heart-btn"
-			class:is-favorite={isFavorite}
+			class:active={isFavorite}
 			onclick={(e) => {
 				e.stopPropagation();
 				onToggleFavorite();
@@ -57,181 +63,137 @@
 	.card-wrapper {
 		position: relative;
 		width: 100%;
-		aspect-ratio: 1 / 1;
 	}
 
 	.grid-card {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		justify-content: center;
+		justify-content: flex-start;
 		width: 100%;
-		height: 100%;
-		padding: 0.65rem 0.4rem;
-		border-radius: 18px;
-		border: 2.5px solid var(--color-border);
-		background: 
-			linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
-			url('/images/minecraft_green_planks.png');
-		background-size: auto, 96px;
-		box-shadow:
-			inset 0 3px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -5px 0 rgba(0, 0, 0, 0.2),
-			0 4px 0 var(--color-border);
+		padding: 0.875rem 0.5rem 0.75rem;
+		border-radius: var(--radius-xl);
+		background: var(--color-surface-container-lowest);
+		border: 1px solid transparent;
+		box-shadow: var(--shadow-card);
 		cursor: pointer;
 		text-align: center;
-		gap: 0.35rem;
+		gap: 0.25rem;
 		position: relative;
-		transition:
-			transform 0.1s ease,
-			box-shadow 0.1s ease,
-			filter 0.15s ease;
-	}
-
-	/* Favorite highlighted style */
-	.grid-card.is-favorite-card {
-		background: url('/images/minecraft_green_planks.png');
-		background-size: 96px;
-		box-shadow:
-			inset 0 3px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -5px 0 rgba(0, 0, 0, 0.25),
-			0 4px 0 var(--color-border);
+		transition: border-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
 	}
 
 	.grid-card:hover {
-		filter: brightness(1.15);
+		border-color: rgba(197, 200, 187, 0.5);
 		transform: translateY(-2px);
-		box-shadow:
-			inset 0 3px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -5px 0 rgba(0, 0, 0, 0.35),
-			0 5.5px 0 var(--color-border);
 	}
 
-	.grid-card.is-favorite-card:hover {
-		filter: brightness(1.15);
-		transform: translateY(-2px);
-		box-shadow:
-			inset 0 3px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -5px 0 rgba(0, 0, 0, 0.45),
-			0 5.5px 0 var(--color-border);
+	.grid-card.is-favorite {
+		background: rgba(213, 234, 181, 0.15);
+		border-color: rgba(185, 206, 155, 0.4);
 	}
 
 	.grid-card:active {
-		transform: translateY(4px);
-		box-shadow:
-			inset 0 2px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -2px 0 rgba(0, 0, 0, 0.35),
-			0 0px 0 var(--color-border);
-		filter: brightness(0.85);
+		transform: scale(0.96);
+		box-shadow: var(--shadow-press);
 	}
 
 	.drink-img {
-		width: 3.8rem;
-		height: 3.8rem;
+		width: 3rem;
+		height: 3rem;
 		object-fit: contain;
-		flex-shrink: 0;
-		filter: drop-shadow(0 2px 4px rgba(61, 44, 42, 0.15));
+		border-radius: var(--radius-lg);
 		transition: transform 0.2s ease;
 	}
 
 	.grid-card:hover .drink-img {
-		transform: scale(1.1) rotate(4deg);
+		transform: scale(1.08);
 	}
 
 	.drink-emoji {
-		font-size: 3.4rem;
+		font-size: 2.25rem;
 		line-height: 1;
 		transition: transform 0.2s ease;
 	}
 
 	.grid-card:hover .drink-emoji {
-		transform: scale(1.1) rotate(-4deg);
+		transform: scale(1.08);
 	}
 
 	.drink-name {
 		font-family: var(--font-body);
-		font-weight: 700;
+		font-weight: 600;
 		font-size: 0.72rem;
-		line-height: 1.15;
-		color: var(--color-text);
+		line-height: 1.2;
+		color: var(--color-on-surface);
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
 		line-clamp: 2;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
-		text-overflow: ellipsis;
-		word-break: break-word;
 		max-width: 100%;
-		padding-inline: 0.1rem;
 	}
 
-	/* Heart Button style (3D tactile style) */
+	.caffeine-badge {
+		font-family: var(--font-body);
+		font-size: 0.65rem;
+		font-weight: 600;
+		color: var(--color-primary);
+		background: rgba(80, 98, 56, 0.08);
+		padding: 0.1rem 0.4rem;
+		border-radius: var(--radius-full);
+		letter-spacing: 0.02em;
+	}
+
+	/* Heart button */
 	.heart-btn {
 		position: absolute;
-		top: -0.25rem;
-		right: -0.25rem;
-		width: 1.75rem;
-		height: 1.75rem;
+		top: -0.35rem;
+		right: -0.35rem;
+		width: 1.625rem;
+		height: 1.625rem;
 		border-radius: 50%;
-		border: 1.5px solid var(--color-border);
-		background: #faf0dd;
+		border: 1px solid var(--color-outline-variant);
+		background: var(--color-surface-container-lowest);
+		box-shadow: var(--shadow-card);
 		display: grid;
 		place-items: center;
 		cursor: pointer;
-		box-shadow: 0 2px 0 var(--color-border);
-		color: var(--color-text-muted);
-		transition:
-			transform 0.1s ease,
-			box-shadow 0.1s ease,
-			background 0.2s ease;
 		padding: 0;
 		z-index: 10;
+		transition: background 0.2s ease, border-color 0.2s ease;
 	}
 
 	.heart-btn:hover {
-		background: #ffffff;
-		color: var(--color-rose);
-	}
-
-	.heart-btn:active {
-		transform: translateY(2px);
-		box-shadow: 0 0px 0 var(--color-border);
+		background: #fff0f3;
+		border-color: var(--color-secondary);
 	}
 
 	.heart-icon {
-		width: 0.85rem;
-		height: 0.85rem;
+		width: 0.8rem;
+		height: 0.8rem;
 		fill: none;
-		stroke: currentColor;
-		stroke-width: 3;
-		transition:
-			fill 0.2s ease,
-			stroke 0.2s ease;
+		stroke: var(--color-outline);
+		stroke-width: 2.5;
+		transition: fill 0.2s ease, stroke 0.2s ease;
 	}
 
-	.heart-btn.is-favorite {
-		color: var(--color-rose);
-		background: #fff0f3;
+	.heart-btn.active .heart-icon {
+		fill: var(--color-secondary);
+		stroke: var(--color-secondary);
 	}
 
-	.heart-btn.is-favorite .heart-icon {
-		fill: var(--color-rose);
-		stroke: var(--color-rose-deep);
-	}
-
-	/* Tooltip implementation (wooden signboard styled) */
+	/* Tooltip */
 	.tooltip {
 		position: absolute;
 		bottom: 110%;
 		left: 50%;
 		transform: translateX(-50%) translateY(6px);
-		background: var(--color-accent-deep); /* dark brown wood */
-		border: 1.75px solid var(--color-border);
-		box-shadow: 0 2px 0 var(--color-border);
-		color: #faf0dd;
-		padding: 0.45rem 0.65rem;
-		border-radius: 12px;
-		font-size: 0.65rem;
+		background: var(--color-inverse-surface);
+		color: var(--color-inverse-on-surface);
+		padding: 0.5rem 0.75rem;
+		border-radius: var(--radius-lg);
+		font-size: 0.7rem;
 		white-space: nowrap;
 		display: flex;
 		flex-direction: column;
@@ -239,24 +201,11 @@
 		opacity: 0;
 		pointer-events: none;
 		z-index: 50;
-		transition:
-			opacity 0.15s ease,
-			transform 0.15s ease;
+		transition: opacity 0.15s ease, transform 0.15s ease;
 		text-align: left;
+		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
 	}
 
-	.tooltip-title {
-		font-family: var(--font-display);
-		font-size: 0.62rem;
-		font-weight: 700;
-		letter-spacing: 0.03em;
-		text-transform: uppercase;
-		border-bottom: 1.5px solid rgba(255, 255, 255, 0.2);
-		padding-bottom: 0.15rem;
-		margin-bottom: 0.15rem;
-	}
-
-	/* Arrow/caret for tooltip */
 	.tooltip::after {
 		content: '';
 		position: absolute;
@@ -265,17 +214,30 @@
 		transform: translateX(-50%);
 		border-width: 4px;
 		border-style: solid;
-		border-color: var(--color-border) transparent transparent transparent;
+		border-color: var(--color-inverse-surface) transparent transparent transparent;
 	}
 
-	/* Show tooltip on hover or active/focus states */
+	.tooltip-title {
+		font-family: var(--font-display);
+		font-size: 0.7rem;
+		font-weight: 600;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+		padding-bottom: 0.2rem;
+		margin-bottom: 0.15rem;
+	}
+
+	.tooltip-row {
+		font-family: var(--font-body);
+		font-size: 0.65rem;
+		opacity: 0.85;
+	}
+
 	.grid-card:hover .tooltip,
 	.grid-card:focus-within .tooltip {
 		opacity: 1;
 		transform: translateX(-50%) translateY(0);
 	}
 
-	/* On mobile, support touch trigger */
 	@media (hover: none) {
 		.grid-card:active .tooltip {
 			opacity: 1;
