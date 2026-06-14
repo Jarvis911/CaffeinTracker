@@ -144,7 +144,7 @@
 </script>
 
 <svelte:head>
-	<title>Trends — Zakka Caffeine</title>
+	<title>Trends | Zakka Caffeine</title>
 </svelte:head>
 
 <!-- Top App Bar -->
@@ -359,8 +359,8 @@
 
 	.section-heading {
 		font-family: var(--font-display);
-		font-size: 1.1rem;
-		font-weight: 600;
+		font-size: 1.25rem;
+		font-weight: 500;
 		color: var(--color-on-surface);
 		margin: 0 0 0.875rem;
 		padding: 0 0.25rem;
@@ -369,11 +369,11 @@
 	/* ── Chart ───────────────────────────────────────────── */
 	.chart-card {
 		background: var(--color-surface-container-lowest);
-		border-radius: var(--radius-xl);
+		border-radius: var(--radius-lg);
 		box-shadow: var(--shadow-card);
-		border: 1px solid rgba(117, 120, 109, 0.08);
+		border: 1px solid rgba(28, 46, 36, 0.12);
 		padding: var(--space-gutter);
-		background-image: radial-gradient(circle at 20% 30%, rgba(118, 137, 92, 0.04) 0%, transparent 60%);
+		background-image: radial-gradient(circle at 20% 30%, rgba(28, 46, 36, 0.02) 0%, transparent 60%);
 	}
 
 	.chart-bars {
@@ -400,8 +400,8 @@
 		width: 100%;
 		display: flex;
 		align-items: flex-end;
-		background: rgba(80, 98, 56, 0.08);
-		border-radius: 0.375rem 0.375rem 0 0;
+		background: rgba(28, 46, 36, 0.05);
+		border-radius: var(--radius-sm) var(--radius-sm) 0 0;
 		overflow: hidden;
 		min-height: 100%;
 	}
@@ -409,9 +409,9 @@
 	.bar-fill {
 		width: 100%;
 		background: var(--color-primary);
-		border-radius: 0.375rem 0.375rem 0 0;
-		transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-		opacity: 0.7;
+		border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+		transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+		opacity: 0.8;
 	}
 
 	.bar-col:hover .bar-fill {
@@ -424,12 +424,12 @@
 	}
 
 	.bar-col:hover .bar-track {
-		background: rgba(80, 98, 56, 0.14);
+		background: rgba(28, 46, 36, 0.1);
 	}
 
 	.bar-label {
 		font-family: var(--font-body);
-		font-size: 0.7rem;
+		font-size: 0.65rem;
 		font-weight: 500;
 		color: var(--color-on-surface-variant);
 	}
@@ -441,7 +441,7 @@
 
 	.chart-footer {
 		padding-top: 0.5rem;
-		border-top: 1px solid rgba(197, 200, 187, 0.3);
+		border-top: 1px solid rgba(28, 46, 36, 0.1);
 		margin-top: 0.25rem;
 	}
 
@@ -464,15 +464,15 @@
 		align-items: center;
 		gap: 0.75rem;
 		background: var(--color-surface-container-lowest);
-		border-radius: var(--radius-xl);
+		border-radius: var(--radius-lg);
 		box-shadow: var(--shadow-card);
 		padding: 0.875rem;
-		border: 1px solid rgba(117, 120, 109, 0.06);
+		border: 1px solid rgba(28, 46, 36, 0.12);
 	}
 
 	.streak-card {
-		background: rgba(213, 234, 181, 0.15);
-		border-color: rgba(185, 206, 155, 0.3);
+		background: rgba(186, 109, 86, 0.04);
+		border-color: rgba(186, 109, 86, 0.3);
 	}
 
 	.summary-icon-wrap {
@@ -483,23 +483,18 @@
 		align-items: center;
 		justify-content: center;
 		flex-shrink: 0;
-		background: rgba(117, 120, 109, 0.08);
+		background: rgba(28, 46, 36, 0.05);
 		color: var(--color-outline);
 	}
 
 	.primary-wrap {
-		background: rgba(80, 98, 56, 0.1);
+		background: rgba(28, 46, 36, 0.08);
 		color: var(--color-primary);
 	}
 
 	.secondary-wrap {
-		background: rgba(153, 70, 42, 0.1);
+		background: rgba(186, 109, 86, 0.08);
 		color: var(--color-secondary);
-	}
-
-	.tertiary-wrap {
-		background: rgba(116, 85, 75, 0.1);
-		color: var(--color-tertiary);
 	}
 
 	.summary-icon-wrap .material-symbols-outlined {
@@ -512,7 +507,7 @@
 
 	.summary-label {
 		font-family: var(--font-body);
-		font-size: 0.7rem;
+		font-size: 0.65rem;
 		font-weight: 600;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
@@ -523,21 +518,21 @@
 	.summary-value {
 		font-family: var(--font-body);
 		font-size: 0.825rem;
-		font-weight: 600;
+		font-weight: 700;
 		color: var(--color-on-surface);
 		margin: 0;
 	}
 
 	.insight-quote {
 		padding: 1rem 1.25rem;
-		border-left: 3px solid var(--color-primary-fixed-dim);
-		background: rgba(213, 234, 181, 0.1);
-		border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
-		font-family: var(--font-body);
-		font-size: 0.875rem;
+		border-left: 2px solid var(--color-primary);
+		background: rgba(28, 46, 36, 0.03);
+		border-radius: var(--radius-sm);
+		font-family: var(--font-display);
+		font-size: 1.05rem;
 		font-style: italic;
 		color: var(--color-on-surface-variant);
-		line-height: 1.6;
+		line-height: 1.5;
 	}
 
 	/* ── History ─────────────────────────────────────────── */
@@ -558,18 +553,21 @@
 		gap: 0.25rem;
 		padding: 0.4rem 0.875rem;
 		border-radius: var(--radius-full);
-		border: 1px solid var(--color-outline-variant);
+		border: 1px solid var(--color-primary);
 		background: transparent;
 		color: var(--color-primary);
 		font-family: var(--font-body);
-		font-size: 0.8rem;
+		font-size: 0.72rem;
 		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
 		cursor: pointer;
-		transition: background 0.2s ease;
+		transition: background 0.2s ease, color 0.2s ease;
 	}
 
 	.export-btn:hover {
-		background: var(--color-surface-container);
+		background: var(--color-primary);
+		color: #ffffff;
 	}
 
 	.export-btn .material-symbols-outlined {
@@ -582,8 +580,8 @@
 		align-items: center;
 		gap: 0.625rem;
 		padding: 3rem 1.5rem;
-		border-radius: var(--radius-xl);
-		border: 1px dashed var(--color-outline-variant);
+		border-radius: var(--radius-lg);
+		border: 1px dashed rgba(28, 46, 36, 0.2);
 		background: var(--color-surface-container-lowest);
 		text-align: center;
 		color: var(--color-outline);
@@ -621,12 +619,12 @@
 	.divider-line {
 		flex: 1;
 		height: 1px;
-		background: var(--color-outline-variant);
+		background: rgba(28, 46, 36, 0.1);
 	}
 
 	.divider-label {
 		font-family: var(--font-body);
-		font-size: 0.7rem;
+		font-size: 0.65rem;
 		font-weight: 600;
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
@@ -638,26 +636,27 @@
 		align-items: center;
 		gap: 0.875rem;
 		background: var(--color-surface-container-lowest);
-		border-radius: var(--radius-xl);
+		border-radius: var(--radius-lg);
 		padding: 0.875rem;
 		box-shadow: var(--shadow-card);
-		border: 1px solid rgba(117, 120, 109, 0.06);
+		border: 1px solid rgba(28, 46, 36, 0.1);
 		cursor: pointer;
 		transition: background 0.2s ease, box-shadow 0.15s ease;
 	}
 
 	.history-item:hover {
-		background: var(--color-surface-container-low);
+		background: rgba(28, 46, 36, 0.02);
 	}
 
 	.history-icon {
 		width: 3rem;
 		height: 3rem;
-		border-radius: 50%;
-		background: rgba(80, 98, 56, 0.05);
+		border-radius: var(--radius-md);
+		background: rgba(28, 46, 36, 0.04);
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		color: var(--color-primary);
 		flex-shrink: 0;
 	}
 
@@ -679,9 +678,9 @@
 	}
 
 	.history-name {
-		font-family: var(--font-body);
-		font-size: 0.9rem;
-		font-weight: 600;
+		font-family: var(--font-display);
+		font-size: 1.15rem;
+		font-weight: 500;
 		color: var(--color-on-surface);
 		white-space: nowrap;
 		overflow: hidden;
@@ -690,14 +689,14 @@
 
 	.history-time {
 		font-family: var(--font-body);
-		font-size: 0.75rem;
+		font-size: 0.72rem;
 		color: var(--color-outline);
 		flex-shrink: 0;
 	}
 
 	.history-category {
 		font-family: var(--font-body);
-		font-size: 0.75rem;
+		font-size: 0.72rem;
 		color: var(--color-on-surface-variant);
 		text-transform: capitalize;
 	}
@@ -705,7 +704,8 @@
 	.history-mg {
 		font-family: var(--font-body);
 		font-size: 0.875rem;
-		font-weight: 600;
+		font-weight: 700;
+		color: var(--color-primary);
 		flex-shrink: 0;
 	}
 </style>

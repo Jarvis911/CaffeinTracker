@@ -1,12 +1,19 @@
 <script lang="ts">
 	import { app } from '$lib/state/app.svelte';
-	import { getCaffeineStatus } from '$lib/personalization/recommendations';
+	import { getCaffeineStatus, getRecommendations } from '$lib/personalization/recommendations';
 	import { DRINK_CATALOG } from '$lib/drinks/catalog';
+	import HealthChip from '$lib/components/HealthChip.svelte';
+	import RecommendationCard from '$lib/components/RecommendationCard.svelte';
+	import { _ } from 'svelte-i18n';
 
 	const caffeine = $derived(getCaffeineStatus(app.profile, app.logs));
 
+	const recommendations = $derived(
+		getRecommendations(app.health, app.profile, app.logs)
+	);
+
 	const zenQuotes = [
-		'Find beauty in the steam rising from your cup. Today\'s clarity is found in the smallest sips.',
+		"Find beauty in the steam rising from your cup. Today's clarity is found in the smallest sips.",
 		'A cup held with intention nourishes more than caffeine alone.',
 		'The ritual matters as much as the drink itself.',
 		'Breathe. Sip. Be present. The day unfolds gently.',
@@ -17,7 +24,7 @@
 
 	const warningQuotes = [
 		'Your cup is full for today. Rest is the next ritual.',
-		'Approaching your limit — perhaps water is the wiser companion now.',
+		'Approaching your limit, perhaps water is the wiser companion now.',
 		'The body whispers before it shouts. Listen gently.',
 		'A mindful pause serves better than another cup.'
 	];
@@ -65,17 +72,34 @@
 	}
 
 	const fillPercent = $derived(Math.min(caffeine.percent, 100));
-	const fillColor = $derived(
-		caffeine.percent >= 90
-			? 'from-red-400 to-red-300'
-			: caffeine.percent >= 75
-			? 'from-amber-500 to-amber-300'
-			: 'from-[#99462a] to-[#fe9572]'
-	);
+
+	// Wellness chip data derived from health snapshot
+	const wellnessChips = $derived([
+		{
+			icon: '😴',
+			label: $_('health.sleep'),
+			value: `${app.health.sleepHours}h`
+		},
+		{
+			icon: '❤️',
+			label: $_('health.resting_hr'),
+			value: `${app.health.restingHeartRate} bpm`
+		},
+		{
+			icon: '👟',
+			label: $_('health.steps'),
+			value: app.health.steps.toLocaleString()
+		},
+		{
+			icon: '💧',
+			label: $_('health.water'),
+			value: `${app.health.hydrationMl}ml`
+		}
+	]);
 </script>
 
 <svelte:head>
-	<title>Ritual — Zakka Caffeine</title>
+	<title>Ritual | Zakka Caffeine</title>
 </svelte:head>
 
 <!-- Top App Bar -->
@@ -89,22 +113,43 @@
 </header>
 
 <main class="ritual-page fade-in">
-	<!-- ── Ceramic Bowl Section ────────────────────────────── -->
+	<!-- ── Beaker Progress Section ────────────────────────────── -->
 	<section class="bowl-section">
 		<div class="bowl-outer">
-			<!-- Ambient glow -->
-			<div class="bowl-glow" aria-hidden="true"></div>
+			<!-- Beaker Container -->
+			<div class="beaker" aria-label="Caffeine balance: {caffeine.consumed}mg of {caffeine.limit}mg">
+				<svg class="beaker-svg" viewBox="0 0 160 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<defs>
+						<clipPath id="beaker-clip">
+							<path d="M72,21 L88,21 L88,58 L117,158 C120,168 112,185 96,185 L64,185 C48,185 40,168 43,158 L72,58 Z"/>
+						</clipPath>
+					</defs>
 
-			<!-- Bowl container -->
-			<div class="bowl" aria-label="Caffeine balance: {caffeine.consumed}mg of {caffeine.limit}mg">
-				<!-- Liquid fill -->
-				<div
-					class="liquid"
-					style:height="{fillPercent}%"
-					aria-hidden="true"
-				>
-					<div class="liquid-shine" aria-hidden="true"></div>
-				</div>
+					<!-- Glow effect background -->
+					<path class="glass-bg" d="M70,20 L90,20 L90,60 L120,160 C124,175 112,188 96,188 L64,188 C48,188 36,175 40,160 L70,60 Z" fill="rgba(28, 46, 36, 0.02)"/>
+
+					<!-- Clipped Liquid -->
+					<g clip-path="url(#beaker-clip)">
+						<rect class="liquid-rect" x="20" y={185 - (165 * fillPercent / 100)} width="120" height="200" fill="url(#liquid-gradient)"/>
+					</g>
+
+					<!-- Glass Contour Flask Outline -->
+					<path class="glass-contour" d="M62,20 L98,20 M70,20 L70,60 L40,160 C36,175 48,188 64,188 L96,188 C112,188 124,175 120,160 L90,60 L90,20" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+					<!-- Graduations / Measurement marks -->
+					<line x1="50" y1="150" x2="58" y2="150" stroke="var(--color-outline-variant)" stroke-width="1"/>
+					<line x1="57" y1="120" x2="64" y2="120" stroke="var(--color-outline-variant)" stroke-width="1"/>
+					<line x1="64" y1="90" x2="70" y2="90" stroke="var(--color-outline-variant)" stroke-width="1"/>
+
+					<text x="63" y="153" fill="var(--color-outline)" font-family="var(--font-body)" font-size="6.5" font-weight="600">100</text>
+					<text x="69" y="123" fill="var(--color-outline)" font-family="var(--font-body)" font-size="6.5" font-weight="600">200</text>
+					<text x="75" y="93" fill="var(--color-outline)" font-family="var(--font-body)" font-size="6.5" font-weight="600">300</text>
+
+					<linearGradient id="liquid-gradient" x1="0%" y1="100%" x2="0%" y2="0%">
+						<stop offset="0%" stop-color="var(--color-primary)"/>
+						<stop offset="100%" stop-color="var(--color-primary-container)"/>
+					</linearGradient>
+				</svg>
 			</div>
 
 			<!-- Caffeine badge -->
@@ -128,11 +173,6 @@
 			onclick={shuffleQuote}
 			aria-label="Refresh zen quote"
 		>
-			<div class="ritual-card-header">
-				<span class="material-symbols-outlined ritual-icon fill">spa</span>
-				<span class="ritual-card-label">Daily Ritual</span>
-			</div>
-
 			<blockquote class="zen-quote">"{currentQuote}"</blockquote>
 
 			<div class="ritual-card-footer">
@@ -145,6 +185,37 @@
 			</div>
 		</button>
 	</section>
+
+	<!-- ── Wellness Chips (only when fitness data connected) ── -->
+	{#if app.hasFitnessData}
+		<section class="wellness-section section-gap">
+			<h3 class="section-label">{$_('home.wellness')}</h3>
+			<div class="chips-row">
+				{#each wellnessChips as chip (chip.label)}
+					<HealthChip icon={chip.icon} label={chip.label} value={chip.value} />
+				{/each}
+			</div>
+		</section>
+	{/if}
+
+	<!-- ── Personalized Picks (when fitness data connected) ── -->
+	{#if app.hasFitnessData && recommendations.length > 0}
+		<section class="picks-section section-gap">
+			<h3 class="section-label">{$_('home.picked_for_you')}</h3>
+			<div class="picks-list">
+				{#each recommendations.slice(0, 3) as rec (rec.drink.id)}
+					<RecommendationCard item={rec} onLog={() => logDrink(rec.drink.id)} />
+				{/each}
+			</div>
+		</section>
+	{:else if !app.hasFitnessData}
+		<!-- Connect prompt -->
+		<section class="connect-prompt section-gap">
+			<span class="material-symbols-outlined connect-icon">monitor_heart</span>
+			<p class="connect-text">{$_('home.connect_prompt')}</p>
+			<a href="/connect" class="btn-primary connect-btn">{$_('home.connect_btn')}</a>
+		</section>
+	{/if}
 
 	<!-- ── Quick Log ─────────────────────────────────────── -->
 	<section class="quick-log-section">
@@ -235,7 +306,7 @@
 		padding: 0 var(--space-container) var(--space-section);
 	}
 
-	/* ── Bowl Section ─────────────────────────────────────── */
+	/* ── Beaker Section ─────────────────────────────────────── */
 	.bowl-section {
 		display: flex;
 		flex-direction: column;
@@ -252,98 +323,83 @@
 		justify-content: center;
 	}
 
-	.bowl-glow {
-		position: absolute;
-		inset: 0;
-		background: var(--color-surface-container);
-		border-radius: 50%;
-		opacity: 0.4;
-		filter: blur(2rem);
-		transform: scale(0.75);
-	}
-
-	.bowl {
+	.beaker {
 		position: relative;
 		z-index: 10;
-		width: 12rem;
-		height: 12rem;
-		background: var(--color-surface-container-highest);
-		border-radius: 50%;
-		border: 4px solid rgba(197, 200, 187, 0.3);
-		overflow: hidden;
-		box-shadow: var(--shadow-card);
+		width: 11.5rem;
+		height: 14.5rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
-	.liquid {
-		position: absolute;
-		bottom: 0;
-		left: 0;
+	.beaker-svg {
 		width: 100%;
-		background: linear-gradient(to top, var(--color-secondary), var(--color-secondary-container));
-		opacity: 0.82;
-		transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
+		height: 100%;
+		overflow: visible;
 	}
 
-	.liquid-shine {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 1rem;
-		background: rgba(255, 255, 255, 0.2);
-		filter: blur(4px);
+	.liquid-rect {
+		transition: y 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	.glass-contour {
+		transition: stroke 0.3s ease;
 	}
 
 	.stats-badge {
 		position: absolute;
-		top: -0.5rem;
-		right: -0.5rem;
+		bottom: 1.5rem;
+		right: 0.5rem;
 		z-index: 20;
-		width: 5rem;
-		height: 5rem;
-		background: var(--color-primary);
-		color: var(--color-on-primary);
+		width: 4rem;
+		height: 4rem;
+		background: var(--color-secondary);
+		color: var(--color-on-secondary);
 		border-radius: 50%;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		box-shadow: var(--shadow-card);
-		transform: rotate(12deg);
+		transform: rotate(-8deg);
+		border: 1px solid rgba(255, 255, 255, 0.2);
 	}
 
 	.stats-mg {
 		font-family: var(--font-display);
 		font-size: 1.25rem;
-		font-weight: 600;
+		font-weight: 700;
 		line-height: 1;
 	}
 
 	.stats-unit {
-		font-size: 0.7rem;
-		font-weight: 500;
-		opacity: 0.85;
+		font-family: var(--font-body);
+		font-size: 0.65rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		opacity: 0.9;
 	}
 
 	.bowl-caption {
-		margin-top: 1.5rem;
+		margin-top: 1rem;
 		text-align: center;
 	}
 
 	.bowl-label {
 		font-family: var(--font-body);
-		font-size: 0.75rem;
+		font-size: 0.72rem;
 		font-weight: 600;
-		letter-spacing: 0.1em;
+		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: var(--color-outline);
-		margin: 0 0 0.25rem;
+		margin: 0 0 0.15rem;
 	}
 
 	.bowl-status {
 		font-family: var(--font-display);
-		font-size: 1.625rem;
-		font-weight: 600;
+		font-size: 1.75rem;
+		font-weight: 500;
 		color: var(--color-on-surface);
 		margin: 0;
 		letter-spacing: -0.01em;
@@ -357,77 +413,66 @@
 	.ritual-card {
 		width: 100%;
 		background: var(--color-surface-container-lowest);
-		border-radius: var(--radius-xl);
+		border-radius: var(--radius-lg);
 		box-shadow: var(--shadow-card);
-		border: 1px solid rgba(117, 120, 109, 0.1);
-		padding: var(--space-gutter);
+		border: 1px solid rgba(28, 46, 36, 0.12);
+		padding: 1.75rem var(--space-gutter) 1.5rem;
 		cursor: pointer;
-		text-align: left;
-		transition: box-shadow 0.2s ease, transform 0.15s ease;
+		text-align: center;
+		transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.15s ease;
+		position: relative;
+	}
+
+	.ritual-card::before {
+		content: '☘';
+		display: block;
+		font-size: 1.25rem;
+		color: var(--color-secondary);
+		margin-bottom: 0.75rem;
+		line-height: 1;
 	}
 
 	.ritual-card:hover {
-		box-shadow: 0px 6px 24px rgba(93, 64, 55, 0.09);
+		border-color: var(--color-primary);
+		box-shadow: 0px 6px 24px rgba(28, 46, 36, 0.06);
 	}
 
 	.ritual-card:active {
-		transform: translateY(2px);
-		box-shadow: var(--shadow-press);
-	}
-
-	.ritual-card-header {
-		display: flex;
-		align-items: center;
-		gap: 0.6rem;
-		margin-bottom: 0.75rem;
-	}
-
-	.ritual-icon {
-		color: var(--color-primary);
-		font-size: 1.25rem;
-	}
-
-	.ritual-icon.fill {
-		font-variation-settings: 'FILL' 1;
-	}
-
-	.ritual-card-label {
-		font-family: var(--font-body);
-		font-size: 0.875rem;
-		font-weight: 600;
-		letter-spacing: 0.02em;
-		color: var(--color-primary);
+		transform: translateY(1px);
 	}
 
 	.zen-quote {
-		font-family: var(--font-body);
-		font-size: 0.95rem;
+		font-family: var(--font-display);
+		font-size: 1.375rem;
 		font-style: italic;
-		color: var(--color-on-surface-variant);
-		border-left: 2px solid var(--color-primary-fixed-dim);
-		padding-left: 0.875rem;
-		margin: 0 0 1rem;
-		line-height: 1.6;
+		font-weight: 400;
+		color: var(--color-on-surface);
+		margin: 0 0 1.25rem;
+		line-height: 1.5;
+		padding: 0 0.5rem;
+		padding-bottom: 2px;
 	}
 
 	.ritual-card-footer {
 		display: flex;
-		justify-content: space-between;
+		flex-direction: column;
+		gap: 0.25rem;
 		align-items: center;
-		margin-bottom: 0.5rem;
+		margin-bottom: 0.75rem;
 	}
 
 	.footer-hint {
 		font-family: var(--font-body);
-		font-size: 0.7rem;
-		font-weight: 500;
+		font-size: 0.72rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
 		color: var(--color-outline);
-		letter-spacing: 0.02em;
 	}
 
 	.progress-track {
 		width: 100%;
-		height: 4px;
+		height: 3px;
 		background: var(--color-surface-container);
 		border-radius: var(--radius-full);
 		overflow: hidden;
@@ -437,7 +482,79 @@
 		height: 100%;
 		background: var(--color-primary);
 		border-radius: var(--radius-full);
-		transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+		transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	/* ── Section label ────────────────────────────────────── */
+	.section-label {
+		font-family: var(--font-body);
+		font-size: 0.72rem;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--color-outline);
+		margin: 0 0 0.875rem;
+		padding: 0 0.25rem;
+	}
+
+	/* ── Wellness Chips ──────────────────────────────────── */
+	.wellness-section {
+		width: 100%;
+	}
+
+	.chips-row {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 0.625rem;
+	}
+
+	@media (min-width: 480px) {
+		.chips-row {
+			grid-template-columns: repeat(4, 1fr);
+		}
+	}
+
+	/* ── Personalized Picks ──────────────────────────────── */
+	.picks-section {
+		width: 100%;
+	}
+
+	.picks-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	/* ── Connect prompt ──────────────────────────────────── */
+	.connect-prompt {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 1.75rem var(--space-gutter);
+		border-radius: var(--radius-lg);
+		border: 1px dashed rgba(28, 46, 36, 0.2);
+		background: var(--color-surface-container-lowest);
+		text-align: center;
+	}
+
+	.connect-icon {
+		font-size: 2rem;
+		color: var(--color-outline);
+	}
+
+	.connect-text {
+		font-family: var(--font-body);
+		font-size: 0.85rem;
+		color: var(--color-on-surface-variant);
+		margin: 0;
+		max-width: 28ch;
+		line-height: 1.5;
+	}
+
+	.connect-btn {
+		font-size: 0.78rem;
+		padding: 0.625rem 1.25rem;
 	}
 
 	/* ── Quick Log ────────────────────────────────────────── */
@@ -447,9 +564,9 @@
 
 	.quick-log-title {
 		font-family: var(--font-body);
-		font-size: 0.75rem;
+		font-size: 0.72rem;
 		font-weight: 600;
-		letter-spacing: 0.1em;
+		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: var(--color-outline);
 		margin: 0 0 0.875rem;
@@ -475,8 +592,8 @@
 		gap: 0.875rem;
 		background: var(--color-surface-container-lowest);
 		padding: 0.875rem;
-		border-radius: var(--radius-xl);
-		border: 1px solid transparent;
+		border-radius: var(--radius-lg);
+		border: 1px solid rgba(28, 46, 36, 0.12);
 		box-shadow: var(--shadow-card);
 		cursor: pointer;
 		text-align: left;
@@ -484,8 +601,8 @@
 	}
 
 	.quick-drink-card:hover {
-		border-color: rgba(254, 149, 114, 0.4);
-		transform: translateY(-1px);
+		border-color: var(--color-primary);
+		transform: translateY(-2px);
 	}
 
 	.quick-drink-card:active {
@@ -496,38 +613,18 @@
 	.quick-drink-icon {
 		width: 3rem;
 		height: 3rem;
-		border-radius: var(--radius-lg);
-		background: rgba(153, 70, 42, 0.1);
+		border-radius: var(--radius-md);
+		background: rgba(28, 46, 36, 0.04);
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		color: var(--color-secondary);
+		color: var(--color-primary);
 		flex-shrink: 0;
 		transition: background 0.2s ease, color 0.2s ease;
 	}
 
-	.quick-drink-card:nth-child(2) .quick-drink-icon {
-		background: rgba(80, 98, 56, 0.1);
-		color: var(--color-primary);
-	}
-
-	.quick-drink-card:nth-child(3) .quick-drink-icon {
-		background: rgba(116, 85, 75, 0.1);
-		color: var(--color-tertiary);
-	}
-
 	.quick-drink-card:hover .quick-drink-icon {
-		background: var(--color-secondary-container);
-		color: #ffffff;
-	}
-
-	.quick-drink-card:nth-child(2):hover .quick-drink-icon {
 		background: var(--color-primary);
-		color: #ffffff;
-	}
-
-	.quick-drink-card:nth-child(3):hover .quick-drink-icon {
-		background: var(--color-tertiary);
 		color: #ffffff;
 	}
 
@@ -543,46 +640,46 @@
 
 	.quick-drink-name {
 		font-family: var(--font-display);
-		font-size: 1rem;
-		font-weight: 600;
+		font-size: 1.15rem;
+		font-weight: 500;
 		color: var(--color-on-surface);
 	}
 
 	.quick-drink-sub {
 		font-family: var(--font-body);
-		font-size: 0.75rem;
+		font-size: 0.72rem;
 		font-weight: 500;
 		color: var(--color-outline);
 	}
 
 	.custom-entry-btn {
-		display: flex;
+		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		gap: 0.5rem;
 		width: 100%;
 		margin-top: 0.875rem;
-		padding: 0.875rem;
+		padding: 0.75rem;
 		border-radius: var(--radius-full);
-		border: 2px dashed rgba(117, 120, 109, 0.3);
+		border: 1px solid var(--color-primary);
 		background: transparent;
-		color: var(--color-outline);
+		color: var(--color-primary);
 		font-family: var(--font-body);
-		font-size: 0.875rem;
+		font-size: 0.8rem;
 		font-weight: 600;
-		letter-spacing: 0.02em;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
 		text-decoration: none;
-		transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+		transition: background 0.2s ease, color 0.2s ease;
 	}
 
 	.custom-entry-btn:hover {
-		background: var(--color-surface-container);
-		border-color: var(--color-outline-variant);
-		color: var(--color-on-surface-variant);
+		background: var(--color-primary);
+		color: #ffffff;
 	}
 
 	.custom-entry-btn .material-symbols-outlined {
-		font-size: 1.25rem;
+		font-size: 1.125rem;
 	}
 
 	/* ── Toast ────────────────────────────────────────────── */

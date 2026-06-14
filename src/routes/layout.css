@@ -6,80 +6,80 @@
    ============================================================ */
 
 :root {
-	/* Primary (Matcha) */
-	--color-primary: #506238;
+	/* Primary (Deep Forest) */
+	--color-primary: #1C3B2B;
 	--color-on-primary: #ffffff;
-	--color-primary-container: #687b4f;
-	--color-on-primary-container: #faffea;
-	--color-primary-fixed: #d5eab5;
-	--color-primary-fixed-dim: #b9ce9b;
-	--color-inverse-primary: #b9ce9b;
+	--color-primary-container: #365D46;
+	--color-on-primary-container: #F1F6F3;
+	--color-primary-fixed: #B1CBB7;
+	--color-primary-fixed-dim: #8CAE94;
+	--color-inverse-primary: #8CAE94;
 
-	/* Secondary (Terracotta) */
-	--color-secondary: #99462a;
+	/* Secondary (Terracotta Rose) */
+	--color-secondary: #BA6D56;
 	--color-on-secondary: #ffffff;
-	--color-secondary-container: #fe9572;
-	--color-on-secondary-container: #762c12;
+	--color-secondary-container: #D7917C;
+	--color-on-secondary-container: #4F2317;
 
-	/* Tertiary (Roasted Bean) */
-	--color-tertiary: #74554b;
+	/* Tertiary (Chamomile Straw) */
+	--color-tertiary: #8C775D;
 	--color-on-tertiary: #ffffff;
-	--color-tertiary-container: #8f6d62;
-	--color-tertiary-fixed: #ffdbd0;
-	--color-tertiary-fixed-dim: #e7bdb1;
+	--color-tertiary-container: #AA947A;
+	--color-tertiary-fixed: #F5EFEB;
+	--color-tertiary-fixed-dim: #DCD0C3;
 
-	/* Surface (Washi Paper) */
-	--color-surface: #fbf9f4;
-	--color-surface-dim: #dbdad5;
-	--color-surface-bright: #fbf9f4;
-	--color-surface-container: #f0eee9;
-	--color-surface-container-low: #f5f3ee;
+	/* Surface (Alabaster Paper) */
+	--color-surface: #FAF9F6;
+	--color-surface-dim: #E6E5DF;
+	--color-surface-bright: #FAF9F6;
+	--color-surface-container: #EFF1EE;
+	--color-surface-container-low: #F5F7F4;
 	--color-surface-container-lowest: #ffffff;
-	--color-surface-container-high: #eae8e3;
-	--color-surface-container-highest: #e4e2dd;
-	--color-surface-variant: #e4e2dd;
+	--color-surface-container-high: #E3E7E3;
+	--color-surface-container-highest: #D7DDD7;
+	--color-surface-variant: #D7DDD7;
 
 	/* On-Surface */
-	--color-on-surface: #1b1c19;
-	--color-on-surface-variant: #45483e;
-	--color-inverse-surface: #30312e;
-	--color-inverse-on-surface: #f2f1ec;
+	--color-on-surface: #101F16;
+	--color-on-surface-variant: #34463C;
+	--color-inverse-surface: #202F26;
+	--color-inverse-on-surface: #FAF9F6;
 
 	/* Outline */
-	--color-outline: #75786d;
-	--color-outline-variant: #c5c8bb;
+	--color-outline: #5E7064;
+	--color-outline-variant: #C2CDC5;
 
 	/* Background */
-	--color-bg: #fbf9f4;
-	--color-on-bg: #1b1c19;
+	--color-bg: #FAF9F6;
+	--color-on-bg: #101F16;
 
 	/* Error */
-	--color-error: #ba1a1a;
-	--color-error-container: #ffdad6;
-	--color-on-error-container: #93000a;
+	--color-error: #BA1A1A;
+	--color-error-container: #FFDAD6;
+	--color-on-error-container: #93000A;
 
 	/* Typography */
-	--font-display: 'Manrope', system-ui, sans-serif;
+	--font-display: 'Cormorant Garamond', Georgia, serif;
 	--font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
 
-	/* Shadows */
-	--shadow-card: 0px 4px 20px rgba(93, 64, 55, 0.06);
-	--shadow-nav: 0px -4px 20px rgba(93, 64, 55, 0.06);
-	--shadow-press: 0px 2px 10px rgba(93, 64, 55, 0.03);
+	/* Shadows (Refined, botanical soft depth) */
+	--shadow-card: 0px 4px 16px rgba(28, 46, 36, 0.04);
+	--shadow-nav: 0px -4px 16px rgba(28, 46, 36, 0.04);
+	--shadow-press: 0px 1px 6px rgba(28, 46, 36, 0.02);
 
-	/* Border radius */
-	--radius-sm: 0.25rem;
-	--radius-md: 0.5rem;
-	--radius-lg: 0.75rem;
-	--radius-xl: 1rem;
-	--radius-2xl: 1.5rem;
+	/* Border radius (Crisp, book-like corners) */
+	--radius-sm: 0px;
+	--radius-md: 2px;
+	--radius-lg: 4px;
+	--radius-xl: 6px;
+	--radius-2xl: 8px;
 	--radius-full: 9999px;
 
 	/* Spacing rhythm */
 	--space-unit: 8px;
 	--space-gutter: 16px;
 	--space-container: 24px;
-	--space-section: 40px;
+	--space-section: 48px;
 }
 
 /* ============================================================

@@ -5,8 +5,7 @@ A cozy caffeine & sugar drink tracker with **personalized recommendations** from
 | Platform | Stack | Folder |
 |----------|-------|--------|
 | **Web** | Svelte 5 + SvelteKit | `/` (this repo root) |
-| **Mobile** | Flutter + Supabase + HealthKit/Health Connect | `mobile/caffein_tracker/` |
-| **Backend (mobile)** | Supabase Postgres + Auth | `supabase/` |
+| **Backend** | Supabase Postgres + Auth | `supabase/` |
 
 ## Features
 
@@ -32,10 +31,6 @@ npm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173).
-
-## Getting started (mobile)
-
-See [mobile/caffein_tracker/README.md](mobile/caffein_tracker/README.md) and [supabase/README.md](supabase/README.md).
 
 ## App flow
 

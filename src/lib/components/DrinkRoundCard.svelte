@@ -26,10 +26,10 @@
 		align-items: center;
 		gap: 0.4rem;
 		flex-shrink: 0;
-		padding: 0.5rem 0.875rem 0.5rem 0.625rem;
+		padding: 0.4rem 0.875rem 0.4rem 0.625rem;
 		border-radius: var(--radius-full);
 		background: var(--color-surface-container-lowest);
-		border: 1px solid var(--color-outline-variant);
+		border: 1px solid rgba(28, 46, 36, 0.15);
 		box-shadow: var(--shadow-card);
 		cursor: pointer;
 		text-align: left;
@@ -37,7 +37,7 @@
 	}
 
 	.chip:hover {
-		background: rgba(80, 98, 56, 0.05);
+		background: rgba(28, 46, 36, 0.04);
 		border-color: var(--color-primary);
 	}
 
@@ -49,7 +49,7 @@
 		width: 1.5rem;
 		height: 1.5rem;
 		object-fit: contain;
-		border-radius: var(--radius-sm);
+		border-radius: var(--radius-md);
 	}
 
 	.chip-emoji {
@@ -58,19 +58,21 @@
 	}
 
 	.chip-name {
-		font-family: var(--font-body);
-		font-size: 0.8rem;
-		font-weight: 600;
+		font-family: var(--font-display);
+		font-size: 0.95rem;
+		font-weight: 500;
 		color: var(--color-on-surface);
 	}
 
 	.chip-mg {
 		font-family: var(--font-body);
-		font-size: 0.65rem;
+		font-size: 0.625rem;
 		font-weight: 600;
 		color: var(--color-primary);
-		background: rgba(80, 98, 56, 0.08);
+		background: rgba(28, 46, 36, 0.05);
+		border: 1px solid rgba(28, 46, 36, 0.08);
 		padding: 0.1rem 0.35rem;
 		border-radius: var(--radius-full);
+		letter-spacing: 0.02em;
 	}
 </style>

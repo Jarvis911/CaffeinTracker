@@ -1,6 +1,6 @@
-# Caffein Tracker — Supabase (mobile backend)
+# Caffein Tracker — Supabase Backend
 
-Separate backend for the **Flutter mobile app** and **web Google sign-in**. The web app still stores drink logs in `localStorage`; auth links your Google account via Supabase.
+Backend database for the web Google sign-in. The web app still stores drink logs in `localStorage`; auth links your Google account via Supabase.
 
 ## Setup
 
@@ -16,9 +16,7 @@ supabase db push
 
 Or paste `migrations/20260520000000_mobile_schema.sql` into **SQL Editor** → Run.
 
-5. Copy **Project URL** and **anon public key** into:
-   - `mobile/caffein_tracker/.env`
-   - root `.env` as `PUBLIC_SUPABASE_URL` and `PUBLIC_SUPABASE_ANON_KEY` (see `.env.example`)
+5. Copy **Project URL** and **anon public key** into root `.env` as `PUBLIC_SUPABASE_URL` and `PUBLIC_SUPABASE_ANON_KEY` (see `.env.example`).
 
 ## Google sign-in (web)
 
@@ -30,7 +28,6 @@ Or paste `migrations/20260520000000_mobile_schema.sql` into **SQL Editor** → R
 5. **Authentication** → URL Configuration → Redirect URLs:
    - `http://localhost:5173/auth/callback`
    - `https://your-domain.com/auth/callback` (production)
-   - `io.supabase.caffeintracker://login-callback` (Flutter mobile)
 
 Web login page: `/login` — or **Settings** → Account.
 
@@ -47,13 +44,6 @@ Web login page: `/login` — or **Settings** → Account.
 ## Auth
 
 Email/password signup creates a `profiles` row automatically via trigger.
-
-## Mobile health flow
-
-1. User grants HealthKit (iOS) or Health Connect (Android) in the app.
-2. App reads metrics locally via the `health` package.
-3. App upserts `health_snapshots` and `fitness_connections` to Supabase.
-4. Personalization runs on-device (same rules as web) using latest snapshot + logs.
 
 ## RLS
 

@@ -10,12 +10,7 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"setup": "powershell -ExecutionPolicy Bypass -File scripts/setup.ps1",
-		"mobile:pub": "tools/flutter/bin/flutter pub get",
-		"mobile:analyze": "tools/flutter/bin/flutter analyze",
-		"mobile:run": "cd mobile/caffein_tracker && ../../tools/flutter/bin/flutter run",
-		"mobile:run:web": "cd mobile/caffein_tracker && ../../tools/flutter/bin/flutter run -d chrome",
-		"supabase:types": "npx supabase gen types typescript --local > mobile/caffein_tracker/lib/types/supabase.generated.ts 2>nul || echo Link Supabase project first"
+		"setup": "powershell -ExecutionPolicy Bypass -File scripts/setup.ps1"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^7.0.1",

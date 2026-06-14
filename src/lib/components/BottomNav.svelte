@@ -37,11 +37,9 @@
 		display: flex;
 		justify-content: space-around;
 		align-items: center;
-		padding: 0.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom));
+		padding: 0.625rem 1rem calc(0.625rem + env(safe-area-inset-bottom));
 		background: var(--color-surface);
-		border-top: 1px solid rgba(197, 200, 187, 0.3);
-		border-top-left-radius: 0.75rem;
-		border-top-right-radius: 0.75rem;
+		border-top: 1px solid rgba(28, 46, 36, 0.1);
 		box-shadow: var(--shadow-nav);
 		z-index: 50;
 	}
@@ -51,17 +49,30 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		gap: 0.2rem;
-		padding: 0.35rem 1rem 0.25rem;
-		border-radius: var(--radius-full);
-		color: var(--color-on-surface-variant);
+		gap: 0.25rem;
+		padding: 0.4rem 0.75rem;
+		color: var(--color-outline);
 		text-decoration: none;
 		font-family: var(--font-body);
-		font-size: 0.75rem;
-		font-weight: 600;
-		letter-spacing: 0.02em;
-		transition: color 0.2s ease, background 0.2s ease, transform 0.15s ease;
-		min-width: 4rem;
+		font-size: 0.72rem;
+		font-weight: 500;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		transition: color 0.2s ease, transform 0.15s ease;
+		min-width: 4.5rem;
+		position: relative;
+	}
+
+	a::after {
+		content: '';
+		position: absolute;
+		bottom: 2px;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 0;
+		height: 2px;
+		background: var(--color-primary);
+		transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 	}
 
 	a:hover {
@@ -69,14 +80,18 @@
 	}
 
 	a.active {
-		background: var(--color-primary-container);
-		color: var(--color-on-primary-container);
+		color: var(--color-primary);
+		font-weight: 700;
+	}
+
+	a.active::after {
+		width: 1.5rem;
 	}
 
 	.icon {
-		font-size: 1.5rem;
-		font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-		transition: font-variation-settings 0.2s ease;
+		font-size: 1.375rem;
+		font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+		transition: font-variation-settings 0.2s ease, color 0.2s ease;
 	}
 
 	.icon.fill {
@@ -84,7 +99,7 @@
 	}
 
 	.label {
-		font-size: 0.7rem;
+		font-size: 0.65rem;
 		line-height: 1;
 	}
 </style>

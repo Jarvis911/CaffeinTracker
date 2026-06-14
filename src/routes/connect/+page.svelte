@@ -29,7 +29,7 @@
 </script>
 
 <svelte:head>
-	<title>Fitness Sync — Zakka Caffeine</title>
+	<title>Fitness Sync | Zakka Caffeine</title>
 </svelte:head>
 
 <!-- Top Bar -->
@@ -105,8 +105,8 @@
 			<h3 class="info-title">Production Integration</h3>
 		</div>
 		<ul class="info-list">
-			<li><strong>Google Fit / Fitbit / Garmin</strong> — OAuth 2.0 + REST APIs</li>
-			<li><strong>Apple Health</strong> — HealthKit via native iOS companion</li>
+			<li><strong>Google Fit / Fitbit / Garmin</strong>: OAuth 2.0 + REST APIs</li>
+			<li><strong>Apple Health</strong>: HealthKit via native iOS companion</li>
 			<li>Server routes under <code>/api/fitness/*</code> handle tokens securely</li>
 		</ul>
 	</section>

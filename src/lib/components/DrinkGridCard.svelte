@@ -71,30 +71,30 @@
 		align-items: center;
 		justify-content: flex-start;
 		width: 100%;
-		padding: 0.875rem 0.5rem 0.75rem;
-		border-radius: var(--radius-xl);
+		padding: 1rem 0.625rem 0.875rem;
+		border-radius: var(--radius-lg);
 		background: var(--color-surface-container-lowest);
-		border: 1px solid transparent;
+		border: 1px solid rgba(28, 46, 36, 0.12);
 		box-shadow: var(--shadow-card);
 		cursor: pointer;
 		text-align: center;
-		gap: 0.25rem;
+		gap: 0.35rem;
 		position: relative;
-		transition: border-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
+		transition: border-color 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
 	}
 
 	.grid-card:hover {
-		border-color: rgba(197, 200, 187, 0.5);
+		border-color: var(--color-primary);
 		transform: translateY(-2px);
 	}
 
 	.grid-card.is-favorite {
-		background: rgba(213, 234, 181, 0.15);
-		border-color: rgba(185, 206, 155, 0.4);
+		background: rgba(186, 109, 86, 0.04);
+		border-color: rgba(186, 109, 86, 0.3);
 	}
 
 	.grid-card:active {
-		transform: scale(0.96);
+		transform: scale(0.97);
 		box-shadow: var(--shadow-press);
 	}
 
@@ -102,12 +102,12 @@
 		width: 3rem;
 		height: 3rem;
 		object-fit: contain;
-		border-radius: var(--radius-lg);
+		border-radius: var(--radius-md);
 		transition: transform 0.2s ease;
 	}
 
 	.grid-card:hover .drink-img {
-		transform: scale(1.08);
+		transform: scale(1.05);
 	}
 
 	.drink-emoji {
@@ -117,14 +117,14 @@
 	}
 
 	.grid-card:hover .drink-emoji {
-		transform: scale(1.08);
+		transform: scale(1.05);
 	}
 
 	.drink-name {
-		font-family: var(--font-body);
-		font-weight: 600;
-		font-size: 0.72rem;
-		line-height: 1.2;
+		font-family: var(--font-display);
+		font-weight: 500;
+		font-size: 1.05rem;
+		line-height: 1.15;
 		color: var(--color-on-surface);
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
@@ -132,6 +132,7 @@
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 		max-width: 100%;
+		letter-spacing: -0.01em;
 	}
 
 	.caffeine-badge {
@@ -139,10 +140,12 @@
 		font-size: 0.65rem;
 		font-weight: 600;
 		color: var(--color-primary);
-		background: rgba(80, 98, 56, 0.08);
-		padding: 0.1rem 0.4rem;
+		background: rgba(28, 46, 36, 0.05);
+		border: 1px solid rgba(28, 46, 36, 0.08);
+		padding: 0.1rem 0.45rem;
 		border-radius: var(--radius-full);
-		letter-spacing: 0.02em;
+		letter-spacing: 0.03em;
+		text-transform: uppercase;
 	}
 
 	/* Heart button */
@@ -165,7 +168,7 @@
 	}
 
 	.heart-btn:hover {
-		background: #fff0f3;
+		background: rgba(186, 109, 86, 0.05);
 		border-color: var(--color-secondary);
 	}
 
@@ -174,7 +177,7 @@
 		height: 0.8rem;
 		fill: none;
 		stroke: var(--color-outline);
-		stroke-width: 2.5;
+		stroke-width: 2;
 		transition: fill 0.2s ease, stroke 0.2s ease;
 	}
 

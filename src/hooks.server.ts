@@ -45,7 +45,17 @@ const supabaseHandle: Handle = async ({ event, resolve }) => {
 					return { session: null, user: null };
 				}
 
-				return { session, user };
+				return {
+					session: {
+						access_token: session.access_token,
+						refresh_token: session.refresh_token,
+						expires_in: session.expires_in,
+						token_type: session.token_type,
+						expires_at: session.expires_at,
+						user: user as User
+					},
+					user
+				};
 			} catch {
 				// Network/DNS failures (e.g. ENOTFOUND) — treat as logged out
 				return { session: null, user: null };

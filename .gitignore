@@ -6,14 +6,6 @@ dist
 .env.local
 .DS_Store
 
-# Flutter SDK (large — cloned locally)
-tools/flutter/
-
-# Mobile
-mobile/caffein_tracker/.dart_tool/
-mobile/caffein_tracker/build/
-mobile/caffein_tracker/.flutter-plugins-dependencies
-
 # Supabase local
 supabase/.branches
 supabase/.temp

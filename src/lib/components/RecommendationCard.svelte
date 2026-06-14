@@ -25,7 +25,7 @@
 			<h3>{item.drink.name}</h3>
 			<p>{item.reason}</p>
 		</div>
-		<span class="score {scoreColor}">{item.score}</span>
+		<span class="score {scoreColor}" aria-label="Score {item.score}">{item.score}</span>
 	</div>
 	{#if item.tweaks?.length}
 		<ul class="tweaks">
@@ -34,22 +34,28 @@
 			{/each}
 		</ul>
 	{/if}
-	<button type="button" class="log-btn" onclick={onLog}>Log this drink</button>
+	<button type="button" class="log-btn" onclick={onLog}>
+		<span class="material-symbols-outlined log-btn-icon">add_circle</span>
+		Log this drink
+	</button>
 </article>
 
 <style>
 	.rec {
-		padding: 1rem;
-		border-radius: 20px;
-		border: 2.5px solid var(--color-border);
-		background: 
-			linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
-			url('/images/minecraft_green_planks.png');
-		background-size: auto, 144px;
-		box-shadow:
-			inset 0 3px 0 rgba(255, 255, 255, 0.6),
-			inset 0 -3px 0 rgba(0, 0, 0, 0.08),
-			0 4px 0 var(--color-border);
+		padding: var(--space-gutter);
+		border-radius: var(--radius-xl);
+		border: 1px solid rgba(28, 46, 36, 0.12);
+		background: var(--color-surface-container-lowest);
+		box-shadow: var(--shadow-card);
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	.rec:hover {
+		border-color: rgba(28, 46, 36, 0.2);
+		box-shadow: 0px 6px 20px rgba(28, 46, 36, 0.06);
 	}
 
 	.top {
@@ -60,6 +66,8 @@
 
 	.emoji {
 		font-size: 2rem;
+		line-height: 1;
+		flex-shrink: 0;
 	}
 
 	.emoji-img {
@@ -67,97 +75,116 @@
 		height: 2.5rem;
 		object-fit: contain;
 		flex-shrink: 0;
+		border-radius: var(--radius-md);
 	}
 
 	.copy {
 		flex: 1;
+		min-width: 0;
 	}
 
 	h3 {
-		margin: 0;
-		font-size: 1rem;
-		font-weight: 800;
+		margin: 0 0 0.2rem;
+		font-family: var(--font-display);
+		font-size: 1.05rem;
+		font-weight: 600;
+		color: var(--color-on-surface);
+		letter-spacing: -0.01em;
 	}
 
 	p {
-		margin: 0.25rem 0 0;
-		font-size: 0.8rem;
-		color: var(--color-text-muted);
-		line-height: 1.35;
+		margin: 0;
+		font-family: var(--font-body);
+		font-size: 0.78rem;
+		color: var(--color-on-surface-variant);
+		line-height: 1.45;
 	}
 
 	.score {
+		flex-shrink: 0;
 		min-width: 2.25rem;
 		height: 2.25rem;
 		display: grid;
 		place-items: center;
-		border-radius: 12px;
-		border: 1.5px solid var(--color-border);
+		border-radius: var(--radius-full);
+		font-family: var(--font-body);
 		font-weight: 700;
-		font-size: 0.85rem;
-		box-shadow: 0 1.5px 0 var(--color-border);
+		font-size: 0.8rem;
 	}
 
 	.score.high {
-		background: color-mix(in srgb, var(--color-mint) 30%, white);
-		color: var(--color-mint-deep);
+		background: rgba(28, 46, 36, 0.1);
+		color: var(--color-primary);
+		border: 1px solid rgba(28, 46, 36, 0.2);
 	}
 
 	.score.mid {
-		background: color-mix(in srgb, var(--color-accent) 25%, white);
-		color: var(--color-accent-deep);
+		background: rgba(186, 109, 86, 0.1);
+		color: var(--color-secondary);
+		border: 1px solid rgba(186, 109, 86, 0.25);
 	}
 
 	.score.low {
-		background: color-mix(in srgb, var(--color-rose) 25%, white);
-		color: var(--color-rose-deep);
+		background: rgba(186, 26, 26, 0.08);
+		color: var(--color-error);
+		border: 1px solid rgba(186, 26, 26, 0.2);
 	}
 
 	.tweaks {
-		margin: 0.65rem 0 0;
-		padding-left: 1.1rem;
+		margin: 0;
+		padding: 0.5rem 0.75rem;
+		list-style: none;
+		background: rgba(140, 119, 93, 0.06);
+		border-radius: var(--radius-lg);
+		border-left: 2px solid var(--color-tertiary-fixed-dim);
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.tweaks li {
+		font-family: var(--font-body);
 		font-size: 0.75rem;
-		color: var(--color-text-muted);
+		color: var(--color-on-surface-variant);
+		line-height: 1.4;
+	}
+
+	.tweaks li::before {
+		content: '-> ';
+		color: var(--color-tertiary);
+		font-weight: 600;
 	}
 
 	.log-btn {
-		margin-top: 0.75rem;
-		width: 100%;
-		font-family: var(--font-display);
-		font-weight: 600;
-		color: var(--color-text);
-		text-shadow: none;
-		background: 
-			linear-gradient(rgba(250, 240, 221, 0.9), rgba(250, 240, 221, 0.9)),
-			url('/images/minecraft_green_planks.png');
-		background-size: auto, 96px;
-		border: 2.5px solid var(--color-btn-border);
-		border-radius: var(--btn-radius);
-		padding: 0.55rem;
-		cursor: pointer;
-		box-shadow:
-			inset 0 2.5px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -2.5px 0 rgba(0, 0, 0, 0.25),
-			0 3px 0 var(--color-btn-border);
-		transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
+		gap: 0.4rem;
+		width: 100%;
+		padding: 0.625rem 1rem;
+		font-family: var(--font-body);
+		font-size: 0.78rem;
+		font-weight: 600;
 		text-transform: uppercase;
-		font-size: 0.75rem;
-		letter-spacing: 0.03em;
+		letter-spacing: 0.05em;
+		color: var(--color-primary);
+		background: transparent;
+		border: 1px solid var(--color-primary);
+		border-radius: var(--radius-full);
+		cursor: pointer;
+		transition: background 0.2s ease, color 0.2s ease;
 	}
 
 	.log-btn:hover {
-		filter: brightness(1.15);
+		background: var(--color-primary);
+		color: var(--color-on-primary);
 	}
 
 	.log-btn:active {
-		transform: translateY(4px);
-		box-shadow:
-			inset 0 2px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -2px 0 rgba(0, 0, 0, 0.45),
-			0 0px 0 var(--color-btn-border);
-		filter: brightness(0.85);
+		transform: scale(0.97);
+	}
+
+	.log-btn-icon {
+		font-size: 1rem;
 	}
 </style>

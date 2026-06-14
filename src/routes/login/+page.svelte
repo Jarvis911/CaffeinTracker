@@ -9,7 +9,7 @@
 </script>
 
 <svelte:head>
-	<title>{$_('auth.login_title')} — Caffein Tracker</title>
+	<title>{$_('auth.login_title')} | Caffein Tracker</title>
 </svelte:head>
 
 <div class="login-page fade-in">

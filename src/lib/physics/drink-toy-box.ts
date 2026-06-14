@@ -425,7 +425,7 @@ export class DrinkPhysicsBox {
 			source: this.mouseConstraint,
 			body
 		});
-		this.mouseConstraint.body = null;
+		this.mouseConstraint.body = null as unknown as Matter.Body;
 		if (this.mouse) this.mouse.button = -1;
 	}
 
@@ -441,7 +441,7 @@ export class DrinkPhysicsBox {
 		if (!this.mouseConstraint) return;
 
 		if (this.mode === 'water') {
-			this.mouseConstraint.body = null;
+			this.mouseConstraint.body = null as unknown as Matter.Body;
 			if (this.mouseInWorld) {
 				Matter.Composite.remove(this.world, this.mouseConstraint);
 				this.mouseInWorld = false;
